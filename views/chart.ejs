@@ -1,0 +1,362 @@
+<%- include header %>
+<div class="panel-body">
+   <!--<form method="post">-->
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>選擇裝置</label>
+                <select id="mac" name="mac">
+                    <% if(units) { %>
+                        <% for(var i=0;i<units.length;i++){ %>
+                            <option value = "<%= units[i].macAddr %>" >
+                                <%= units[i].name %>
+                            </option>
+                        <% } %>
+                    <% } %>
+                </select>
+            </div> <!-- form-group -->
+        </div> <!-- col-md-3 -->
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>選擇時間</label>
+                <select id="time" name="time_option">
+                    <option value="0">四小時</option>
+    　		   		<option value="1">一天</option>
+    　		   		<option value="2">一周</option>
+    　		   		<option value="3">一個月</option>
+                </select>
+            </div> <!-- form-group -->
+        </div> <!-- col-md-3 -->
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <button name="find" onClick="find()" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-list-alt"></span> 查詢
+                </button>
+            </div>
+        </div> <!-- col-md-3 -->	
+        
+    <!--</form>-->
+
+    <button class="button button-block button-balanced" onClick="test()">測試</button>
+ <button class="button button-block button-balanced" onClick="test2()">測試2</button>
+
+    <div class="col-md-12">
+        <div class="panel-body">
+
+            <div class="panel panel-info">
+
+                <div class="panel-body">
+                    <div id="chartTmp" style=t"height:100px;width:400px; "></div>
+                </div> <!-- panel-body -->
+            </div> <!-- panel panel-info -->
+            <div class="panel panel-info">
+                
+                <div class="panel-body">
+                    <div id="chartHum" style=t"height:100px;width:400px; "></div>
+                </div> <!-- panel-body -->
+            </div> <!-- panel panel-info -->
+
+        </div> <!-- panel-body -->
+    </div> <!-- col -->	
+</div> <!-- panel-body -->
+
+<script>
+    var s1 = [[2002, 25.1], [2003,25.2], [2004, 25.4], [2005, 25.6], [2006, 27.2], 
+    [2007, 28.3], [2008, 28.4], [2009, 29.8], [2010, 30.1], [2011, 30.3]];
+    var s2 = [[2002, 20.1], [2003,21.2], [2004, 21.4], [2005, 21.6], [2006, 22.2], 
+    [2007, 23.3], [2008, 22.4], [2009, 23.8], [2010, 26.1], [2011, 24.3]];
+    var tickString = "%d年";
+    var socket = io.connect();
+    var myData;
+    var plot1,plot2;
+    var options1,options2,options3,options4;
+
+    socket.on('connect',function(){
+		socket.emit('chart_client','hello,chart socket cient is ready');
+	});
+
+    var ajaxDataRenderer = function(url, plot, options) {
+        var ret = null;
+        //alert('ajaxDataRenderer2 url:'+url);
+        $.ajax({
+            async: false,
+            url: url,
+            dataType:"json",
+            success: function(data) {
+                ret = data;
+            }
+        });
+        //alert(ret);
+        return ret;
+        
+    };
+
+    socket.on('chart_client_db_result',function(data){
+		//alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
+        // The url for our json data
+        var jsonurl = "/data/tem1.json";
+        var jsonurl2 = "/data/hum1.json";
+        var xaxisJson = getXaxisJSON(data);//for xaxis
+        //alert('data.option :'+data.option);
+        if(data.option == 1){
+            jsonurl = "/data/tem2.json";
+            jsonurl2 = "/data/hum2.json";
+        }else if(data.option == 2){
+            jsonurl = "/data/tem3.json";
+            jsonurl2 = "/data/hum3.json";
+        }else if(data.option == 3){
+            jsonurl = "/data/tem4.json";
+            jsonurl2 = "/data/hum4.json";
+        }
+        
+        if(plot1 == null){
+            
+            plot1 = $.jqplot('chartTmp', jsonurl,
+                {
+                    title: "溫度",
+                    dataRenderer: ajaxDataRenderer,
+                    dataRendererOptions: {
+                        unusedOptionalUrl: jsonurl
+                    },
+                    axes: 
+                    {
+                        xaxis:xaxisJson,
+                        yaxis: {
+                            tickOptions: {
+                                formatString: "%'d 度"
+                            }
+                        }
+                    }
+                }
+            );
+
+            plot2 = $.jqplot('chartHum', jsonurl2,
+                {
+                    title: "濕度",
+                    dataRenderer: ajaxDataRenderer,
+                    dataRendererOptions: {
+                        unusedOptionalUrl: jsonurl2
+                    },
+                    axes: 
+                    {
+                        xaxis:xaxisJson,
+                        yaxis: {
+                            tickOptions: {
+                                formatString: "%'d %"
+                            }
+                        }
+                    }
+                }
+            );
+        }else{//for replot
+            
+            $('#chartTmp').empty();
+            $('#chartHum').empty();
+            toPlot('chartTmp',jsonurl,xaxisJson);
+            toPlot('chartHum',jsonurl2,xaxisJson);
+        }
+        
+        
+        
+    });
+
+    function toPlot(divName,url,xaxisJson){
+        var title ="溫度";
+        var formatStr ="%'d 度";
+        if(divName !='chartTmp'){
+            title ="濕度";
+            formatStr ="%'d %";
+        }
+        $.jqplot(divName, url,
+            {
+                title: title,
+                dataRenderer: ajaxDataRenderer,
+                dataRendererOptions: {
+                    unusedOptionalUrl: url
+                },
+                axes: 
+                {
+                    xaxis:xaxisJson,
+                    yaxis: {
+                        tickOptions: {
+                            formatString: formatStr
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    function replot(url,xJson,plot) {
+        var ret = null;
+        $.ajax({
+            async: false,
+            url: url,
+            dataType:"json",
+            success: function(data) {
+                var dataStr = JSON.stringify(data);
+                alert('data string : \n'+dataStr);
+                var options=getOptions(data,xJson);
+                plot.replot(options);
+            }
+        });
+    };
+
+    function getOptions(dataJson,xaxisJson){
+        mOptions = {data:dataJson,
+                    axes: 
+                    {
+                        xaxis:xaxisJson,
+                        yaxis: {
+                            tickOptions: {
+                                formatString: "%'d 度"
+                            }
+                        }
+                    }
+        };
+        return mOptions;
+    }
+
+    function find(){
+        //Get select element for mac , time
+		//alert($('#mac').val());
+        
+        var mac = $('[name=mac]').val();
+        var option = $('[name=time_option]').val();
+        //alert('mac : '+mac);
+        //alert('optionc : '+option);
+
+        socket.emit('chart_client_find_db',{mac:mac,option:option});
+    }
+
+    function test2(){
+
+        var s3 = [[1469289952000,32.5],[1469290547000,32.5],[1469291141000,32.5],[1469291735000,32.4]];
+        var s4 = [[1469373785000,32.8],[1469374379000,32.8],[1469374974000,32.8],[1469375568000,32.8]];
+        var options = {data:[s3,s4]};
+        alert(options);
+        plot2.replot(options);
+    }
+
+    function getXaxisJSON(data){   
+        //alert( typeof(data.option));
+        if(data.option == 0){
+            formatStr = '%#H:%M';
+        }else if(data.option == 1){
+            formatStr = '%#d日%#H:%M';
+        }else if(data.option == 2){
+            formatStr = '%#m/%#d';
+        }else if(data.option == 3){
+            formatStr = '%#m/%#d';
+        }
+        
+        return {renderer:$.jqplot.DateAxisRenderer,
+                tickInterval: data.interval,
+                tickOptions:{formatString:formatStr},
+                min: data.min,
+                max: data.max
+        };
+    }
+
+    $(document).ready(function () {
+    
+        /*plot1 = $.jqplot('chartTmp',  [s2,s1], {
+            // Turns on animatino for all series in this plot.
+            animate: true,
+            // Will animate plot on calls to plot1.replot({resetAxes:true})
+            animateReplot: true,
+            cursor: {
+                show: true,
+                zoom: true,
+                looseZoom: true,
+                showTooltip: false
+            },
+            series:[
+                {
+                    pointLabels: {
+                        show: true
+                    },
+                    renderer: $.jqplot.BarRenderer,
+                    showHighlight: false,
+                    yaxis: 'y2axis',
+                    rendererOptions: {
+                        // Speed up the animation a little bit.
+                        // This is a number of milliseconds.  
+                        // Default for bar series is 3000.  
+                        animation: {
+                            speed: 2500
+                        },
+                        barWidth: 15,
+                        barPadding: -15,
+                        barMargin: 0,
+                        highlightMouseOver: false
+                    }
+                }, 
+                {
+                    rendererOptions: {
+                        // speed up the animation a little bit.
+                        // This is a number of milliseconds.
+                        // Default for a line series is 2500.
+                        animation: {
+                            speed: 2000
+                        }
+                    }
+                }
+            ],
+            axesDefaults: {
+                pad: 0
+            },
+            axes: {
+                // These options will set up the x axis like a category axis.
+                xaxis: {
+                    tickInterval: 1,
+                    drawMajorGridlines: false,
+                    drawMinorGridlines: true,
+                    drawMajorTickMarks: false,
+                    tickOptions: {
+                        formatString: tickString
+                    },
+                    rendererOptions: {
+                    tickInset: 0.5,
+                    minorTicks: 1
+                }
+                },
+                yaxis: {
+                    tickOptions: {
+                        formatString: "%'d 度"
+                    },
+                    rendererOptions: {
+                        forceTickAt0: true
+                    }
+                },
+                y2axis: {
+                    tickOptions: {
+                        show:false,
+                        formatString: "%'d 度"
+                    },
+                    rendererOptions: {
+                        // align the ticks on the y2 axis with the y axis.
+                        alignTicks: true,
+                        forceTickAt0: true
+                    }
+                }
+            },
+            highlighter: {
+                show: true, 
+                showLabel: true, 
+                tooltipAxes: 'y',
+                sizeAdjust: 7.5 , tooltipLocation : 'ne'
+            }
+        });*/
+
+        
+    
+    });
+</script>
+<script src="/js/jqplot/jquery.jqplot.min.js"></script>
+<script src="/js/jqplot/plugins/jqplot.ohlcRenderer.js"></script>
+<script src="/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
+<script src="/js/jqplot/plugins/jqplot.myParser.js"></script>
+
+<%- include footer %>

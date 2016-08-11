@@ -1,0 +1,25 @@
+<%- include header %>
+<meta http-equiv="refresh" content="5;url=http://localhost:3000/update">
+更新時間:<%=new Date() %>
+
+
+<table width="800" border="1">
+	<tr>
+		<td>位址</td>
+		<td>資料</td>
+		<td>接收時間</td>
+		<td>上傳時間</td>
+	</tr>
+	<% if(device){ %>
+		<tr>
+		<td><%= device.macAddr %></td>
+		<td><%= device.data %></td>
+		<td><%= device.recv_at %></td>
+		<td><%= device.created_at %></td>
+		</tr>
+	<% } %>
+</table>
+
+<%- include footer %>
+
+

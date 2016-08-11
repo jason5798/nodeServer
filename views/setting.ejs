@@ -1,0 +1,52 @@
+<%- include header %>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="panel panel-default">
+					<div class="panel-heading"><span class="glyphicon glyphicon-edit"></span> 裝置設定欄</div>
+					<div class="panel-body">
+						<form id="editDevice" class="form-horizontal" action="" method="post">
+							<fieldset>
+								<!-- Name input-->
+								<div class="form-group">
+									<label class="col-md-3 control-label" for="name">裝置名稱</label>
+									<div class="col-md-9">
+									<input id="name" name="name" type="text" placeholder="請輸入裝置名稱" class="form-control">
+									</div>
+								</div>
+							
+								<!-- Email input-->
+								<div class="form-group">
+									<label class="col-md-3 control-label" for="email">裝置MAC</label>
+									<div class="col-md-9">
+										<input id="mac" name="mac" type="text" placeholder="請輸入裝置MAC" class="form-control">
+									</div>
+								</div>
+								
+								<!-- Form actions -->
+								<div class="form-group">
+									<div class="col-md-12 widget-right">
+										<!--<button type="button" onClick = "check()"class="btn btn-primary btn-md pull-right">新增裝置</button>-->
+										<input class="btn btn-primary btn-md pull-right" type = "button" onClick="check()" value = "新增裝置" >
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+				
+			</div><!--/.col-->
+			
+			
+		</div><!--/.row-->
+<script class="code" type="text/javascript">
+	function check(){
+		if(document.getElementById("name").value == ""){
+			alert("未輸入裝置名稱");
+		}else if(document.getElementById("mac").value == ""){
+			alert("未輸入裝置MAC");
+		}else{
+		    document.getElementById("editDevice").submit();
+		}
+	}
+</script>
+<%- include footer %>
