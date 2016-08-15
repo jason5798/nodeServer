@@ -23,12 +23,12 @@ exports.saveUnit = function (macAddress,name,callback) {
 		update_at  : time,
 		created_at : new Date()
 	});
-    newUnit.save(function(err){
+    newUnit.save(function(err){¡@¡@
 		if(err){
 			console.log('Debug : Unit save fail!/n'+err);
             return callback(err);
 		}
-		console.log('Debug : Unit save success!');
+		console.log('Debug : Unit save success!');¡@
         return callback(err,'success');
 	});
 }; 	
@@ -49,7 +49,7 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 	};
 	console.log('Debug updateUnit: time.date'+time.date);
 	if(find_mac && name){
-		UnitModel.find({ macAddr: find_mac },function(err,units){
+		UnitModel.find({ macAddr: find_mac }, function(¡@err,units){
 		if(err){
 			console.log('Debug : updateUnit find unit by mac =>'+err);
 			return calllback(err);

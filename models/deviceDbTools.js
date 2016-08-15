@@ -25,7 +25,7 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
 		day    : moment().format("YYYY-MM-DD"),
 		hour   : moment().format("YYYY-MM-DD HH"),
 		minute : moment().format("YYYY-MM-DD HH:mm"),
-		cdate   : moment().format("YYYY¦~MM¤ëDD¤éHH®Émm¤Àss¬í")
+		cdate   : moment().format("YYYYå¹´MM?ˆDD??HH?‚mm?†ssç§?)
 	};
 	var newDevice = new DeviceModel({
 			macAddr    : macAddress,
@@ -44,7 +44,7 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
 			console.log('Debug : Device save fail!');
             return callback(err);
 		}
-		console.log('Debug : Device save success!');
+		console.log('Debug : Device save success!');?€
         return callback(err,mV);
 	});
 };
@@ -65,13 +65,13 @@ exports.findByMac = function (find_mac,callback) {
 					console.log('find '+devices.length+' records');
                     return calllback(err,devices);
 				}else{
-					console.log('??a??¢Xe???');
-                    return callback('??a??¢Xe???');
+					console.log('?¾ä??°è???');
+                    return callback('?¾ä??°è???');
 	  		    }
     	    });
 		}else{
 			console.log('find_name.length=0');
-			return callback('??a??¢Xe???');
+			return callback('?¾ä??°è???');
 		}
 };	
 
@@ -208,7 +208,7 @@ exports.updateDeviceTime = function (unitId,updateTime,calllback) {
 		day    : moment(updateTime).format("YYYY-MM-DD"),
 		hour   : moment(updateTime).format("YYYY-MM-DD HH"),
 		minute : moment(updateTime).format("YYYY-MM HH:mm"),
-		cdate   : moment(updateTime).format("YYYY¦~MM¤ëDD¤éHH®Émm¤Àss¬í")
+		cdate   : moment(updateTime).format("YYYYå¹´MM?ˆDD??HH?‚mm?†ssç§?)
 	};
 	console.log('Debug updateDeviceTime: time.date'+time.cdate);
 	DeviceModel.update({_id : unitId},
