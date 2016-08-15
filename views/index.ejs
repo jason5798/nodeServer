@@ -1,4 +1,4 @@
-﻿<%- include header %>
+�?%- include header %>
 		<div class="row">
 		<div class="col-md-12 column">
 			<form method = "post" id="unitList" name="unitList">
@@ -6,19 +6,18 @@
 					<thead> 
 						<tr>
 							<th>
-								項目
+								?�目
 							</th>
 							<th>
-								名稱
+								?�稱
 							</th>
 							<th>
 								MAC
 							</th>
 							<th>
-								狀態
-							</th>
+								?�??							</th>
 							<th>
-								時間
+								?��?
 							</th>
 							</th>
 
@@ -39,14 +38,12 @@
 										
 									</td>
 									<td>
-										<% if(units[i].status){ %>
-											<button type="button" class="btn btn-success btn-sm" >
-												正常 　
-											</button>　
-										<% }else{ %>
-											<button type="button" class="btn btn-danger btn-sm" >
-												低電壓
-											</button>
+										<% if(units[i].status == 0){ %>
+											<img src="/images/btn_normal.png" width="80" height="30" name="status">
+										<% }else if(units[i].status == 1){ %>
+											<img src="/images/btn_alarm.png" width="80" height="30" name="status">
+										<% }else if(units[i].status == 2){ %>
+											<img src="/images/btn_loss.png" width="80" height="30" name="status">
 										<% } %>
 									</td>
 									<td>
@@ -57,7 +54,7 @@
 											<span class="glyphicon glyphicon-edit"></span> 編輯
 										</button>
 										<button type="button" name="del" class="btn btn-danger btn-sm" onClick="delCheck(this)">
-											<span class="glyphicon glyphicon-trash"></span> 刪除
+											<span class="glyphicon glyphicon-trash"></span> ?�除
 										</button>
 
 									</td>
@@ -73,7 +70,7 @@
 		</div> <!-- column-->
 	</div>	<!--row-->
 
-<!-- （Modal） -->
+<!-- （Modal�?-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
    aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-dialog">
@@ -84,18 +81,18 @@
                   &times;
             </button>
             <h4 class="modal-title" id="myModalLabel">
-               刪除裝置警告
+               ?�除裝置警�?
             </h4>
          </div>
          <div class="modal-body">
-            確定刪除裝置嗎?
+            確�??�除裝置??
          </div>
          <div class="modal-footer">
             <button type="button" class="btn btn-default" 
-               data-dismiss="modal">關閉
+               data-dismiss="modal">?��?
             </button>
             <button type="button" onClick="toSubmit()" class="btn btn-danger">
-               確定刪除
+               確�??�除
             </button>
          </div>s
       </div><!-- /.modal-content -->
@@ -104,6 +101,26 @@
 	<script src="js/bootstrap-table.js"></script>
 
 <script class="code" type="text/javascript">
+	var socket = io.connect();
+	socket.on('connect',function(){
+        socket.emit('index_client','hello,index_client socket cient is ready');
+    });
+
+    socket.on('index_client_timeout',function(data){
+
+		//alert('index :'+data.index);
+		//alert('status :'+data.status);
+		if( data.status == 0 ){
+			$('[name=status]').eq(data.index).attr("src","/images/btn_normal.png");
+		}else if( data.status == 1 ){
+			$('[name=status]').eq(data.index).attr("src","/images/btn_alarm.png");
+		}else{
+			$('[name=status]').eq(data.index).attr("src","/images/btn_loss.png");
+		}
+		
+		
+	});
+
 	function editCheck(button){
 
 		var index = -1;
@@ -118,11 +135,11 @@
 					break;
 				}
 			}
-			//alert("行 :"+(index+1) + unitList.myMac[index].value + " "+unitList.myName[index].value);
+			//alert("�?:"+(index+1) + unitList.myMac[index].value + " "+unitList.myName[index].value);
 			
 			postMac.value = unitList.myMac[index].value;
 			postName.value = unitList.myName[index].value;
-			//alert("行 :"+(index+1) + postMac.value + " "+postName.value);
+			//alert("�?:"+(index+1) + postMac.value + " "+postName.value);
 		}else{
 			postMac.value = unitList.myMac.value;
 			postName.value = unitList.myName.value;
@@ -143,9 +160,9 @@
 					break;
 				}
 			}
-			//alert("行 :"+(index+1) + unitList.myMac[index].value + " "+unitList.myName[index].value);
+			//alert("�?:"+(index+1) + unitList.myMac[index].value + " "+unitList.myName[index].value);
 			postMac.value = unitList.myMac[index].value;
-			//alert("行 :"+(index+1) + " mac : "+postMac.value + " name : "+postName.value);
+			//alert("�?:"+(index+1) + " mac : "+postMac.value + " name : "+postName.value);
 		}else{
 			postMac.value = unitList.myMac.value;
 			//alert(postMac.value);

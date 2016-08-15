@@ -12,23 +12,23 @@ exports.saveUnit = function (macAddress,name,callback) {
 		day    : moment().format("YYYY-MM-DD"),
 		hour   : moment().format("YYYY-MM-DD HH"),
 		minute : moment().format("YYYY-MM HH:mm"),
-		cdate   : moment().format("YYYY年MM月DD日 HH時mm分ss秒")
+		cdate   : moment().format("YYYY-MM HH:mm")
 	};
 
 	console.log('Debug saveUnit: time.date'+time.date);
 	var newUnit = new UnitModel({
 		macAddr    : macAddress,
 		name 	   : name,
-		status     : true,
+		status     : 0,
 		update_at  : time,
 		created_at : new Date()
 	});
-    newUnit.save(function(err){　　
+    newUnit.save(function(err){
 		if(err){
 			console.log('Debug : Unit save fail!/n'+err);
             return callback(err);
 		}
-		console.log('Debug : Unit save success!');　
+		console.log('Debug : Unit save success!');
         return callback(err,'success');
 	});
 }; 	
@@ -49,7 +49,7 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 	};
 	console.log('Debug updateUnit: time.date'+time.date);
 	if(find_mac && name){
-		UnitModel.find({ macAddr: find_mac }, function(　err,units){
+		UnitModel.find({ macAddr: find_mac },function(err,units){
 		if(err){
 			console.log('Debug : updateUnit find unit by mac =>'+err);
 			return calllback(err);
@@ -84,7 +84,7 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 
 /*
 *Remove all of unit 
-*Return -1:資料存取錯誤 0:刪除完成 1:刪除失敗
+*Return -1:資�?存�??�誤 0:?�除完�? 1:?�除失�?
 */
 exports.removeAllUnits = function (calllback) {
     UnitModel.remove({}, (err)=>{
@@ -137,7 +137,7 @@ exports.findUnitBymac = function (mac,calllback) {
 			console.log('find '+units.length+' records');
 			return calllback(err,units[0]);
 		}else{
-			console.log('找不到資料!');
+			console.log('?��??��???');
 			return calllback(err,units);
 		}
     });
