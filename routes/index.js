@@ -5,7 +5,6 @@ var UnitDbTools = require('../models/unitDbTools.js');
 var JsonFileTools =  require('../models/jsonFileTools.js');
 
 var settings = require('../settings');
-var moment = require('moment');
 
 function findUnitsAndShowList(req,res){
 	UnitDbTools.findAllUnits(function(err,units){
@@ -14,12 +13,11 @@ function findUnitsAndShowList(req,res){
 			errorMessae = err;
 		}else{
 			if(+units.length>0){
-				successMessae = '查詢'+units.length+"個裝置";
+				//successMessae = '查詢'+units.length+"個裝置";
 			}
 		}
-
 		req.session.units = units;
-		console.log( "successMessae:"+successMessae )
+		console.log( "successMessae:"+successMessae );
 		res.render('index', { title: '首頁', 
 			units:req.session.units,
 			success: successMessae,
@@ -27,7 +25,6 @@ function findUnitsAndShowList(req,res){
 		});
 	});
 }
-
 
 module.exports = function(app) {
   app.get('/', function (req, res) {
@@ -86,7 +83,7 @@ module.exports = function(app) {
 				error: errorMessae
 			});
 		}else{
-			DeviceDbTools.findDevicesByDate(find_mac,Number(option),'desc',function(err,devices){
+			DeviceDbTools.findDevicesByDate(find_mac,Number(option),function(err,devices){
 				if(err){
 					console.log('Debug chart get -> find name:'+find_mac);
 					req.flash('error', err);
@@ -154,7 +151,7 @@ module.exports = function(app) {
 				error: errorMessae
 			});
 		}else{
-			DeviceDbTools.findDevicesByDate(find_mac,Number(option),'asc',function(err,devices){
+			DeviceDbTools.findDevicesByDate(find_mac,Number(option),function(err,devices){
 				if(err){
 					console.log('find name:'+find_mac);
 					req.flash('error', err);

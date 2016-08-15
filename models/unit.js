@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var unitSchema = new Schema({
   macAddr: { type: String},
   name: { type: String},
-  status:{ type: Number},
+  status:{ type: Boolean},
   update_at: { type: Schema.Types.Mixed}, 
   created_at: { type: Date}
 });

@@ -12,23 +12,23 @@ exports.saveUnit = function (macAddress,name,callback) {
 		day    : moment().format("YYYY-MM-DD"),
 		hour   : moment().format("YYYY-MM-DD HH"),
 		minute : moment().format("YYYY-MM HH:mm"),
-		cdate   : moment().format("YYYY¦~MM¤ëDD¤é HH®Émm¤Àss¬í")
+		cdate   : moment().format("YYYYå¹´MMæœˆDDæ—¥ HHæ™‚mmåˆ†ssç§’")
 	};
 
 	console.log('Debug saveUnit: time.date'+time.date);
 	var newUnit = new UnitModel({
 		macAddr    : macAddress,
 		name 	   : name,
-		status     : 0,
+		status     : true,
 		update_at  : time,
 		created_at : new Date()
 	});
-    newUnit.save(function(err){¡@¡@
+    newUnit.save(function(err){ã€€ã€€
 		if(err){
 			console.log('Debug : Unit save fail!/n'+err);
             return callback(err);
 		}
-		console.log('Debug : Unit save success!');¡@
+		console.log('Debug : Unit save success!');ã€€
         return callback(err,'success');
 	});
 }; 	
@@ -49,7 +49,7 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 	};
 	console.log('Debug updateUnit: time.date'+time.date);
 	if(find_mac && name){
-		UnitModel.find({ macAddr: find_mac }, function(¡@err,units){
+		UnitModel.find({ macAddr: find_mac }, function(ã€€err,units){
 		if(err){
 			console.log('Debug : updateUnit find unit by mac =>'+err);
 			return calllback(err);
@@ -84,7 +84,7 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 
 /*
 *Remove all of unit 
-*Return -1:¸ê®Æ¦s¨ú¿ù»~ 0:§R°£§¹¦¨ 1:§R°£¥¢±Ñ
+*Return -1:è³‡æ–™å­˜å–éŒ¯èª¤ 0:åˆªé™¤å®Œæˆ 1:åˆªé™¤å¤±æ•—
 */
 exports.removeAllUnits = function (calllback) {
     UnitModel.remove({}, (err)=>{
@@ -137,7 +137,7 @@ exports.findUnitBymac = function (mac,calllback) {
 			console.log('find '+units.length+' records');
 			return calllback(err,units[0]);
 		}else{
-			console.log('§ä¤£¨ì¸ê®Æ!');
+			console.log('æ‰¾ä¸åˆ°è³‡æ–™!');
 			return calllback(err,units);
 		}
     });

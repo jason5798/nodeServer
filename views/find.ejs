@@ -5,7 +5,7 @@
 			<form method="post">
 				<div class="col-md-3">
 					<div class="form-group">
-						<label>¿ï¾Ü¸Ë¸m</label>
+						<label>é¸æ“‡è£ç½®</label>
 						<select id="selected_mac" name="mac">
 							<% if(units) { %>
 								<% for(var i=0;i<units.length;i++){ %>
@@ -25,31 +25,31 @@
 				
 				<div class="col-md-3">
 					<div class="form-group">
-						<label>¿ï¾Ü®É¶¡</label>
+						<label>é¸æ“‡æ™‚é–“</label>
 						<select "selected_time" name="time_option">
 							<% if(option == 0){ %>
-								<option value="0" selected>¥|¤p®É</option>
+								<option value="0" selected>å››å°æ™‚</option>
 							<% }else{ %>
-								<option value="0">¥|¤p®É</option>
+								<option value="0">å››å°æ™‚</option>
 							<% } %>
 
 							<% if(option == 1){ %>
-								<option value="1" selected>¤@¤Ñ</option>
+								<option value="1" selected>ä¸€å¤©</option>
 							<% }else{ %>
-								<option value="1">¤@¤Ñ</option>
+								<option value="1">ä¸€å¤©</option>
 							<% } %>
 
 							<% if(option == 2){ %>
-								<option value="2" selected>¤@©P</option>
+								<option value="2" selected>ä¸€å‘¨</option>
 							<% }else{ %>
-								<option value="2">¤@©P</option>
+								<option value="2">ä¸€å‘¨</option>
 							<% } %>
 
 							<% if(option == 3){ %>
 							test
-								<option value="3" selected>¤@­Ó¤ë</option>
+								<option value="3" selected>ä¸€å€‹æœˆ</option>
 							<% }else{ %>
-								<option value="3">¤@­Ó¤ë</option>
+								<option value="3">ä¸€å€‹æœˆ</option>
 							<% } %>
 
 						</select>
@@ -59,48 +59,47 @@
 				<div class="col-md-3">
 					<div class="form-group">
 						<button type="submit" name="edit" class="btn btn-primary btn-sm">
-							<span class="glyphicon glyphicon-list-alt"></span> ¬d¸ß
+							<span class="glyphicon glyphicon-list-alt"></span> æŸ¥è©¢
 						</button>
 					</div>
 				</div> <!-- col-md-3 -->	
 				
 			</form>
 			<div class="col-md-12">
-				
-				<% if (devices != null && devices.length>0) { %>
+				<% if (devices) { %>
 					<table class="table table-striped table-hover">
 					<tr>
-						<!--<td >mac¦ì§}</td>
-						<td >¸ê®Æ</td>-->
-						<td >·Å«×1</td>
-						<td >Àã«×1</td>
-						<td >·Å«×2</td>
-						<td >Àã«×2</td>
-						<td >¹qÀ£</td>
-						<td >®É¶¡</td>
+						<!--<td >macä½å€</td>
+						<td >è³‡æ–™</td>-->
+						<td >æº«åº¦1</td>
+						<td >æ¿•åº¦1</td>
+						<td >æº«åº¦2</td>
+						<td >æ¿•åº¦2</td>
+						<td >é›»å£“</td>
+						<td >æ™‚é–“</td>
 					</tr>	
 					<% devices.forEach(function(device) { %>
 					
 						<tr>
 						<!--<td><%= device.macAddr %></td>
 						<td><%= device.data %></td>-->
-						<td><%= device.temperature1 %>«×</td>
+						<td><%= device.temperature1 %>åº¦</td>
 						<td><%= device.humidity1 %>%</td>
-						<td><%= device.temperature2 %>«×</td>
+						<td><%= device.temperature2 %>åº¦</td>
 						<td><%= device.humidity2 %>%</td>
 						<td>
 						<% if (device.voltage) { %>
 							<% if (device.voltage>300) {  %>
 								<button type="button" class="btn btn-success btn-sm" >
-									<%= '¥¿±`('+device.voltage+')' %> ¡@
-								</button>¡@
+									<%= 'æ­£å¸¸('+device.voltage+')' %> ã€€
+								</button>ã€€
 							<% }else{ %>
 								<button type="button" class="btn btn-danger btn-sm" >
-									<%= '§C¹qÀ£'+device.voltage %>
+									<%= 'ä½Žé›»å£“'+device.voltage %>
 								</button>
 							<% } %>
 						<% } else { %>
-							µL¸ê®Æ
+							ç„¡è³‡æ–™
 						<% } %>
 						</td>
 						<td><%= device.time.date %></td>

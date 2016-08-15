@@ -25,7 +25,7 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
 		day    : moment().format("YYYY-MM-DD"),
 		hour   : moment().format("YYYY-MM-DD HH"),
 		minute : moment().format("YYYY-MM-DD HH:mm"),
-		cdate   : moment().format("YYYYå¹´MM?ˆDD??HH?‚mm?†ssç§?)
+		cdate   : moment().format("YYYYå¹´MMæœˆDDæ—¥ HHæ™‚mmåˆ†ssç§’")
 	};
 	var newDevice = new DeviceModel({
 			macAddr    : macAddress,
@@ -44,7 +44,7 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
 			console.log('Debug : Device save fail!');
             return callback(err);
 		}
-		console.log('Debug : Device save success!');?€
+		console.log('Debug : Device save success!');ã€€
         return callback(err,mV);
 	});
 };
@@ -65,13 +65,13 @@ exports.findByMac = function (find_mac,callback) {
 					console.log('find '+devices.length+' records');
                     return calllback(err,devices);
 				}else{
-					console.log('?¾ä??°è???');
-                    return callback('?¾ä??°è???');
+					console.log('æ‰¾ä¸åˆ°è³‡æ–™!');
+                    return callback('æ‰¾ä¸åˆ°è³‡æ–™!');
 	  		    }
     	    });
 		}else{
 			console.log('find_name.length=0');
-			return callback('?¾ä??°è???');
+			return callback('æ‰¾ä¸åˆ°è³‡æ–™!');
 		}
 };	
 
@@ -104,14 +104,14 @@ exports.findDevices = function (json,calllback) {
 };
 
 //Find last record by mac
-exports.findLastDeviceByUnit = function (unit,calllback) {
+exports.findLastDeviceByMac = function (unit,calllback) {
     var mac = unit.macAddr;
     DeviceModel.find({macAddr:mac}).sort({recv_at: -1}).limit(1).exec(function(err,devices){
         if(err){
-            console.log('Debug deviceDbTools findLastDeviceByUnit -> err :'+err);
+            console.log('Debug deviceDbTools findLastDeviceByMac -> err :'+err);
             return calllback(err);
         }else{
-            console.log('Debug deviceDbTools findLastDeviceByUnit('+mac+') -> device :'+devices.length);
+            console.log('Debug deviceDbTools findLastDeviceByMac('+mac+') -> device :'+devices.length);
             return calllback(err,devices[0]);
         }
     });
@@ -121,7 +121,7 @@ exports.findLastDeviceByUnit = function (unit,calllback) {
 /*Find devices by date 
 *date option: 0:one ours 1:one days 2:one weeks 3:one months
 */
-exports.findDevicesByDate = function (mac,dateOption,order,calllback) {
+exports.findDevicesByDate = function (mac,dateOption,calllback) {
     console.log('---findDevices---------------------------------------');
     console.log('-mac : '+mac);
     var testDate = '20160724';
@@ -160,15 +160,8 @@ exports.findDevicesByDate = function (mac,dateOption,order,calllback) {
             return calllback(err);
 	    } else {
             console.log('Debug :findDevice success\n:',Devices.length);
-            var mDevices = [];
-            if(order == 'asc' && Devices.length>0){
-               for(var i= (Devices.length-1);i>-1 ;i--){
-                   mDevices.push(Devices[i]);
-               }
-               return calllback(err,mDevices);
-            }
-            return calllback(err,Devices);
-        }
+		    return calllback(err,Devices);
+	    }
     });
 };
 
@@ -208,7 +201,7 @@ exports.updateDeviceTime = function (unitId,updateTime,calllback) {
 		day    : moment(updateTime).format("YYYY-MM-DD"),
 		hour   : moment(updateTime).format("YYYY-MM-DD HH"),
 		minute : moment(updateTime).format("YYYY-MM HH:mm"),
-		cdate   : moment(updateTime).format("YYYYå¹´MM?ˆDD??HH?‚mm?†ssç§?)
+		cdate   : moment(updateTime).format("YYYYå¹´MMæœˆDDæ—¥ HHæ™‚mmåˆ†ssç§’")
 	};
 	console.log('Debug updateDeviceTime: time.date'+time.cdate);
 	DeviceModel.update({_id : unitId},

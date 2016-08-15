@@ -67,18 +67,11 @@ GIotClient.on('connect', function()  {
 			console.log('Debug appjs -> Connect to mqtt topic:'+settings.gIoTopic);
 		}
 	}
+	
 });
 
 
 socket.on('connection',function(client){
-
-	//for index ----------------------------------------------------------------------------
-	client.on('index_client',function(data){
-		console.log('Debug index ------------------------------------------------------------start' );
-		console.log('Debug index :' + data );
-		toCheckDeviceTimeout(client);
-	});
-
 	//for new message ----------------------------------------------------------------------------
 	client.on('new_message_client',function(data){
 		console.log('Debug new_message_client :'+data );
@@ -94,7 +87,7 @@ socket.on('connection',function(client){
 					console.log('Debug new_message_client->unit : ('+i+') \n' + unit.macAddr );
 					var unitMac = unit.macAddr;
 					
-					DeviceDbTools.findLastDeviceByUnit(unit,function(err,device){
+					DeviceDbTools.findLastDeviceByMac(unit,function(err,device){
 						if(err){
 
 						}else{
@@ -130,7 +123,7 @@ socket.on('connection',function(client){
 		if(getType(message) !== 'object')
 			return;
 		try {
-			// �ݭn���ժ��y�y
+			// 需要測試的語句
 			var obj = JSON.parse(message);
 		}
 		catch (e) {
@@ -173,7 +166,7 @@ socket.on('connection',function(client){
 	client.on('chart_client_find_db',function(data){
 		console.log('Debug chart_client_find_db ----------------------------------------------------start' );
 		console.log('Debug cart_client mac:'+data.mac +' , option:'+typeof(data.option));
-		DeviceDbTools.findDevicesByDate(data.mac,Number(data.option),'desc',function(err,devices){
+		DeviceDbTools.findDevicesByDate(data.mac,Number(data.option),function(err,devices){
 			if(err){
 				console.log('find name:'+find_mac);
 				return;
@@ -188,77 +181,12 @@ socket.on('connection',function(client){
 				client.emit('chart_client_db_result',timeJson);
 			}else{
 				console.log('Debug find get -> can not find');
-				client.emit('chart_client_db_result',null);
+				errorMessae = '無法找到資料';
 			}
 		});
 		
 	});
 });
-
-function toCheckDeviceTimeout(client){
-	var now = Number(moment().subtract(1,'days'));
-	UnitDbTools.findAllUnits(function(err,units){
-		var successMessae,errorMessae;
-		if(err){
-			console.log('Debug toCheckDeviceStatus -> findAllUnits is fail '+err);
-			return;
-		}
-
-		var macList=[];
-		for(var i=0 ; i<units.length; i++){
-			macList.push(units[i].macAddr);
-		}
-		
-		//units.forEach(function(unit) {
-		for(var i=0 ; i<units.length; i++){
-			console.log('Debug toCheckDeviceStatus -> findLastDeviceByUnit mac :'+units[i].macAddr);
-			DeviceDbTools.findLastDeviceByUnit(units[i],function(err,device){
-				if(err == null){
-					
-					if(device == null){
-						return;
-					}
-					console.log('Debug toCheckDeviceStatus -> findLastDeviceByUnit :'+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss"));
-					
-					//Verify is timeout or not?
-					if(now>Number(moment(device.recv_at)) ){
-                        //Is timeout
-						console.log('Debug findUnitsAndShowList -> '+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss") +' is timeout ');
-						var mIndex = macList.indexOf(device.macAddr);
-						/*if(units[mIndex].status == 2){
-							return;
-						}*/
-						UnitDbTools.updateUnit(device.macAddr,units[mIndex].name,2,function(err,result){
-							if(err){
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit timeout is fail :'+err);
-							}else{
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit timeout success');
-								console.log('index :'+macList.indexOf(device.macAddr));
-								//console.log('mac :'+device.macAddr);
-								client.emit('index_client_timeout',{index:macList.indexOf(device.macAddr),status:2});
-							}
-						});
-					}else{
-						var mIndex = macList.indexOf(device.macAddr);
-						if(units[mIndex].status == 0){
-							return;
-						}
-						UnitDbTools.updateUnit(device.macAddr,units[mIndex].name,0,function(err,result){
-							if(err){
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit normal is fail :'+err);
-							}else{
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit normal success');
-								console.log('index :'+macList.indexOf(device.macAddr));
-								//console.log('mac :'+device.macAddr);
-								client.emit('index_client_timeout',{index:macList.indexOf(device.macAddr),status:0});
-							}
-						});
-					}
-				}
-			});			
-		}
-	});	
-}
 
 function getShortenDevices(devices){
 	var interval = Math.floor(devices.length/145)+1;
@@ -319,4 +247,3 @@ app.use(function(err, req, res, next) {
 
 
 //module.exports = app;
-
