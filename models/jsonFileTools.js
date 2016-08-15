@@ -103,7 +103,16 @@ function getTimeRangeString(option,devices){
     }
        
     var min = moment(devices[0].recv_at).format(formatStr);
-    var max = moment(devices[(devices.length-1)].recv_at).format(formatStr);; 
+    var max = moment(devices[(devices.length-1)].recv_at);
+    if(option==0){
+        max = max.add(1,'hours').format(formatStr);
+    }else if(option==1){
+        max = max.add(1,'hours').format(formatStr);
+    }else if(option==2){
+        max = max.add(1,'days').format(formatStr);
+    }else if(option==3){
+        max = max.add(1,'days').format(formatStr);
+    }
     return '{"option":'+option+',"deviceNumber":'+devices.length+',"interval":"'+interval+'","min":"'+min+'","max":"'+max+'"}';
 }
 

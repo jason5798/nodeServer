@@ -3,7 +3,7 @@
    <!--<form method="post">-->
         <div class="col-md-3">
             <div class="form-group">
-                <label>ÈÅ∏ÊìáË£ùÁΩÆ</label>
+                <label>øÔæ‹∏À∏m</label>
                 <select id="mac" name="mac">
                     <% if(units) { %>
                         <% for(var i=0;i<units.length;i++){ %>
@@ -18,12 +18,12 @@
 
         <div class="col-md-3">
             <div class="form-group">
-                <label>ÈÅ∏ÊìáÊôÇÈñì</label>
+                <label>øÔæ‹Æ…∂°</label>
                 <select id="time" name="time_option">
-                    <option value="0">ÂõõÂ∞èÊôÇ</option>
-    „ÄÄ		   		<option value="1">‰∏ÄÂ§©</option>
-    „ÄÄ		   		<option value="2">‰∏ÄÂë®</option>
-    „ÄÄ		   		<option value="3">‰∏ÄÂÄãÊúà</option>
+                    <option value="0">•|§pÆ…</option>
+    °@               <option value="1">§@§—</option>
+    °@               <option value="2">§@©P</option>
+    °@               <option value="3">§@≠”§Î</option>
                 </select>
             </div> <!-- form-group -->
         </div> <!-- col-md-3 -->
@@ -31,15 +31,15 @@
         <div class="col-md-3">
             <div class="form-group">
                 <button name="find" onClick="find()" class="btn btn-primary btn-sm">
-                    <span class="glyphicon glyphicon-list-alt"></span> Êü•Ë©¢
+                    <span class="glyphicon glyphicon-list-alt"></span> ¨d∏ﬂ
                 </button>
             </div>
-        </div> <!-- col-md-3 -->	
+        </div> <!-- col-md-3 -->    
         
     <!--</form>-->
-
-    <button class="button button-block button-balanced" onClick="test()">Ê∏¨Ë©¶</button>
- <button class="button button-block button-balanced" onClick="test2()">Ê∏¨Ë©¶2</button>
+    <!--
+    <button class="button button-block button-balanced" onClick="test()">¥˙∏’</button>
+    <button class="button button-block button-balanced" onClick="test2()">¥˙∏’2</button>-->
 
     <div class="col-md-12">
         <div class="panel-body">
@@ -58,23 +58,18 @@
             </div> <!-- panel panel-info -->
 
         </div> <!-- panel-body -->
-    </div> <!-- col -->	
+    </div> <!-- col --> 
 </div> <!-- panel-body -->
 
 <script>
-    var s1 = [[2002, 25.1], [2003,25.2], [2004, 25.4], [2005, 25.6], [2006, 27.2], 
-    [2007, 28.3], [2008, 28.4], [2009, 29.8], [2010, 30.1], [2011, 30.3]];
-    var s2 = [[2002, 20.1], [2003,21.2], [2004, 21.4], [2005, 21.6], [2006, 22.2], 
-    [2007, 23.3], [2008, 22.4], [2009, 23.8], [2010, 26.1], [2011, 24.3]];
-    var tickString = "%dÂπ¥";
     var socket = io.connect();
     var myData;
     var plot1,plot2;
     var options1,options2,options3,options4;
 
     socket.on('connect',function(){
-		socket.emit('chart_client','hello,chart socket cient is ready');
-	});
+        socket.emit('chart_client','hello,chart socket cient is ready');
+    });
 
     var ajaxDataRenderer = function(url, plot, options) {
         var ret = null;
@@ -89,12 +84,17 @@
         });
         //alert(ret);
         return ret;
-        
     };
 
     socket.on('chart_client_db_result',function(data){
-		//alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
-        // The url for our json data
+        //alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
+        // The url for our json data;
+        if(data == null){
+            $('#chartTmp').empty();
+            $('#chartHum').empty();
+            alert('µL™kß‰®Ï∏ÍÆ∆!');
+            return;
+        }
         var jsonurl = "/data/tem1.json";
         var jsonurl2 = "/data/hum1.json";
         var xaxisJson = getXaxisJSON(data);//for xaxis
@@ -114,7 +114,7 @@
             
             plot1 = $.jqplot('chartTmp', jsonurl,
                 {
-                    title: "Ê∫´Â∫¶",
+                    title: "∑≈´◊",
                     dataRenderer: ajaxDataRenderer,
                     dataRendererOptions: {
                         unusedOptionalUrl: jsonurl
@@ -124,7 +124,7 @@
                         xaxis:xaxisJson,
                         yaxis: {
                             tickOptions: {
-                                formatString: "%'d Â∫¶"
+                                formatString: "%'d ´◊"
                             }
                         }
                     }
@@ -133,7 +133,7 @@
 
             plot2 = $.jqplot('chartHum', jsonurl2,
                 {
-                    title: "ÊøïÂ∫¶",
+                    title: "¿„´◊",
                     dataRenderer: ajaxDataRenderer,
                     dataRendererOptions: {
                         unusedOptionalUrl: jsonurl2
@@ -156,16 +156,13 @@
             toPlot('chartTmp',jsonurl,xaxisJson);
             toPlot('chartHum',jsonurl2,xaxisJson);
         }
-        
-        
-        
     });
 
     function toPlot(divName,url,xaxisJson){
-        var title ="Ê∫´Â∫¶";
-        var formatStr ="%'d Â∫¶";
+        var title ="∑≈´◊";
+        var formatStr ="%'d ´◊";
         if(divName !='chartTmp'){
-            title ="ÊøïÂ∫¶";
+            title ="¿„´◊";
             formatStr ="%'d %";
         }
         $.jqplot(divName, url,
@@ -204,13 +201,13 @@
     };
 
     function getOptions(dataJson,xaxisJson){
-        mOptions = {data:dataJson,
+        var mOptions = {data:dataJson,
                     axes: 
                     {
                         xaxis:xaxisJson,
                         yaxis: {
                             tickOptions: {
-                                formatString: "%'d Â∫¶"
+                                formatString: "%'d ´◊"
                             }
                         }
                     }
@@ -220,7 +217,7 @@
 
     function find(){
         //Get select element for mac , time
-		//alert($('#mac').val());
+        //alert($('#mac').val());
         
         var mac = $('[name=mac]').val();
         var option = $('[name=time_option]').val();
@@ -230,21 +227,13 @@
         socket.emit('chart_client_find_db',{mac:mac,option:option});
     }
 
-    function test2(){
-
-        var s3 = [[1469289952000,32.5],[1469290547000,32.5],[1469291141000,32.5],[1469291735000,32.4]];
-        var s4 = [[1469373785000,32.8],[1469374379000,32.8],[1469374974000,32.8],[1469375568000,32.8]];
-        var options = {data:[s3,s4]};
-        alert(options);
-        plot2.replot(options);
-    }
 
     function getXaxisJSON(data){   
         //alert( typeof(data.option));
         if(data.option == 0){
-            formatStr = '%#H:%M';
+            formatStr = '%#d§È%#H:%M';
         }else if(data.option == 1){
-            formatStr = '%#dÊó•%#H:%M';
+            formatStr = '%#d§È%#H:%M';
         }else if(data.option == 2){
             formatStr = '%#m/%#d';
         }else if(data.option == 3){
@@ -324,7 +313,7 @@
                 },
                 yaxis: {
                     tickOptions: {
-                        formatString: "%'d Â∫¶"
+                        formatString: "%'d ´◊"
                     },
                     rendererOptions: {
                         forceTickAt0: true
@@ -333,7 +322,7 @@
                 y2axis: {
                     tickOptions: {
                         show:false,
-                        formatString: "%'d Â∫¶"
+                        formatString: "%'d ´◊"
                     },
                     rendererOptions: {
                         // align the ticks on the y2 axis with the y axis.
@@ -360,3 +349,4 @@
 <script src="/js/jqplot/plugins/jqplot.myParser.js"></script>
 
 <%- include footer %>
+

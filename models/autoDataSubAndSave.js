@@ -33,7 +33,7 @@ GIotClient.on('message', function(topic, message) {
 		if(getType(message) !== 'object')
 			return;
 		try {
-			// éœ€è¦æ¸¬è©¦çš„èªå¥
+			// »İ­n´ú¸Õªº»y¥y
 			var obj = JSON.parse(message);
 		}
 		catch (e) {
@@ -46,9 +46,10 @@ GIotClient.on('message', function(topic, message) {
 			if(err){
 				console.log('Debug saveDevice fail : '+err);
 			}else{
-				var status = true;
+				//Statu 0:¥¿±` 1:§C¹qÀ£ 2:¥¢Áp
+				var status = 0;
 				if(voltage<300){
-					status = false;
+					status = 1;
 				}
 				//Verify unit status is same
 				UnitDbTools.findUnitBymac(obj.macAddr,function(err,unit){
@@ -65,7 +66,6 @@ GIotClient.on('message', function(topic, message) {
 							}
 						}
 					}
-					
 				})
 			}
 			findUnitBymac
@@ -79,4 +79,5 @@ function getType(p) {
     else if (p != null && typeof p == 'object') return 'object';
     else return 'other';
 }
+
 
