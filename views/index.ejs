@@ -1,4 +1,4 @@
-﻿<%- include header %>
+<%- include header %>
 		<div class="row">
 		<div class="col-md-12 column">
 			<form method = "post" id="unitList" name="unitList">
@@ -39,14 +39,12 @@
 										
 									</td>
 									<td>
-										<% if(units[i].status){ %>
-											<button type="button" class="btn btn-success btn-sm" >
-												正常 　
-											</button>　
-										<% }else{ %>
-											<button type="button" class="btn btn-danger btn-sm" >
-												低電壓
-											</button>
+										<% if(units[i].status == 0){ %>
+											<img src="/images/btn_normal.png" width="80" height="30" name="status">
+										<% }else if(units[i].status == 1){ %>
+											<img src="/images/btn_alarm.png" width="80" height="30" name="status">
+										<% }else if(units[i].status == 2){ %>
+											<img src="/images/btn_loss.png" width="80" height="30" name="status">
 										<% } %>
 									</td>
 									<td>
@@ -104,6 +102,26 @@
 	<script src="js/bootstrap-table.js"></script>
 
 <script class="code" type="text/javascript">
+	var socket = io.connect();
+	socket.on('connect',function(){
+        socket.emit('index_client','hello,index_client socket cient is ready');
+    });
+
+    socket.on('index_client_timeout',function(data){
+
+		//alert('index :'+data.index);
+		//alert('status :'+data.status);
+		if( data.status == 0 ){
+			$('[name=status]').eq(data.index).attr("src","/images/btn_normal.png");
+		}else if( data.status == 1 ){
+			$('[name=status]').eq(data.index).attr("src","/images/btn_alarm.png");
+		}else{
+			$('[name=status]').eq(data.index).attr("src","/images/btn_loss.png");
+		}
+		
+		
+	});
+
 	function editCheck(button){
 
 		var index = -1;

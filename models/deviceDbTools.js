@@ -44,7 +44,7 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
 			console.log('Debug : Device save fail!');
             return callback(err);
 		}
-		console.log('Debug : Device save success!');　
+		console.log('Debug : Device save success!');
         return callback(err,mV);
 	});
 };
@@ -69,10 +69,10 @@ exports.findByMac = function (find_mac,callback) {
                     return callback('找不到資料!');
 	  		    }
     	    });
-		}else{
-			console.log('find_name.length=0');
+	}else{
+		console.log('find_name.length=0');
 			return callback('找不到資料!');
-		}
+	}
 };	
 
 /*Find all of unit 
@@ -104,14 +104,14 @@ exports.findDevices = function (json,calllback) {
 };
 
 //Find last record by mac
-exports.findLastDeviceByMac = function (unit,calllback) {
+exports.findLastDeviceByUnit = function (unit,calllback) {
     var mac = unit.macAddr;
     DeviceModel.find({macAddr:mac}).sort({recv_at: -1}).limit(1).exec(function(err,devices){
         if(err){
-            console.log('Debug deviceDbTools findLastDeviceByMac -> err :'+err);
+            console.log('Debug deviceDbTools findLastDeviceByUnit -> err :'+err);
             return calllback(err);
         }else{
-            console.log('Debug deviceDbTools findLastDeviceByMac('+mac+') -> device :'+devices.length);
+            console.log('Debug deviceDbTools findLastDeviceByUnit('+mac+') -> device :'+devices.length);
             return calllback(err,devices[0]);
         }
     });
@@ -121,7 +121,7 @@ exports.findLastDeviceByMac = function (unit,calllback) {
 /*Find devices by date 
 *date option: 0:one ours 1:one days 2:one weeks 3:one months
 */
-exports.findDevicesByDate = function (mac,dateOption,calllback) {
+exports.findDevicesByDate = function (mac,dateOption,order,calllback) {
     console.log('---findDevices---------------------------------------');
     console.log('-mac : '+mac);
     var testDate = '20160724';
@@ -160,8 +160,15 @@ exports.findDevicesByDate = function (mac,dateOption,calllback) {
             return calllback(err);
 	    } else {
             console.log('Debug :findDevice success\n:',Devices.length);
-		    return calllback(err,Devices);
-	    }
+            var mDevices = [];
+            if(order == 'asc' && Devices.length>0){
+               for(var i= (Devices.length-1);i>-1 ;i--){
+                   mDevices.push(Devices[i]);
+               }
+               return calllback(err,mDevices);
+            }
+            return calllback(err,Devices);
+        }
     });
 };
 
