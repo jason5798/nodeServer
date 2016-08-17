@@ -1,4 +1,5 @@
 <%- include header %>
+
 <div class="panel-body">
    <!--<form method="post">-->
         <div class="col-md-3">
@@ -34,8 +35,8 @@
                     <span class="glyphicon glyphicon-list-alt"></span> 查詢
                 </button>
             </div>
-        </div> <!-- col-md-3 -->	
-        
+        </div> <!-- col-md-3 -->
+
     <!--</form>-->
 
     <button class="button button-block button-balanced" onClick="test()">測試</button>
@@ -51,14 +52,14 @@
                 </div> <!-- panel-body -->
             </div> <!-- panel panel-info -->
             <div class="panel panel-info">
-                
+
                 <div class="panel-body">
                     <div id="chartHum" style=t"height:100px;width:400px; "></div>
                 </div> <!-- panel-body -->
             </div> <!-- panel panel-info -->
 
         </div> <!-- panel-body -->
-    </div> <!-- col -->	
+    </div> <!-- col -->
 </div> <!-- panel-body -->
 
 <script>
@@ -84,7 +85,7 @@
         });
         //alert(ret);
         return ret;
-        
+
     };
 
     socket.on('chart_client_db_result',function(data){
@@ -110,9 +111,9 @@
             jsonurl = "/data/tem4.json";
             jsonurl2 = "/data/hum4.json";
         }
-        
+
         if(plot1 == null){
-            
+
             plot1 = $.jqplot('chartTmp', jsonurl,
                 {
                     title: "溫度",
@@ -120,7 +121,7 @@
                     dataRendererOptions: {
                         unusedOptionalUrl: jsonurl
                     },
-                    axes: 
+                    axes:
                     {
                         xaxis:xaxisJson,
                         yaxis: {
@@ -139,7 +140,7 @@
                     dataRendererOptions: {
                         unusedOptionalUrl: jsonurl2
                     },
-                    axes: 
+                    axes:
                     {
                         xaxis:xaxisJson,
                         yaxis: {
@@ -151,15 +152,15 @@
                 }
             );
         }else{//for replot
-            
+
             $('#chartTmp').empty();
             $('#chartHum').empty();
             toPlot('chartTmp',jsonurl,xaxisJson);
             toPlot('chartHum',jsonurl2,xaxisJson);
         }
-        
-        
-        
+
+
+
     });
 
     function toPlot(divName,url,xaxisJson){
@@ -176,7 +177,7 @@
                 dataRendererOptions: {
                     unusedOptionalUrl: url
                 },
-                axes: 
+                axes:
                 {
                     xaxis:xaxisJson,
                     yaxis: {
@@ -206,7 +207,7 @@
 
     function getOptions(dataJson,xaxisJson){
         mOptions = {data:dataJson,
-                    axes: 
+                    axes:
                     {
                         xaxis:xaxisJson,
                         yaxis: {
@@ -222,7 +223,7 @@
     function find(){
         //Get select element for mac , time
 		//alert($('#mac').val());
-        
+
         var mac = $('[name=mac]').val();
         var option = $('[name=time_option]').val();
         //alert('mac : '+mac);
@@ -240,7 +241,7 @@
         plot2.replot(options);
     }
 
-    function getXaxisJSON(data){   
+    function getXaxisJSON(data){
         //alert( typeof(data.option));
         if(data.option == 0){
             formatStr = '%#H:%M';
@@ -251,7 +252,7 @@
         }else if(data.option == 3){
             formatStr = '%#m/%#d';
         }
-        
+
         return {renderer:$.jqplot.DateAxisRenderer,
                 tickInterval: data.interval,
                 tickOptions:{formatString:formatStr},
@@ -261,7 +262,7 @@
     }
 
     $(document).ready(function () {
-    
+
         /*plot1 = $.jqplot('chartTmp',  [s2,s1], {
             // Turns on animatino for all series in this plot.
             animate: true,
@@ -283,8 +284,8 @@
                     yaxis: 'y2axis',
                     rendererOptions: {
                         // Speed up the animation a little bit.
-                        // This is a number of milliseconds.  
-                        // Default for bar series is 3000.  
+                        // This is a number of milliseconds.
+                        // Default for bar series is 3000.
                         animation: {
                             speed: 2500
                         },
@@ -293,7 +294,7 @@
                         barMargin: 0,
                         highlightMouseOver: false
                     }
-                }, 
+                },
                 {
                     rendererOptions: {
                         // speed up the animation a little bit.
@@ -344,15 +345,13 @@
                 }
             },
             highlighter: {
-                show: true, 
-                showLabel: true, 
+                show: true,
+                showLabel: true,
                 tooltipAxes: 'y',
                 sizeAdjust: 7.5 , tooltipLocation : 'ne'
             }
         });*/
 
-        
-    
     });
 </script>
 <script src="/js/jqplot/jquery.jqplot.min.js"></script>

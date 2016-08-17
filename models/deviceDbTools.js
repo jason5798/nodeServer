@@ -73,9 +73,9 @@ exports.findByMac = function (find_mac,callback) {
 		console.log('find_name.length=0');
 			return callback('找不到資料!');
 	}
-};	
+};
 
-/*Find all of unit 
+/*Find all of unit
 */
 exports.findAllDevices = function (calllback) {
     console.log('---findAllUnits---------------------------------------');
@@ -115,10 +115,10 @@ exports.findLastDeviceByUnit = function (unit,calllback) {
             return calllback(err,devices[0]);
         }
     });
-	
+
 };
 
-/*Find devices by date 
+/*Find devices by date
 *date option: 0:one ours 1:one days 2:one weeks 3:one months
 */
 exports.findDevicesByDate = function (mac,dateOption,order,calllback) {
@@ -126,7 +126,7 @@ exports.findDevicesByDate = function (mac,dateOption,order,calllback) {
     console.log('-mac : '+mac);
     var testDate = '20160724';
     var now = moment(testDate).toDate();
-    
+
     var from;
     switch(dateOption) {
     case 0:
@@ -190,7 +190,7 @@ exports.getOptioDeviceList = function (devices,option) {
     default:
         from =  moment().subtract(1,'days').toDate();
     }
-    var deviceList = []; 
+    var deviceList = [];
     var i = 0;
     for(i=0; i< devices.length ; i=i+diff){
         deviceList.push(devices[i]);
@@ -234,7 +234,7 @@ exports.updateDeviceData = function (unitId,data,calllback) {
 	var mHum1 = arrData[1];
 	var mTmp2 = arrData[2];
 	var mHum2 = arrData[3];
-	
+
 	DeviceModel.update({_id : unitId},
         {temperature1:mTmp1 ,
 			humidity1:mHum1,
@@ -255,7 +255,7 @@ exports.updateDeviceData = function (unitId,data,calllback) {
 
 exports.removeDevicesByDate = function (startDate,option,number,calllback) {
     console.log('--removeDevicesByDate---------------------------------------');
-   
+
     var now = moment(startDate).toDate();
     var from
     switch(option) {

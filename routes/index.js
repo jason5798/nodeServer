@@ -19,7 +19,7 @@ function findUnitsAndShowList(req,res){
 		}
 		req.session.units = units;
 		console.log( "successMessae:"+successMessae );
-		res.render('index', { title: '首頁', 
+		res.render('index', { title: '首頁',
 			units:req.session.units,
 			success: successMessae,
 			error: errorMessae
@@ -47,7 +47,7 @@ module.exports = function(app) {
 				}
 				findUnitsAndShowList(req,res);
 			});
-			
+
 		}else{//Edit mode
 			UnitDbTools.updateUnit(post_mac,post_name,true,function(err,result){
 				if(err){
@@ -60,11 +60,11 @@ module.exports = function(app) {
 				findUnitsAndShowList(req,res);
 			});
 		}
-		
+
 	});
 
   app.get('/chart', function (req, res) {
-		
+
 		console.log('Debug chart get -> render to find.ejs');
 		var find_mac = req.flash('mac').toString();
 		var option = req.flash('option').toString();
@@ -91,7 +91,7 @@ module.exports = function(app) {
 					return res.redirect('/find');
 				}
 				console.log("Debug chart get -> find all of mac "+find_mac+" : "+devices);
-				
+
 				if (devices.length>0) {
 					console.log('Debug chart get -> find '+devices.length+' records');
 					successMessae = '找到'+devices.length+'筆資料';
@@ -166,7 +166,7 @@ module.exports = function(app) {
 				if (devices.length>0) {
 					console.log('Debug find get -> find '+devices.length+' records');
 					successMessae = '找到'+devices.length+'筆資料';
-					
+
 				}else{
 					console.log('Debug find get -> can not find');
 					errorMessae = '無法找到資料';
@@ -209,7 +209,7 @@ module.exports = function(app) {
 				successMessae = result;
 				findUnitsAndShowList(req,res);
 			});
-			
+
 		}else{
 			res.render('setting', { title: '裝置設定',
 				success: req.flash('success').toString(),
@@ -221,7 +221,7 @@ module.exports = function(app) {
   app.post('/setting', function (req, res) {
 		var	post_mac = req.body.mac;
 		var post_name = req.body.name;
-		
+
 		if(	post_mac && post_name && post_mac.length>=1 && post_name.length>=1){
 			console.log('post_mac:'+post_mac);
 			console.log('post_name:'+post_name);
@@ -232,6 +232,6 @@ module.exports = function(app) {
 			req.flash('error', '輸入資料不正確,請重新輸入!');
 			return res.redirect('/setting');
 		}
-		
+
   	});
 };

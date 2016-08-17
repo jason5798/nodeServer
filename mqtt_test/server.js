@@ -11,7 +11,7 @@ MqttServer.on('clientConnected', function(client){
  * 监听MQTT主题消息
  **/
 MqttServer.on('published', function(packet, client) {
-    var topic = packet.topic;	
+    var topic = packet.topic;
     switch(topic){
 	case 'pubMsg':
 	    console.log('message-publish', packet.payload.toString());

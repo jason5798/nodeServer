@@ -10,7 +10,7 @@ exports.saveFile = function (option,devices) {
     //Set path,format
     setByOption(option);
     temobj = [],humobj = [];
-    
+
     for(var i=0;i<devices.length;i++){
         var temobj1 = [],humobj1 = [];
         temobj1.push(Number(devices[i].temperature1));
@@ -31,7 +31,7 @@ exports.saveFile = function (option,devices) {
 
     saveFile(temPath,temobj);
     saveFile(humPath,humobj);
-}; 	
+};
 
 exports.saveFile1 = function (option,devices) {
     //Set path,format
@@ -41,12 +41,12 @@ exports.saveFile1 = function (option,devices) {
     var temArr1 = [],humArr1 = [],temArr2 = [],humArr2 = [];
     var temStr='',tem1Str='',tem2Str='',humStr='',hum1Str='',hum2Str='';
     for(var i=0;i<mlength;i++){
-        
+
         var date = devices[i].recv_at;
         console.log('--------------------------------------------------------------------------------');
         console.log('date : '+ date);
         var timestamp = moment(date);
-        
+
         console.log('timestamp : '+ timestamp);
         tem1Str = tem1Str + getTemperatureString(i,mlength,timestamp,devices[i].temperature1);
         tem2Str = tem2Str + getTemperatureString(i,mlength,timestamp,devices[i].temperature2);
@@ -57,14 +57,14 @@ exports.saveFile1 = function (option,devices) {
         console.log('hum1Str : '+ hum1Str);
         console.log('hum2Str : '+ hum2Str);
     }
-    
+
     temStr =  '{"tem1":'+tem1Str+',"tem2":'+tem2Str+'}';
     humStr =  '{"hum1":'+hum1Str+',"hum2":'+hum2Str+'}';
     console.log('temStr : ' + temStr);
     console.log('humStr : ' + humStr);
     saveStringToFile(temPath,temStr);
     saveStringToFile(humPath,humStr);
-}; 
+};
 
 exports.saveDataToFile = function (option,devices) {
 
@@ -101,7 +101,7 @@ function getTimeRangeString(option,devices){
         interval = '1 day';
         formatStr = 'YYYY/MM/DD';
     }
-       
+
     var min = moment(devices[0].recv_at).format(formatStr);
     var max = moment(devices[(devices.length-1)].recv_at);
     if(option==0){
@@ -137,7 +137,7 @@ function saveDataToFile(option,devices){
         /*console.log('temArr1 : ' + temArr1);
         console.log('temArr2 : ' + temArr2);
         console.log('humArr1 : ' + humArr1);
-        console.log('humArr2 : ' + humArr2);*/  
+        console.log('humArr2 : ' + humArr2);*/
     }
     temArr.push(temArr1);
     temArr.push(temArr2);

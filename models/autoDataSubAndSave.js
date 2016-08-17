@@ -12,7 +12,7 @@ GIotClient.on('connect', function()  {
   		GIotClient.subscribe(settings.gIoTopic,{qos:0});
 		isMqttConnection = true;
 		date = date.add(1,'minutes');
-		
+
 	}else{
 		var testDate = moment();
 		//console.log('Debug appjs -> testDate.valueOf():'+testDate.valueOf() + ", type:"+typeof(testDate.valueOf()));

@@ -31,7 +31,7 @@ exports.saveUnit = function (macAddress,name,callback) {
 		console.log('Debug : Unit save success!');
         return callback(err,'success');
 	});
-}; 	
+};
 
 /*
 *Update unit name,date
@@ -83,7 +83,7 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 };
 
 /*
-*Remove all of unit 
+*Remove all of unit
 *Return -1:資料存取錯誤 0:刪除完成 1:刪除失敗
 */
 exports.removeAllUnits = function (calllback) {
@@ -112,7 +112,7 @@ exports.removeUnitByMac = function (mac,calllback) {
     });
 };
 
-/*Find all of unit 
+/*Find all of unit
 */
 exports.findAllUnits = function (calllback) {
     console.log('---findAllUnits---------------------------------------');

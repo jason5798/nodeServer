@@ -50,7 +50,7 @@ if(choise == 0){//save
     dbTools.updateUnit(mac,name2,function(err,result){
         if(err){
             console.log('updateUnit :'+err);
-        } 
+        }
         console.log('updateUnit  mac:'+mac+", name2:"+name2+" , result :" +result);
     });
 }*/
@@ -62,7 +62,7 @@ var JsonFileTools =  require('./jsonFileTools.js');
     deviceDbTools.findDevicesByDate(mac,option,function(err,devices){
         if(err){
             console.log('findDevices :'+err);
-        } 
+        }
         console.log('findDevices mac:'+mac+" , result :" +devices.length);
         getDeviceist(devices,option);
         var deviceList = getDeviceist(devices,option);
@@ -77,7 +77,7 @@ UnitDbTools.removeAllUnits(function(err,result){
     }else{
         console.log('success');
     }
-    
+
 })*/
 
 /*function getDeviceist(devices,option){
@@ -98,7 +98,7 @@ UnitDbTools.removeAllUnits(function(err,result){
     default:
         from =  moment().subtract(1,'days').toDate();
     }
-    var deviceList = []; 
+    var deviceList = [];
     var i = 0;
     for(i=0; i< devices.length ; i=i+diff){
         deviceList.push(devices[i]);
@@ -110,8 +110,8 @@ UnitDbTools.removeAllUnits(function(err,result){
 deviceDbTools.findAllDevices(function(err,devices){
     if(err){
         console.log('findDevices :'+err);
-    } 
-    
+    }
+
     //var device = devices[0];
     console.log('Debug testTools device'+devices.length);
     /*for(var i=0;i<devices.length;i++){

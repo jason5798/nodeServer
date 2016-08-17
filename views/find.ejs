@@ -14,7 +14,7 @@
 									<% }else{ %>
 										<option value = "<%= units[i].macAddr %>" >
 									<% } %>
-									
+
 										<%= units[i].name %>
 									</option>
 								<% } %>
@@ -22,7 +22,7 @@
 						</select>
 					</div> <!-- form-group -->
 				</div> <!-- col-md-3 -->
-				
+
 				<div class="col-md-3">
 					<div class="form-group">
 						<label>選擇時間</label>
@@ -62,8 +62,8 @@
 							<span class="glyphicon glyphicon-list-alt"></span> 查詢
 						</button>
 					</div>
-				</div> <!-- col-md-3 -->	
-				
+				</div> <!-- col-md-3 -->
+
 			</form>
 			<div class="col-md-12">
 				<% if (devices!=null && devices.length>0){ %>
@@ -76,9 +76,9 @@
 						<td >濕度2</td>
 						<td >電壓</td>
 						<td >時間</td>
-					</tr>	
+					</tr>
 					<% devices.forEach(function(device) { %>
-					
+
 						<tr>
 						<!--<td><%= device.macAddr %></td>
 						<td><%= device.data %></td>-->
@@ -102,17 +102,17 @@
 						<% } %>
 						</td>
 						<td><%= device.time.date %></td>
-						</tr>				
+						</tr>
 					<% }); %>
 					</table>
 				<% } %>
-			</div> <!-- col -->	
+			</div> <!-- col -->
 		</div> <!-- panel-body -->
-	
+
 
 <script class="code" type="text/javascript">
 	 $(document).ready(function(){
-	 	
+
 	});<!-- (document).ready(function() end -->
 </script>
 

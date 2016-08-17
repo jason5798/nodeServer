@@ -3,7 +3,7 @@
 		<div class="col-md-12 column">
 			<form method = "post" id="unitList" name="unitList">
 				<table class="table table-striped table-hover">
-					<thead> 
+					<thead>
 						<tr>
 							<th>
 								項目
@@ -36,7 +36,7 @@
 									</td>
 									<td>
 										<input name="myMac" type="text" disabled="disabled" value="<%= units[i].macAddr %>">
-										
+
 									</td>
 									<td>
 										<% if(units[i].status == 0){ %>
@@ -67,17 +67,17 @@
 				<input id="postMac" name="postMac" type="hidden"">
 				<input id="postName" name="postName" type="hidden"">
 			</form>
-			
+
 		</div> <!-- column-->
 	</div>	<!--row-->
 
 <!-- （Modal） -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
    aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-dialog">
       <div class="modal-content">
          <div class="modal-header">
-            <button type="button" class="close" 
+            <button type="button" class="close"
                data-dismiss="modal" aria-hidden="true">
                   &times;
             </button>
@@ -89,7 +89,7 @@
             確定刪除裝置嗎?
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-default" 
+            <button type="button" class="btn btn-default"
                data-dismiss="modal">關閉
             </button>
             <button type="button" onClick="toSubmit()" class="btn btn-danger">
@@ -118,8 +118,8 @@
 		}else{
 			$('[name=status]').eq(data.index).attr("src","/images/btn_loss.png");
 		}
-		
-		
+
+
 	});
 
 	function editCheck(button){
@@ -137,7 +137,7 @@
 				}
 			}
 			//alert("行 :"+(index+1) + unitList.myMac[index].value + " "+unitList.myName[index].value);
-			
+
 			postMac.value = unitList.myMac[index].value;
 			postName.value = unitList.myName[index].value;
 			//alert("行 :"+(index+1) + postMac.value + " "+postName.value);
@@ -145,12 +145,12 @@
 			postMac.value = unitList.myMac.value;
 			postName.value = unitList.myName.value;
 		}
-		
+
 		document.getElementById("unitList").submit();
 	}
 
 	function delCheck(button){
-		
+
 		var index = -1;
 		var postMac = document.getElementById("postMac");
 

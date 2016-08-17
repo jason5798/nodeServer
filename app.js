@@ -57,7 +57,7 @@ GIotClient.on('connect', function()  {
   		GIotClient.subscribe(settings.gIoTopic,{qos:0});
 		isMqttConnection = true;
 		date = date.add(1,'minutes');
-		
+
 	}else{
 		var testDate = moment();
 		//console.log('Debug appjs -> testDate.valueOf():'+testDate.valueOf() + ", type:"+typeof(testDate.valueOf()));
@@ -93,7 +93,7 @@ socket.on('connection',function(client){
 					var unit = units[i];
 					console.log('Debug new_message_client->unit : ('+i+') \n' + unit.macAddr );
 					var unitMac = unit.macAddr;
-					
+
 					DeviceDbTools.findLastDeviceByUnit(unit,function(err,device){
 						if(err){
 
@@ -107,9 +107,9 @@ socket.on('connection',function(client){
 								}
 								console.log('Debug new_message_client ->device ('+index+') :'+device.time.date );
 								client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.temperature1,hum1:device.humidity2,tmp2:device.temperature2,hum2:device.humidity2,vol:device.voltage});
-								console.log('Debug new_message_client ------------------------------------------------------------end' );	
+								console.log('Debug new_message_client ------------------------------------------------------------end' );
 						}
-								
+
 						}
 					});
 				}
@@ -178,7 +178,7 @@ socket.on('connection',function(client){
 				console.log('find name:'+find_mac);
 				return;
 			}
-			
+
 			if (devices.length>0) {
 				console.log('Debug chart -> find '+devices.length+' records');
 				var newDevices = getShortenDevices(devices);
@@ -191,10 +191,14 @@ socket.on('connection',function(client){
 				client.emit('chart_client_db_result',null);
 			}
 		});
-		
+
 	});
 });
 
+/**toCheckDeviceTimeout
+ * @param  {[client]}
+ * @return client.emit to index page
+ */
 function toCheckDeviceTimeout(client){
 	var now = Number(moment().subtract(1,'days'));
 	UnitDbTools.findAllUnits(function(err,units){
@@ -208,18 +212,18 @@ function toCheckDeviceTimeout(client){
 		for(var i=0 ; i<units.length; i++){
 			macList.push(units[i].macAddr);
 		}
-		
+
 		//units.forEach(function(unit) {
 		for(var i=0 ; i<units.length; i++){
 			console.log('Debug toCheckDeviceStatus -> findLastDeviceByUnit mac :'+units[i].macAddr);
 			DeviceDbTools.findLastDeviceByUnit(units[i],function(err,device){
 				if(err == null){
-					
+
 					if(device == null){
 						return;
 					}
 					console.log('Debug toCheckDeviceStatus -> findLastDeviceByUnit :'+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss"));
-					
+
 					//Verify is timeout or not?
 					if(now>Number(moment(device.recv_at)) ){
                         //Is timeout
@@ -255,9 +259,9 @@ function toCheckDeviceTimeout(client){
 						});
 					}
 				}
-			});			
+			});
 		}
-	});	
+	});
 }
 
 function getShortenDevices(devices){

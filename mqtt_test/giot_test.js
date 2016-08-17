@@ -36,6 +36,6 @@ client.on('message', function(topic, message) {
     		console.log('message:'+message.toString());
     		var obj = JSON.parse(message);
          	console.log('macAddr:'+obj.macAddr+', data:'+obj.data + '>> receive time : '+obj.recv);
-         
+
          }
 });
