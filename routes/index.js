@@ -7,14 +7,26 @@ var JsonFileTools =  require('../models/jsonFileTools.js');
 var settings = require('../settings');
 var moment = require('moment');
 
-function findUnitsAndShowList(req,res){
+function findUnitsAndShowList(req,res,isUpdate){
 	UnitDbTools.findAllUnits(function(err,units){
 		var successMessae,errorMessae;
+		var macList = [];
+
 		if(err){
 			errorMessae = err;
 		}else{
 			if(+units.length>0){
 				successMessae = '查詢'+units.length+"個裝置";
+			}
+			for(var i=0;i<units.length;i++){
+			if(units[i].macAddr){
+					console.log('mac ('+i+'):'+units[i].macAddr);
+					macList.push(units[i].macAddr);
+				}
+			}
+			//Jason add for save mac array on 2016.08.18
+			if(isUpdate){
+				JsonFileTools.saveJsonToFile('./public/data/macList.json',macList);
 			}
 		}
 		req.session.units = units;
@@ -29,7 +41,7 @@ function findUnitsAndShowList(req,res){
 
 module.exports = function(app) {
   app.get('/', function (req, res) {
-		findUnitsAndShowList(req,res);
+		findUnitsAndShowList(req,res,false);
   });
 
   app.post('/', function (req, res) {
@@ -45,7 +57,7 @@ module.exports = function(app) {
 					console.log('removeUnitByMac :'+post_mac + 'success');
 					successMessae = successMessae;
 				}
-				findUnitsAndShowList(req,res);
+				findUnitsAndShowList(req,res,false);
 			});
 
 		}else{//Edit mode
@@ -57,7 +69,7 @@ module.exports = function(app) {
 					console.log('removeUnitByMac :'+post_mac + 'success');
 					successMessae = successMessae;
 				}
-				findUnitsAndShowList(req,res);
+				findUnitsAndShowList(req,res,false);
 			});
 		}
 
@@ -207,7 +219,7 @@ module.exports = function(app) {
 					return res.redirect('/setting');
 				}
 				successMessae = result;
-				findUnitsAndShowList(req,res);
+				findUnitsAndShowList(req,res,true);
 			});
 
 		}else{

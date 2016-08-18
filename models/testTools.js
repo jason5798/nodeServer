@@ -107,31 +107,6 @@ if(choise == 0){//save
     return deviceList;
 }*/
 
-
-/*deviceDbTools.findAllDevices(function(err,devices){
-    if(err){
-        console.log('findDevices :'+err);
-    }
-
-    //var device = devices[0];
-    console.log('Debug testTools device'+devices.length);
-    /*for(var i=0;i<devices.length;i++){
-        updateData(devices[i]._id,devices[i].data);
-        if(i>1){
-            break;
-        }
-    }
-    JsonFileTools.saveDataToFile(0,devices);
-    //Remove device data
-    /*deviceDbTools.removeDevicesByDate('20160720',3,1,function(err,result){
-        if(err){
-            console.log('Debug removeDevicesByDate fail /n'+err);
-        }
-        console.log('Debug removeDevicesByDate success');
-    });
-
-});*/
-
 /*function update(id,time){
     deviceDbTools.updateDeviceTime(id,time,function(err,result){
         if(err){
@@ -152,14 +127,26 @@ function updateData(id,data){
     });
 }*/
 
+var macList = [];
+
 UnitDbTools.findAllUnits(function(err,units){
     if(err){
         console.log('Debug autoDataSubAndSave -> findAllUnits fail\n'+err);
         return;
     }
-    units.forEach(function(unit) {
-        macList.push(unit.macAddr);
-    }
-    var a = fruits.indexOf("Apple");
-    console.log('indexOf Apple :'+a);
-})
+    for(var i=0;i<units.length;i++){
+		if(units[i].macAddr){
+			console.log('mac ('+i+'):'+units[i].macAddr);
+			macList.push(units[i].macAddr);
+		}
+	}
+
+    //JsonFileTools.saveJsonToFile('test.json',macList);
+    //macList = JsonFileTools.getJsonToFile('./public/data/macList.json');
+    var test = JsonFileTools.getJsonFromFile('../public/data/macList.json');
+    console.log('array : '+test + " , type : "+typeof(test));
+    var a = test.indexOf('apple');
+    console.log('index of apple : '+a);
+    var b = test.indexOf('123456');
+    console.log('index of 123456 : '+b);
+});

@@ -5,76 +5,13 @@ console.log('folderPath : '+folderPath);
 var temPath,humPath,dtaePath,interval;
 var temobj,humobj;
 
-//[[28.8,28.6],[27.7,27.6],[27.1,26.7]]
-exports.saveFile = function (option,devices) {
-    //Set path,format
-    setByOption(option);
-    temobj = [],humobj = [];
+exports.saveJsonToFile = function (path,obj){
+    saveJaonFile(path,obj);
+}
 
-    for(var i=0;i<devices.length;i++){
-        var temobj1 = [],humobj1 = [];
-        temobj1.push(Number(devices[i].temperature1));
-        temobj1.push(Number(devices[i].temperature2));
-        temobj.push( temobj1);
-        humobj1.push(Number(devices[i].humidity1));
-        humobj1.push(Number(devices[i].humidity2));
-        humobj.push( humobj1);
-        console.log('Debug jsonFileTools -> devices \n'+devices[i]);
-        console.log('Debug jsonFileTools -> temobj1 \n'+temobj1);
-        console.log('Debug jsonFileTools -> temobj \n'+temobj);
-        console.log('Debug jsonFileTools -> humobj1 \n'+humobj1);
-        console.log('Debug jsonFileTools -> humobj \n'+humobj);
-        if(i>1){
-            break;
-        }
-    }
-
-    saveFile(temPath,temobj);
-    saveFile(humPath,humobj);
-};
-
-exports.saveFile1 = function (option,devices) {
-    //Set path,format
-    setByOption(option);
-    temobj = [],humobj = [];
-    var mlength = 1;
-    var temArr1 = [],humArr1 = [],temArr2 = [],humArr2 = [];
-    var temStr='',tem1Str='',tem2Str='',humStr='',hum1Str='',hum2Str='';
-    for(var i=0;i<mlength;i++){
-
-        var date = devices[i].recv_at;
-        console.log('--------------------------------------------------------------------------------');
-        console.log('date : '+ date);
-        var timestamp = moment(date);
-
-        console.log('timestamp : '+ timestamp);
-        tem1Str = tem1Str + getTemperatureString(i,mlength,timestamp,devices[i].temperature1);
-        tem2Str = tem2Str + getTemperatureString(i,mlength,timestamp,devices[i].temperature2);
-        hum1Str = hum1Str + getHumidityString(i,mlength,timestamp,devices[i].humidity1);
-        hum2Str = hum2Str + getHumidityString(i,mlength,timestamp,devices[i].humidity2);
-        console.log('tem1Str : '+ tem1Str);
-        console.log('tem2Str : '+ tem2Str);
-        console.log('hum1Str : '+ hum1Str);
-        console.log('hum2Str : '+ hum2Str);
-    }
-
-    temStr =  '{"tem1":'+tem1Str+',"tem2":'+tem2Str+'}';
-    humStr =  '{"hum1":'+hum1Str+',"hum2":'+hum2Str+'}';
-    console.log('temStr : ' + temStr);
-    console.log('humStr : ' + humStr);
-    saveStringToFile(temPath,temStr);
-    saveStringToFile(humPath,humStr);
-};
-
-exports.saveDataToFile = function (option,devices) {
-
-    //Save json string to file
-    saveDataToFile(option,devices);
-    //Jason add on 201608.05 for date range data
-    var dateStr = getTimeRangeString(option,devices);
-    console.log('dateStr : ' + dateStr);
-    saveStringToFile(dtaePath,dateStr);
-};
+exports.getJsonFromFile = function (path,obj){
+    return getJaonFile(path);
+}
 
 exports.saveDataAndGetTimeeString = function (option,devices) {
 
@@ -186,13 +123,18 @@ function saveStringToFile(mpath,mstring){
     //console.log("Output Content : \n"+ content);
 }
 
-function saveJaonToFile(path,obj){
+function saveJaonFile(path,obj){
     console.log("Debug jsonFileTools saveFile -> path: "+ path);
     var json = JSON.stringify(obj);
     fs.writeFile(path, json, 'utf8');
-    console.log("\n *START* \n");
-    //var content = fs.readFileSync(path);
-    //console.log("Output Content : \n"+ content);
+}
+
+function getJaonFile(path){
+    console.log("Debug jsonFileTools getJaonFile -> path: "+ path);
+    var text = fs.readFileSync(path, 'utf8');
+    console.log('read text :'+text);
+    var json = JSON.parse(text);
+    return json;
 }
 
 function setByOption(option){

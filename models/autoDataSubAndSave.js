@@ -6,20 +6,7 @@ var moment = require('moment');
 var date = moment();
 var isMqttConnection = false;
 var allUnits;
-var macList = [];
-
-UnitDbTools.findAllUnits(function(err,units){
-    if(err){
-        console.log('Debug autoDataSubAndSave -> findAllUnits fail\n'+err);
-        return;
-    }
-    for(var i=0;i<units.length;i++){
-		if(units[i].macAddr){
-			console.log('mac ('+i+'):'+units[i].macAddr);
-			macList.push(units[i].macAddr);
-		}
-	}
-});
+var macList;
 
 GIotClient.on('connect', function()  {
 	if(isMqttConnection == false){
@@ -44,6 +31,7 @@ GIotClient.on('message', function(topic, message) {
 		console.log('topic:'+topic.toString());
 		console.log('message:'+message.toString());
 		console.log('message type :'+getType(message));
+		macList = JsonFileTools.getJsonFromFile('../public/data/macList.json');
 
 		if(getType(message) !== 'object')
 			return;
@@ -100,5 +88,3 @@ function getType(p) {
     else if (p != null && typeof p == 'object') return 'object';
     else return 'other';
 }
-
-
