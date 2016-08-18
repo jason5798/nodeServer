@@ -5,6 +5,21 @@ var UnitDbTools =  require('./unitDbTools.js');
 var moment = require('moment');
 var date = moment();
 var isMqttConnection = false;
+var allUnits;
+var macList = [];
+
+UnitDbTools.findAllUnits(function(err,units){
+    if(err){
+        console.log('Debug autoDataSubAndSave -> findAllUnits fail\n'+err);
+        return;
+    }
+    for(var i=0;i<units.length;i++){
+		if(units[i].macAddr){
+			console.log('mac ('+i+'):'+units[i].macAddr);
+			macList.push(units[i].macAddr);
+		}
+	}
+});
 
 GIotClient.on('connect', function()  {
 	if(isMqttConnection == false){
@@ -32,14 +47,21 @@ GIotClient.on('message', function(topic, message) {
 
 		if(getType(message) !== 'object')
 			return;
+		var obj;
 		try {
-			var obj = JSON.parse(message);
+			obj = JSON.parse(message);
 		}
 		catch (e) {
 			console.log('parse json error message :'+e.toString());
 			return;
 		}
 		console.log('mac:'+obj.macAddr +', data:'+obj.data+', recv:'+obj.recv);
+        var testIndex = macList.indexOf(obj.macAddr);
+        if(testIndex == -1){
+        	console.log('???? :not setting mac -> reject mqtt message');
+        	return;
+        }
+
         var mData = obj.data;
 		DeviceDbTools.saveDevice(obj.macAddr,obj.data,obj.recv,function(err,voltage){
 			if(err){

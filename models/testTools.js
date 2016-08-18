@@ -5,8 +5,10 @@ for(var num in arr){
     console.log('num : '+arr[num]);
 }*/
 
-var moment = require('moment');
-
+//var moment = require('moment');
+var deviceDbTools =  require('./deviceDbTools.js');
+var JsonFileTools =  require('./jsonFileTools.js');
+var UnitDbTools =  require('./unitDbTools.js');
 var mac = '04000496';
 var data = '012001ca011e01d7012f';
 var recv = new Date();
@@ -55,8 +57,7 @@ if(choise == 0){//save
     });
 }*/
 
-var deviceDbTools =  require('./deviceDbTools.js');
-var JsonFileTools =  require('./jsonFileTools.js');
+
 /*if(choise == 3){//find
     var option = 1;
     deviceDbTools.findDevicesByDate(mac,option,function(err,devices){
@@ -70,8 +71,8 @@ var JsonFileTools =  require('./jsonFileTools.js');
 
     });
 }*/
-/*var UnitDbTools =  require('./unitDbTools.js');
-UnitDbTools.removeAllUnits(function(err,result){
+
+/*UnitDbTools.removeAllUnits(function(err,result){
     if(err){
         console.log('err : '+err);
     }else{
@@ -107,7 +108,7 @@ UnitDbTools.removeAllUnits(function(err,result){
 }*/
 
 
-deviceDbTools.findAllDevices(function(err,devices){
+/*deviceDbTools.findAllDevices(function(err,devices){
     if(err){
         console.log('findDevices :'+err);
     }
@@ -119,7 +120,7 @@ deviceDbTools.findAllDevices(function(err,devices){
         if(i>1){
             break;
         }
-    }*/
+    }
     JsonFileTools.saveDataToFile(0,devices);
     //Remove device data
     /*deviceDbTools.removeDevicesByDate('20160720',3,1,function(err,result){
@@ -127,11 +128,11 @@ deviceDbTools.findAllDevices(function(err,devices){
             console.log('Debug removeDevicesByDate fail /n'+err);
         }
         console.log('Debug removeDevicesByDate success');
-    });*/
+    });
 
-});
+});*/
 
-function update(id,time){
+/*function update(id,time){
     deviceDbTools.updateDeviceTime(id,time,function(err,result){
         if(err){
             console.log('Debug testTools updateDeviceTime fail /n'+err);
@@ -149,4 +150,16 @@ function updateData(id,data){
             console.log('Debug testTools updateDeviceTime success');
         }
     });
-}
+}*/
+
+UnitDbTools.findAllUnits(function(err,units){
+    if(err){
+        console.log('Debug autoDataSubAndSave -> findAllUnits fail\n'+err);
+        return;
+    }
+    units.forEach(function(unit) {
+        macList.push(unit.macAddr);
+    }
+    var a = fruits.indexOf("Apple");
+    console.log('indexOf Apple :'+a);
+})
