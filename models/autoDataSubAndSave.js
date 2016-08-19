@@ -2,6 +2,7 @@ var settings = require('../settings');
 var GIotClient =  require('./gIotClient.js');
 var DeviceDbTools =  require('./deviceDbTools.js');
 var UnitDbTools =  require('./unitDbTools.js');
+var JsonFileTools =  require('./jsonFileTools.js');
 var moment = require('moment');
 var date = moment();
 var isMqttConnection = false;

@@ -172,8 +172,8 @@ socket.on('connection',function(client){
 
 	client.on('chart_client_find_db',function(data){
 		console.log('Debug chart_client_find_db ----------------------------------------------------start' );
-		console.log('Debug cart_client mac:'+data.mac +' , option:'+typeof(data.option));
-		DeviceDbTools.findDevicesByDate(data.mac,Number(data.option),'desc',function(err,devices){
+		console.log('Debug cart_client mac:'+data.mac +' , option:'+typeof(data.option)+' , date:'+typeof(data.date));
+		DeviceDbTools.findDevicesByDate(data.date,data.mac,Number(data.option),'desc',function(err,devices){
 			if(err){
 				console.log('find name:'+find_mac);
 				return;
@@ -181,7 +181,7 @@ socket.on('connection',function(client){
 
 			if (devices.length>0) {
 				console.log('Debug chart -> find '+devices.length+' records');
-				var newDevices = getShortenDevices(devices);
+				var newDevices = devices;//getShortenDevices(devices);
 				var timeJsonStr =JsonFileTools.saveDataAndGetTimeeString(data.option,newDevices);
 				var timeJson = JSON.parse(timeJsonStr);
 				console.log('Debug chart -> timeJsonStr : '+timeJsonStr);

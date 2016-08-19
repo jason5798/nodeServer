@@ -1,6 +1,15 @@
 <%- include header %>
+
 <div class="panel-body">
    <!--<form method="post">-->
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>日期</label>
+                <input id="datepicker1" name="datepicker1" type="text" value="<%= mdate %>"/>
+            </div> <!-- form-group -->
+        </div> <!-- col-md-12 -->
+
+
         <div class="col-md-3">
             <div class="form-group">
                 <label>選擇裝置</label>
@@ -21,9 +30,9 @@
                 <label>選擇時間</label>
                 <select id="time" name="time_option">
                     <option value="0">四小時</option>
-    　		   		<option value="1">一天</option>
-    　		   		<option value="2">一周</option>
-    　		   		<option value="3">一個月</option>
+    　               <option value="1">一天</option>
+    　               <option value="2">一周</option>
+    　               <option value="3">一個月</option>
                 </select>
             </div> <!-- form-group -->
         </div> <!-- col-md-3 -->
@@ -38,8 +47,8 @@
 
     <!--</form>-->
 
-    <button class="button button-block button-balanced" onClick="test()">測試</button>
- <button class="button button-block button-balanced" onClick="test2()">測試2</button>
+    <!--<button class="button button-block button-balanced" onClick="test()">測試</button>
+    <button class="button button-block button-balanced" onClick="test2()">測試2</button>-->
 
     <div class="col-md-12">
         <div class="panel-body">
@@ -68,8 +77,8 @@
     var options1,options2,options3,options4;
 
     socket.on('connect',function(){
-		socket.emit('chart_client','hello,chart socket cient is ready');
-	});
+        socket.emit('chart_client','hello,chart socket cient is ready');
+    });
 
     var ajaxDataRenderer = function(url, plot, options) {
         var ret = null;
@@ -88,14 +97,14 @@
     };
 
     socket.on('chart_client_db_result',function(data){
-		//alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
+        //alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
         // The url for our json data
-		if(data == null){
-			$('#chartTmp').empty();
+        if(data == null){
+            $('#chartTmp').empty();
             $('#chartHum').empty();
-			alert('無法找到資料!');
-			return;
-		}
+            alert('無法找到資料!');
+            return;
+        }
         var jsonurl = "/data/tem1.json";
         var jsonurl2 = "/data/hum1.json";
         var xaxisJson = getXaxisJSON(data);//for xaxis
@@ -221,14 +230,15 @@
 
     function find(){
         //Get select element for mac , time
-		//alert($('#mac').val());
+        //alert($('#mac').val());
 
         var mac = $('[name=mac]').val();
         var option = $('[name=time_option]').val();
+        var date = $('[name=datepicker1]').val();
         //alert('mac : '+mac);
-        //alert('optionc : '+option);
-
-        socket.emit('chart_client_find_db',{mac:mac,option:option});
+        //alert('option : '+option);
+        //alert('date : '+date);
+        socket.emit('chart_client_find_db',{mac:mac,option:option,date:date});
     }
 
     function test2(){
@@ -261,7 +271,8 @@
     }
 
     $(document).ready(function () {
-
+        $('#datepicker1').datepicker({dateFormat: 'yy-mm-dd', showOn: 'both',
+    buttonImageOnly: true, buttonImage: 'images/calendar.png'});
         /*plot1 = $.jqplot('chartTmp',  [s2,s1], {
             // Turns on animatino for all series in this plot.
             animate: true,

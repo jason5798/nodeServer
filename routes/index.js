@@ -85,17 +85,18 @@ module.exports = function(app) {
 		var timeStr = '';
 		console.log('Debug chart get -> find mac:'+find_mac);
 		console.log('Debug chart get -> find option:'+option);
-		if(find_mac == ""){
+		//if(find_mac == ""){
 			res.render('chart', { title: '圖表分析',
 				units:req.session.units,
 				mac:find_mac,
 				option:option,
+				mdate:moment().format('YYYY-MM-DD'),
 				devices: null,
 				timeStr:timeStr,
 				success: successMessae,
 				error: errorMessae
 			});
-		}else{
+		/*}else{
 			DeviceDbTools.findDevicesByDate(find_mac,Number(option),'desc',function(err,devices){
 				if(err){
 					console.log('Debug chart get -> find name:'+find_mac);
@@ -125,10 +126,10 @@ module.exports = function(app) {
 					error: errorMessae
 				});
 			});
-		}
+		}*/
   });
 
-  app.post('/chart', function (req, res) {
+  /*app.post('/chart', function (req, res) {
 		var	post_mac = req.body.mac;
 		var option = req.body.time_option;
 		console.log('option:'+option);
@@ -136,7 +137,7 @@ module.exports = function(app) {
 		req.flash('mac', post_mac);
 		req.flash('option', option);
 		return res.redirect('/chart');
-  	});
+  });*/
 
   app.get('/socket', function (req, res) {
 		res.render('socket', { title: '最新訊息',
@@ -150,44 +151,43 @@ module.exports = function(app) {
 		console.log('render to find.ejs');
 		var find_mac = req.flash('mac').toString();
 		var option = req.flash('option').toString();
+		var mdate = req.flash('mdate').toString();
 		var successMessae,errorMessae;
 		var count = 0;
-		console.log('Debug find get -> mac:'+find_mac);
-		console.log('Debug find get ->  option:'+option);
+		console.log('Debug find get -> mac:'+ find_mac);
+		console.log('Debug find get -> option:'+ option);
+		console.log('Debug find get -> date:'+ mdate);
 		if(find_mac == ""){
 			res.render('find', { title: '資料查詢',
 				units:req.session.units,
 				mac:find_mac,
 				option:option,
+				mdate:moment().format('YYYY-MM-DD'),
 				devices: null,
 				success: successMessae,
 				error: errorMessae
 			});
 		}else{
-			DeviceDbTools.findDevicesByDate(find_mac,Number(option),'asc',function(err,devices){
+			DeviceDbTools.findDevicesByDate(mdate,find_mac,Number(option),'asc',function(err,devices){
 				if(err){
 					console.log('find name:'+find_mac);
 					req.flash('error', err);
 					return res.redirect('/find');
 				}
-				console.log("find all of mac "+find_mac+" : "+devices);
-				devices.forEach(function(device) {
+
+				/*devices.forEach(function(device) {
 					console.log('mac:'+device.macAddr + ', data :' +device.data);
 					count = count +1;
-				});
-				if (devices.length>0) {
-					console.log('Debug find get -> find '+devices.length+' records');
-					successMessae = '找到'+devices.length+'筆資料';
+				});*/
 
-				}else{
-					console.log('Debug find get -> can not find');
-					errorMessae = '無法找到資料';
-				}
+				console.log('Debug find get mac '+find_mac+'-> find '+devices.length+' records');
+				successMessae = '找到'+devices.length+'筆資料';
 
 				res.render('find', { title: '資料查詢',
 					units:req.session.units,
 					mac:find_mac,
 					option:option,
+					mdate:mdate,
 					devices: devices,
 					success: successMessae,
 					error: errorMessae
@@ -198,10 +198,13 @@ module.exports = function(app) {
   app.post('/find', function (req, res) {
 		var	post_mac = req.body.mac;
 		var option = req.body.time_option;
+		var mdate = req.body.datepicker1;
 		console.log('Debug find post -> option:'+option);
 		console.log('Debug find post -> find mac:'+post_mac);
+		console.log('Debug find post -> date:'+mdate);
 		req.flash('mac', post_mac);
 		req.flash('option', option);
+		req.flash('mdate', mdate);
 		return res.redirect('/find');
   	});
 
