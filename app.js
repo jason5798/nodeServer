@@ -1,4 +1,4 @@
-var express = require('express');
+﻿var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -13,6 +13,7 @@ var moment = require('moment');
 //require private module ------------------------------------------
 var UnitDbTools = require('./models/unitDbTools.js');
 var DeviceDbTools = require('./models/deviceDbTools.js');
+var UserDbTools = require('./models/userDbTools.js');
 var GIotClient =  require('./models/gIotClient.js');
 var tools =  require('./models/tools.js');
 var JsonFileTools =  require('./models/jsonFileTools.js');
@@ -71,6 +72,32 @@ GIotClient.on('connect', function()  {
 
 
 socket.on('connection',function(client){
+
+	//for register ----------------------------------------------------------------------------
+	/*client.on('reg_client',function(data){
+		console.log('Debug reg_client ------------------------------------------------------------start' );
+		console.log('Debug reg_client :' + data );
+	});
+
+	client.on('reg_client_check',function(data){
+		console.log('Debug reg_client_check ----------------------------------------------------start' );
+		console.log('Debug reg_client_check:'+data.account + ' , password:'+ data.password);
+
+		UserDbTools.findUserByName (data.account,function(err,user){
+			if(err){
+				console.log('Debug reg_client_check -> findUserByName :' + err);
+				return;
+			}
+			console.log('Debug reg_client_check -> find user :\n'+user);
+			if (user) {
+				client.emit('reg_client_db_result',{result:'fail'});
+
+			}else{
+				client.emit('reg_client_db_result',{result:'ok'});
+			}
+		});
+
+	});*/
 
 	//for index ----------------------------------------------------------------------------
 	client.on('index_client',function(data){

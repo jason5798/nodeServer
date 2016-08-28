@@ -3,6 +3,7 @@ var router = express.Router();
 var DeviceDbTools = require('../models/deviceDbTools.js');
 var UnitDbTools = require('../models/unitDbTools.js');
 var JsonFileTools =  require('../models/jsonFileTools.js');
+var UserDbTools =  require('../models/userDbTools.js');
 
 var settings = require('../settings');
 var moment = require('moment');
@@ -33,6 +34,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 		console.log( "successMessae:"+successMessae );
 		res.render('index', { title: '首頁',
 			units:req.session.units,
+			user:req.session.user,
 			success: successMessae,
 			error: errorMessae
 		});
@@ -41,7 +43,15 @@ function findUnitsAndShowList(req,res,isUpdate){
 
 module.exports = function(app) {
   app.get('/', function (req, res) {
-		findUnitsAndShowList(req,res,false);
+  		if(req.session.user){
+  			findUnitsAndShowList(req,res,false);
+  		}else{
+  			//req.flash('error','尚未登入')
+			//res.redirect('/login');
+			res.render('login', { title: '登入',
+			error: ''
+		});
+  		}
   });
 
   app.post('/', function (req, res) {
@@ -74,6 +84,138 @@ module.exports = function(app) {
 		}
 
 	});
+
+  app.get('/login', function (req, res) {
+	req.session.user = null;
+  	var name = req.flash('post_name').toString();
+	var successMessae,errorMessae;
+	console.log('Debug register get -> name:'+ name);
+	
+	if(name ==''){
+		errorMessae = '';
+		res.render('login', { title: '登入',
+			error: errorMessae
+		});
+	}else{
+		var password = req.flash('post_password').toString();
+		
+		console.log('Debug register get -> password:'+ password);
+		UserDbTools.findUserByName(name,function(err,user){
+			if(err){
+				errorMessae = err;
+				res.render('login', { title: '登入',
+					error: errorMessae
+				});
+			}
+			if(user == null ){
+				//login fail
+				errorMessae = '無此帳號';
+				res.render('login', { title: '登入',
+					error: errorMessae
+				});
+			}else{
+				//login success
+				if(password == user.password){
+					req.session.user = user;
+					return res.redirect('/');
+				}else{
+					//login fail
+					errorMessae = '密碼錯誤';
+					res.render('login', { title: '登入',
+						error: errorMessae
+					});
+				}
+			}
+		});
+	}
+  });
+
+  app.post('/login', function (req, res) {
+  	var post_name = req.body.account;
+  	var	post_password = req.body.password;
+  	console.log('Debug login post -> name:'+post_name);
+	console.log('Debug login post -> password:'+post_password);
+	req.flash('post_name', post_name);
+	req.flash('post_password', post_password);
+	return res.redirect('/login');
+  });
+
+
+  app.get('/register', function (req, res) {
+  	var name = req.flash('post_name').toString();
+	var password = req.flash('post_password').toString();
+	var successMessae,errorMessae;
+	var count = 0;
+	var level = 1;
+	console.log('Debug register get -> name:'+ name);
+	console.log('Debug register get -> password:'+ password);
+	if(name==''){
+		//Redirect from login
+		res.render('register', { title: '註冊',
+			error: errorMessae
+		});
+	}else{
+		//Register submit with post method
+		/*UserDbTools.removeAllUsers(function(err,result){
+			if(err){
+				console.log('removeAllUsers :'+err);
+			}
+			console.log('removeAllUsers : '+result);
+		});*/
+		UserDbTools.findUserByName(name,function(err,user){
+			if(err){
+				errorMessae = err;
+				res.render('register', { title: '註冊',
+					error: errorMessae
+				});
+			}
+			if(user != null ){
+				errorMessae = '已有相同帳號';
+				res.render('register', { title: '註冊',
+					error: errorMessae
+				});
+			}else{
+				//save database
+				if(name == 'admin'){
+					level = 0;
+				}
+				UserDbTools.saveUser(name,password,level,function(err,result){
+					if(err){
+						errorMessae = '新增帳戶失敗';
+						res.render('register', { title: '註冊',
+							error: errorMessae
+						});
+					}
+					UserDbTools.findUserByName(name,function(err,user){
+						if(user){
+							req.session.user = user;
+						}
+						return res.redirect('/');
+					});
+
+				});
+			}
+
+		});
+	}
+
+  });
+
+  app.post('/register', function (req, res) {
+		var post_name = req.body.register_account;
+
+		/*if(post_name == ""){//redirect from login
+			res.redirect('/register');
+		}else{*/
+			var successMessae,errorMessae;
+			var	post_password = req.body.register_password;
+			console.log('Debug register post -> post_name:'+post_name);
+			console.log('Debug register post -> post_password:'+post_password);
+			req.flash('post_name', post_name);
+			req.flash('post_password', post_password);
+			return res.redirect('/register');
+		//}
+  });
 
   app.get('/chart', function (req, res) {
 

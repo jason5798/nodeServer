@@ -30,9 +30,9 @@
                 <label>選擇時間</label>
                 <select id="time" name="time_option">
                     <option value="0">四小時</option>
-    　               <option value="1">一天</option>
-    　               <option value="2">一周</option>
-    　               <option value="3">一個月</option>
+    　		   		<option value="1">一天</option>
+    　		   		<option value="2">一周</option>
+    　		   		<option value="3">一個月</option>
                 </select>
             </div> <!-- form-group -->
         </div> <!-- col-md-3 -->
@@ -70,15 +70,15 @@
     </div> <!-- col -->
 </div> <!-- panel-body -->
 
-<script>
+<script class="code" type="text/javascript">
     var socket = io.connect();
     var myData;
     var plot1,plot2;
     var options1,options2,options3,options4;
 
     socket.on('connect',function(){
-        socket.emit('chart_client','hello,chart socket cient is ready');
-    });
+		socket.emit('chart_client','hello,chart socket cient is ready');
+	});
 
     var ajaxDataRenderer = function(url, plot, options) {
         var ret = null;
@@ -97,14 +97,14 @@
     };
 
     socket.on('chart_client_db_result',function(data){
-        //alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
+		//alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
         // The url for our json data
-        if(data == null){
-            $('#chartTmp').empty();
+		if(data == null){
+			$('#chartTmp').empty();
             $('#chartHum').empty();
-            alert('無法找到資料!');
-            return;
-        }
+			alert('無法找到資料!');
+			return;
+		}
         var jsonurl = "/data/tem1.json";
         var jsonurl2 = "/data/hum1.json";
         var xaxisJson = getXaxisJSON(data);//for xaxis
@@ -230,7 +230,7 @@
 
     function find(){
         //Get select element for mac , time
-        //alert($('#mac').val());
+		//alert($('#mac').val());
 
         var mac = $('[name=mac]').val();
         var option = $('[name=time_option]').val();

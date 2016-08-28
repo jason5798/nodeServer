@@ -1,0 +1,155 @@
+var UserModel = require('./user.js');
+var moment = require('moment');
+
+
+exports.saveUser = function (name,password,level,callback) {
+  console.log('---saveUser ---------------------------------------');
+  var authz = {
+    101 : false,//user setting
+    102 : false,//index
+    103 : false,//new message
+    104 : false,//show data with chart
+    105 : false,//show data in table
+    106 : false,//device setting
+  };
+
+  var time = {
+    date   : moment().format("YYYY-MM-DD HH:mm:ss"),
+    year   : moment().format("YYYY"),
+    month  : moment().format("YYYY-MM"),
+    day    : moment().format("YYYY-MM-DD"),
+    hour   : moment().format("YYYY-MM-DD HH"),
+    minute : moment().format("YYYY-MM HH:mm"),
+    cdate   : moment().format("YYYY-MM HH:mm")
+  };
+
+  console.log('Debug saveUser -> name :'+name);
+  var newUser = new UserModel({
+    name: name,
+    password: password,
+    level:level,//0:Hightest 1:normal
+    authz: authz,
+    update_at  : time,
+    created_at: new Date()
+  });
+  newUser.save(function(err){
+    if(err){
+      console.log('Debug : User save fail!/n'+err);
+      return callback(err);
+    }
+    console.log('Debug : User save success!');
+      return callback(err,'success');
+  });
+};
+
+/*
+*Update name,password,authz
+*/
+exports.updateUser = function (name,password,level,autthz,calllback) {
+  console.log('---updateUser ---------------------------------------');
+  console.log('Debug : updateUser name='+name+" , password ="+password);
+  console.log('Debug : updateUser leve='+leve+" , autthz ="+autthz);
+  var time = {
+    date   : moment().format("YYYY-MM-DD HH:mm:ss"),
+    year   : moment().format("YYYY"),
+    month  : moment().format("YYYY-MM"),
+    day    : moment().format("YYYY-MM-DD"),
+    hour   : moment().format("YYYY-MM-DD HH"),
+    minute : moment().format("YYYY-MM HH:mm"),
+    cdate   : moment().format("YYYY-MM HH:mm")
+  };
+
+  if(password && name){
+    UserModel.find({ name: name },function(err,users){
+      if(err){
+        console.log('Debug : updateUser find user by name =>'+err);
+        return calllback(err);
+      }
+      if(users.length>0){
+        var userId = users[0]._id;
+        console.log('Debug : getUserId device ' + users);
+        console.log('Debug : getUserId : ' +userId);
+        UserModel.update({_id : userId},
+          {password : password, level : level ,autthz:authz ,update_at:time},
+          {safe : true, upsert : true},
+          (err, rawResponse)=>{
+            if (err) {
+                      console.log('Debug : updateUser : '+ err);
+                      return calllback(err);
+            } else {
+                      console.log('Debug : updateUser : success');
+                return calllback(err,'success');
+              }
+            }
+          );
+      }else{
+        console.log('Debug : updateUser can not find user!');
+        return calllback('Can not find user!');
+      }
+    });
+  }else{
+    console.log('Debug : updateUser no referance');
+        return calllback('Referance nul!');
+  }
+};
+
+/*
+*Remove all of users
+*Return -1:資料存取錯誤 0:刪除完成 1:刪除失敗
+*/
+exports.removeAllUsers = function (calllback) {
+    UserModel.remove({}, (err)=>{
+      console.log('---removeAllUsers ---------------------------------------');
+      if (err) {
+        console.log('Debug : User remove all occur a error:', err);
+            return calllback(err);
+      } else {
+        console.log('Debug : User remove all success.');
+            return calllback(err,'success');
+      }
+    });
+};
+
+exports.removeUserByName = function (name,calllback) {
+    UserModel.remove({namee:name}, (err)=>{
+      console.log('---removeUserByName ---------------------------------------');
+      if (err) {
+        console.log('Debug : User remove name :'+name+' occur a error:', err);
+            return calllback(err);
+      } else {
+        console.log('Debug : User remove name :'+name+' success.');
+            return calllback(err,'success');
+      }
+    });
+};
+
+/*Find all of users
+*/
+exports.findAllUsers = function (calllback) {
+    console.log('---findAllUsers---------------------------------------');
+    UserModel.find((err, users) => {
+      if (err) {
+        console.log('Debug : findAllUsers err:', err);
+            return calllback(err);
+      } else {
+            console.log('Debug : findAllUsers success\n:',users.length);
+        return calllback(err,users);
+      }
+    });
+};
+
+exports.findUserByName = function (name,calllback) {
+    console.log('---findUserByName---------------------------------------');
+    UserModel.find({ name: name }, function(err,users){
+      if(err){
+        return callback(err);
+      }
+      if (users.length>0) {
+        console.log('find '+users);
+        return calllback(err,users[0]);
+      }else{
+        console.log('找不到資料!');
+        return calllback(err,null);
+      }
+    });
+};

@@ -1,12 +1,13 @@
-// grab the things we need
-var mongoose = require('mongoose');
+var mongoose = require('./mongoose.js');
 var Schema = mongoose.Schema;
-mongoose.connect('mongodb://localhost/demo');
 
 // create a schema
 var userSchema = new Schema({
   name: { type: String},
-  age: { type: String},
+  password: { type: String},
+  level:{type: Number},//0:Hightest 1:normal
+  authz: { type: Schema.Types.Mixed},
+  update_at: { type: Schema.Types.Mixed},
   created_at: { type: Date}
 });
 
