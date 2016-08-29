@@ -230,6 +230,7 @@ module.exports = function(app) {
 		//if(find_mac == ""){
 			res.render('chart', { title: '圖表分析',
 				units:req.session.units,
+				user:req.session.user,
 				mac:find_mac,
 				option:option,
 				mdate:moment().format('YYYY-MM-DD'),
@@ -284,6 +285,7 @@ module.exports = function(app) {
   app.get('/socket', function (req, res) {
 		res.render('socket', { title: '最新訊息',
 			units  : req.session.units,
+			user:req.session.user,
 			success: req.flash('success').toString(),
 			error  : req.flash('error').toString()
 		});
@@ -302,6 +304,7 @@ module.exports = function(app) {
 		if(find_mac == ""){
 			res.render('find', { title: '資料查詢',
 				units:req.session.units,
+				user:req.session.user,
 				mac:find_mac,
 				option:option,
 				mdate:moment().format('YYYY-MM-DD'),
@@ -327,6 +330,7 @@ module.exports = function(app) {
 
 				res.render('find', { title: '資料查詢',
 					units:req.session.units,
+					user:req.session.user,
 					mac:find_mac,
 					option:option,
 					mdate:mdate,
@@ -369,6 +373,7 @@ module.exports = function(app) {
 
 		}else{
 			res.render('setting', { title: '裝置設定',
+				user:req.session.user,
 				success: req.flash('success').toString(),
 				error: req.flash('error').toString()
 			});
