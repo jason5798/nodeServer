@@ -48,7 +48,7 @@ module.exports = function(app) {
   		}else{
   			//req.flash('error','尚未登入')
 			//res.redirect('/login');
-			res.render('login', { title: '登入',
+			res.render('user/login', { title: '登入',
 			error: ''
 		});
   		}
@@ -90,27 +90,27 @@ module.exports = function(app) {
   	var name = req.flash('post_name').toString();
 	var successMessae,errorMessae;
 	console.log('Debug register get -> name:'+ name);
-	
+
 	if(name ==''){
 		errorMessae = '';
-		res.render('login', { title: '登入',
+		res.render('user/login', { title: '登入',
 			error: errorMessae
 		});
 	}else{
 		var password = req.flash('post_password').toString();
-		
+
 		console.log('Debug register get -> password:'+ password);
 		UserDbTools.findUserByName(name,function(err,user){
 			if(err){
 				errorMessae = err;
-				res.render('login', { title: '登入',
+				res.render('user/login', { title: '登入',
 					error: errorMessae
 				});
 			}
 			if(user == null ){
 				//login fail
 				errorMessae = '無此帳號';
-				res.render('login', { title: '登入',
+				res.render('user/login', { title: '登入',
 					error: errorMessae
 				});
 			}else{
@@ -121,7 +121,7 @@ module.exports = function(app) {
 				}else{
 					//login fail
 					errorMessae = '密碼錯誤';
-					res.render('login', { title: '登入',
+					res.render('user/login', { title: '登入',
 						error: errorMessae
 					});
 				}
@@ -151,7 +151,7 @@ module.exports = function(app) {
 	console.log('Debug register get -> password:'+ password);
 	if(name==''){
 		//Redirect from login
-		res.render('register', { title: '註冊',
+		res.render('user/register', { title: '註冊',
 			error: errorMessae
 		});
 	}else{
@@ -165,13 +165,13 @@ module.exports = function(app) {
 		UserDbTools.findUserByName(name,function(err,user){
 			if(err){
 				errorMessae = err;
-				res.render('register', { title: '註冊',
+				res.render('user/register', { title: '註冊',
 					error: errorMessae
 				});
 			}
 			if(user != null ){
 				errorMessae = '已有相同帳號';
-				res.render('register', { title: '註冊',
+				res.render('user/register', { title: '註冊',
 					error: errorMessae
 				});
 			}else{
@@ -182,7 +182,7 @@ module.exports = function(app) {
 				UserDbTools.saveUser(name,password,level,function(err,result){
 					if(err){
 						errorMessae = '新增帳戶失敗';
-						res.render('register', { title: '註冊',
+						res.render('user/register', { title: '註冊',
 							error: errorMessae
 						});
 					}
