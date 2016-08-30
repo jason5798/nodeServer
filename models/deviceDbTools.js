@@ -10,14 +10,14 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
     var mHum2 = arrData[3];
     var mV = arrData[4];
     var mRecv =new Date(recv);
-    /*console.log('macAddress:'+macAddress);
+    console.log('macAddress:'+macAddress);
     console.log('data:'+data);
     console.log('mTmp1:'+mTmp1);
     console.log('mHum1:'+mHum1);
     console.log('mTmp2'+mTmp2);
     console.log('mHum2:'+mHum2);
     console.log('mV:'+mV);
-    console.log('mRecv:'+mRecv);*/
+    console.log('mRecv:'+mRecv);
     var time = {
         date   : moment().format("YYYY-MM-DD HH:mm:ss"),
         year   : moment().format("YYYY"),

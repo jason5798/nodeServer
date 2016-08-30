@@ -2,7 +2,6 @@
 var UnitModel = require('./unit.js');
 var moment = require('moment');
 
-
 exports.saveUnit = function (macAddress,name,callback) {
     console.log('---saveUnit ---------------------------------------');
 	var time = {
@@ -127,9 +126,9 @@ exports.findAllUnits = function (calllback) {
     });
 };
 
-exports.findUnitBymac = function (mac,calllback) {
-    console.log('---findUnitBymac---------------------------------------');
-    UnitModel.find({ macAddr: find_mac }, function(err,units){
+exports.findByMac = function (mac,calllback) {
+    console.log('---findByMac---------------------------------------');
+    UnitModel.find({ macAddr: mac }, function(err,units){
 		if(err){
 			return callback(err);
 		}
@@ -142,3 +141,4 @@ exports.findUnitBymac = function (mac,calllback) {
 		}
     });
 };
+
