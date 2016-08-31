@@ -30,7 +30,7 @@ GIotClient.on('connect', function()  {
 GIotClient.on('message', function(topic, message) {
 		//var message = '{"id":"2512c9fd-5719-4271-8991-6bb9e019d955","macAddr":"04000496","data":"00fc03a900fb01d701e7","buff":"2016-08-30T01:07:18.852Z","recv":"2016-08-30T01:07:17.000Z","extra":{"gwip":"134.208.228.32","gwid":"00001c497b431fa9","repeater":"00000000ffffffff","systype":4,"rssi":-119,"snr":-120}}';
 		console.log('Debug mqtt data ------------------------------------------------------------start' );
-		//console.log('topic:'+topic.toString());
+		console.log('topic:'+topic.toString());
 		console.log('message:'+message.toString());
 		console.log('message type :'+getType(message));
 		try {
@@ -43,18 +43,14 @@ GIotClient.on('message', function(topic, message) {
 		}
 		console.log('message type:'+getType(message));
 
-		if(getType(message) != 'string'){
-			console.log('message is not string');
-			return;
-		}
-		var obj;
-		try {
+		var obj=message;
+		/*try {
 			obj = JSON.parse(message);
 		}
 		catch (e) {
 			console.log('parse json error message :'+e.toString());
 			return;
-		}
+		}*/
 		console.log('mac:'+obj.macAddr +', data:'+obj.data+', recv:'+obj.recv);
 		if(macList){
 			console.log('**** :got macist');

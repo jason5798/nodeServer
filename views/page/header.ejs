@@ -41,9 +41,11 @@
 								<% } %>
 							<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-								<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+								<li><a href="/info"><span class="glyphicon glyphicon-user"></span> 帳號資訊</a></li>
+								<% if(user.level == 0){ %>
+									<li><a href="#"><span class="glyphicon glyphicon-cog"></span> 帳戶管理</a></li>
+								<% } %>
+								<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> 登出</a></li>
 							</ul>
 						</li>
 				</ul>

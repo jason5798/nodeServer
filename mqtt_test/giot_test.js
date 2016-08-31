@@ -5,7 +5,7 @@ var portNumber = 80;
 var client_Id = '200000166-generic-service';
 var name = '200000166';
 var pw = '80698426';
-var mytopic = 'client/200000166/20000066-GIOT-MAKER';
+var mytopic = 'client/200000166/200000166-GIOT-MAKER';
 
 var options = {
 	port:portNumber,
@@ -13,8 +13,8 @@ var options = {
     clientId:client_Id,
     username:name,
     password:pw,
-    keepalive: 60,
-	reconnectPeriod: 1000,
+    //keepalive: 60,
+	//reconnectPeriod: 1000,
 	protocolId: 'MQIsdp',
 	protocolVersion: 3,
 	//clean: true,

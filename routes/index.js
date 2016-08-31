@@ -31,7 +31,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 			}
 		}
 		req.session.units = units;
-		
+
 		console.log( "successMessae:"+successMessae );
 		res.render('index', { title: '首頁',
 			units:req.session.units,
@@ -408,11 +408,61 @@ module.exports = function(app){
 			req.flash('mac', post_mac);
 			req.flash('name', post_name);
 			return res.redirect('/setting');
-		}else{
-			req.flash('error', '輸入資料不正確,請重新輸入!');
+		}/*else{
+	　   	req.flash('error', '輸入資料不正確,請重新輸入!');
 			return res.redirect('/setting');
-		}
+		}*/
+  	});
 
+   app.get('/info', checkLogin);
+   app.get('/info', function (req, res) {
+		console.log('render to info.ejs');
+		var save_password = req.flash('password').toString();
+		var save_name = req.flash('name').toString();
+		var save_email = req.flash('email').toString();
+		var user = req.session.user;
+		var successMessae,errorMessae;
+		console.log('save_password:'+save_password);
+		console.log('save_name:'+save_name);
+		console.log('save_email:'+save_email);
+		var json = {password:save_password};
+		if(save_password==''){
+			res.render('user/info', { title: '帳號資訊',
+					user:req.session.user,
+					error: errorMessae,
+					success: null
+				});
+		}else{
+			if(save_password == user.password){
+				return res.redirect('/');
+			}
+			UserDbTools.updateUser(user.name,json,function(err,result){
+				if(err){
+					req.flash('error', err);
+					req.flash('success', null);
+					return res.redirect('/info');
+				}
+				req.session.user = null;
+				errorMessae = '密碼已更換,請重新登入!';
+				res.render('user/login', { title: '登入',
+					error: errorMessae
+				});
+			});
+		}
+    });
+
+  	app.post('/info', checkLogin);
+  	app.post('/info', function (req, res) {
+		var	post_password = req.body.password;
+		var	post_name = req.body.name;
+		var	post_email = req.body.email;
+		console.log('post_password:'+post_password);
+		console.log('post_name:'+post_name);
+		console.log('post_email:'+post_email);
+		req.flash('password',post_password);
+		req.flash('name', post_name);
+		req.flash('email', post_email);
+		return res.redirect('/info');
   	});
 };
 
