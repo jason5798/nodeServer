@@ -55,7 +55,7 @@ var myUnits;
 GIotClient.on('connect', function()  {
 	if(isMqttConnection == false){
 		console.log('Debug appjs -> Connect to mqtt topic:'+settings.gIoTopic);
-  		GIotClient.subscribe(settings.gIoTopic,{qos:0});
+  		GIotClient.subscribe(settings.gIoTopic,{qos:2});
 		isMqttConnection = true;
 		date = date.add(1,'minutes');
 

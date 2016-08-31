@@ -66,9 +66,13 @@
 
 				<div class="col-md-3">
 					<div class="form-group">
-						<button type="submit" name="edit" class="btn btn-primary btn-sm">
-							<span class="glyphicon glyphicon-list-alt"></span> 查詢
-						</button>
+						<% if (user.authz.a05==false) { %>
+							<button type="submit" name="edit" class="btn btn-primary btn-sm">
+						<% }else{ %>
+							<button type="submit" name="edit" class="btn btn-defaut btn-sm" disabled>
+						<% } %>
+								<span class="glyphicon glyphicon-list-alt"></span> 查詢
+							</button>
 					</div>
 				</div> <!-- col-md-3 -->
 
@@ -118,6 +122,14 @@
 					</table>
 				<% } %>
 			</div> <!-- col -->
+			<div class="col-md-12 column">
+				<label id="error_message" class="checkbox">
+		            <font color="red"><b></b>
+		            <% if (user.authz.a05==false) { %>
+		                你沒有查詢權限,請通知管理員變更權限!
+		            <% } %>
+		        </label>
+			</div> <!-- column-->
 		</div> <!-- panel-body -->
 
 
@@ -125,6 +137,13 @@
 
 	 $('#datepicker1').datepicker({dateFormat: 'yy-mm-dd', showOn: 'both',
     buttonImageOnly: true, buttonImage: 'images/calendar.png'});
+
+	 $(document).ready(function () {
+		setTimeout(function(){
+		    //do what you need here
+		    document.getElementById('error_message').innerText = '';
+		}, 3000);
+	});
 </script>
 
 

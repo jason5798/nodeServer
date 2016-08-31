@@ -26,7 +26,14 @@
 								<div class="form-group">
 									<div class="col-md-12 widget-right">
 										<!--<button type="button" onClick = "check()"class="btn btn-primary btn-md pull-right">新增裝置</button>-->
-										<input class="btn btn-primary btn-md pull-right" type = "button" onClick="check()" value = "新增裝置" >
+										<% if (user.authz.a02==true) { %>
+											<input class="btn btn-primary btn-md pull-right" type = "button" onClick="check()" value = "新增裝置" >
+										<% }else{ %>
+
+									    	<button type="button" name="edit" class="btn btn-default btn-md pull-right" disabled>
+									    	 新增裝置
+											</button>
+										<% } %>
 									</div>
 								</div>
 							</fieldset>
@@ -36,9 +43,27 @@
 
 			</div><!--/.col-->
 
-
 		</div><!--/.row-->
+		<div class="row">
+		<div class="col-md-12 column">
+			<label id="error_message" class="checkbox">
+	            <font color="red"><b></b>
+	            <% if (user.authz.a06==false) { %>
+	                你沒有權限,請通知管理員變更權限!
+	            <% } %>
+	        </label>
+		</div> <!-- column-->
+	</div>	<!--row-->
+
+
 <script class="code" type="text/javascript">
+	$(document).ready(function () {
+		setTimeout(function(){
+		    //do what you need here
+		    document.getElementById('error_message').innerText = '';
+		}, 3000);
+	});
+
 	function check(){
 		if(document.getElementById("name").value == ""){
 			alert("未輸入裝置名稱");

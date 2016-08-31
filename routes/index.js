@@ -31,6 +31,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 			}
 		}
 		req.session.units = units;
+		
 		console.log( "successMessae:"+successMessae );
 		res.render('index', { title: '首頁',
 			units:req.session.units,
@@ -41,7 +42,8 @@ function findUnitsAndShowList(req,res,isUpdate){
 	});
 }
 
-module.exports = function(app) {
+module.exports = function(app){
+  app.get('/', checkLogin);
   app.get('/', function (req, res) {
   		if(req.session.user){
   			findUnitsAndShowList(req,res,false);
@@ -49,11 +51,12 @@ module.exports = function(app) {
   			//req.flash('error','尚未登入')
 			//res.redirect('/login');
 			res.render('user/login', { title: '登入',
-			error: ''
-		});
+				error: ''
+			});
   		}
   });
 
+  app.post('/', checkLogin);
   app.post('/', function (req, res) {
 		var	post_mac = req.body.postMac;
 		var post_name = req.body.postName;
@@ -85,6 +88,13 @@ module.exports = function(app) {
 
 	});
 
+  app.get('/logout', function (req, res) {
+    req.session.user = null;
+    req.flash('success', '');
+    res.redirect('/login');
+  });
+
+  app.get('/login', checkNotLogin);
   app.get('/login', function (req, res) {
 	req.session.user = null;
   	var name = req.flash('post_name').toString();
@@ -130,6 +140,7 @@ module.exports = function(app) {
 	}
   });
 
+  app.post('/login', checkNotLogin);
   app.post('/login', function (req, res) {
   	var post_name = req.body.account;
   	var	post_password = req.body.password;
@@ -140,15 +151,17 @@ module.exports = function(app) {
 	return res.redirect('/login');
   });
 
-
+  app.get('/register', checkNotLogin);
   app.get('/register', function (req, res) {
   	var name = req.flash('post_name').toString();
 	var password = req.flash('post_password').toString();
+	var email = req.flash('post_email').toString();
 	var successMessae,errorMessae;
 	var count = 0;
 	var level = 1;
 	console.log('Debug register get -> name:'+ name);
 	console.log('Debug register get -> password:'+ password);
+	console.log('Debug register get -> email:'+ email);
 	if(name==''){
 		//Redirect from login
 		res.render('user/register', { title: '註冊',
@@ -169,6 +182,7 @@ module.exports = function(app) {
 					error: errorMessae
 				});
 			}
+			console.log('Debug register user -> name: '+user);
 			if(user != null ){
 				errorMessae = '已有相同帳號';
 				res.render('user/register', { title: '註冊',
@@ -179,7 +193,7 @@ module.exports = function(app) {
 				if(name == 'admin'){
 					level = 0;
 				}
-				UserDbTools.saveUser(name,password,level,function(err,result){
+				UserDbTools.saveUser(name,password,email,level,function(err,result){
 					if(err){
 						errorMessae = '新增帳戶失敗';
 						res.render('user/register', { title: '註冊',
@@ -192,31 +206,29 @@ module.exports = function(app) {
 						}
 						return res.redirect('/');
 					});
-
 				});
 			}
-
 		});
 	}
-
   });
 
+  app.post('/register', checkNotLogin);
   app.post('/register', function (req, res) {
 		var post_name = req.body.register_account;
 
-		/*if(post_name == ""){//redirect from login
-			res.redirect('/register');
-		}else{*/
-			var successMessae,errorMessae;
-			var	post_password = req.body.register_password;
-			console.log('Debug register post -> post_name:'+post_name);
-			console.log('Debug register post -> post_password:'+post_password);
-			req.flash('post_name', post_name);
-			req.flash('post_password', post_password);
-			return res.redirect('/register');
-		//}
+		var successMessae,errorMessae;
+		var	post_password = req.body.register_password;
+		var	post_email = req.body.register_email;
+		console.log('Debug register post -> post_name:'+post_name);
+		console.log('Debug register post -> post_password:'+post_password);
+		console.log('Debug register post -> post_emai:'+post_email);
+		req.flash('post_name', post_name);
+		req.flash('post_password', post_password);
+		req.flash('post_email', post_email);
+		return res.redirect('/register');
   });
 
+  app.get('/chart', checkLogin);
   app.get('/chart', function (req, res) {
 
 		console.log('Debug chart get -> render to find.ejs');
@@ -282,15 +294,17 @@ module.exports = function(app) {
 		return res.redirect('/chart');
   });*/
 
-  app.get('/socket', function (req, res) {
-		res.render('socket', { title: '最新訊息',
+  app.get('/update', checkLogin);
+  app.get('/update', function (req, res) {
+		res.render('update', { title: '最新訊息',
 			units  : req.session.units,
 			user:req.session.user,
-			success: req.flash('success').toString(),
-			error  : req.flash('error').toString()
+			success: null,
+			error  : null
 		});
   });
 
+  app.get('/find', checkLogin);
   app.get('/find', function (req, res) {
 		console.log('render to find.ejs');
 		var find_mac = req.flash('mac').toString();
@@ -341,6 +355,8 @@ module.exports = function(app) {
 			});
 		}
   });
+
+  app.post('/find', checkLogin);
   app.post('/find', function (req, res) {
 		var	post_mac = req.body.mac;
 		var option = req.body.time_option;
@@ -354,6 +370,7 @@ module.exports = function(app) {
 		return res.redirect('/find');
   	});
 
+  	app.get('/setting', checkLogin);
 	app.get('/setting', function (req, res) {
 		console.log('render to find.ejs');
 		var save_mac = req.flash('mac').toString();
@@ -380,6 +397,7 @@ module.exports = function(app) {
 		}
   });
 
+  app.post('/setting', checkLogin);
   app.post('/setting', function (req, res) {
 		var	post_mac = req.body.mac;
 		var post_name = req.body.name;
@@ -397,3 +415,19 @@ module.exports = function(app) {
 
   	});
 };
+
+function checkLogin(req, res, next) {
+  if (!req.session.user) {
+    req.flash('error', '');
+    res.redirect('/login');
+  }
+  next();
+}
+
+function checkNotLogin(req, res, next) {
+  if (req.session.user) {
+    req.flash('error', '');
+    res.redirect('back');//返回之前的頁面
+  }
+  next();
+}

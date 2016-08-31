@@ -2,16 +2,30 @@ var UserModel = require('./user.js');
 var moment = require('moment');
 
 
-exports.saveUser = function (name,password,level,callback) {
+exports.saveUser = function (name,password,email,level,callback) {
   console.log('---saveUser ---------------------------------------');
+  var isEnable = false;
   var authz = {
-    101 : false,//user setting
-    102 : false,//index
-    103 : false,//new message
-    104 : false,//show data with chart
-    105 : false,//show data in table
-    106 : false,//device setting
+    a01 : false,//user setting
+    a02 : false,//index
+    a03 : true,//new message
+    a04 : true,//show data with chart
+    a05 : true,//show data in table
+    a06 : false,//device setting
   };
+
+  if(name == 'admin'){
+    isEnable = true;
+    level = 0;
+    authz = {
+      a01 : true,//user setting
+      a02 : true,//index
+      a03 : true,//new message
+      a04 : true,//show data with chart
+      a05 : true,//show data in table
+      a06 : true,//device setting
+    };
+  }
 
   var time = {
     date   : moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -27,6 +41,8 @@ exports.saveUser = function (name,password,level,callback) {
   var newUser = new UserModel({
     name: name,
     password: password,
+    email: email,
+    enable: isEnable,
     level:level,//0:Hightest 1:normal
     authz: authz,
     update_at  : time,
@@ -40,6 +56,7 @@ exports.saveUser = function (name,password,level,callback) {
     console.log('Debug : User save success!');
       return callback(err,'success');
   });
+
 };
 
 /*

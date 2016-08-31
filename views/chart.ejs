@@ -39,11 +39,24 @@
 
         <div class="col-md-3">
             <div class="form-group">
-                <button name="find" onClick="find()" class="btn btn-primary btn-sm">
+                <% if (user.authz.a04==true) { %>
+                    <button name="find" onClick="find()" class="btn btn-primary btn-sm">
+                <% }else{ %>
+                    <button name="find" class="btn btn-deault btn-sm" disabled>
+                <% } %>
                     <span class="glyphicon glyphicon-list-alt"></span> 查詢
                 </button>
             </div>
         </div> <!-- col-md-3 -->
+
+        <div class="col-md-12 column">
+            <label id="error_message" class="checkbox">
+                <font color="red"><b></b>
+                <% if (user.authz.a04==false) { %>
+                    你沒有查詢權限,請通知管理員變更權限!
+                <% } %>
+            </label>
+        </div> <!-- column-->
 
     <!--</form>-->
 
@@ -273,6 +286,11 @@
     $(document).ready(function () {
         $('#datepicker1').datepicker({dateFormat: 'yy-mm-dd', showOn: 'both',
     buttonImageOnly: true, buttonImage: 'images/calendar.png'});
+
+        setTimeout(function(){
+            //do what you need here
+            document.getElementById('error_message').innerText = '';
+        }, 3000);
         /*plot1 = $.jqplot('chartTmp',  [s2,s1], {
             // Turns on animatino for all series in this plot.
             animate: true,
