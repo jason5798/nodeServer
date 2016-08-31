@@ -61,11 +61,11 @@ exports.saveUser = function (name,password,email,level,callback) {
 
 /*
 *Update name,password,authz
+*json:{password : password, level : level ,autthz:authz }
 */
-exports.updateUser = function (name,password,level,autthz,calllback) {
+exports.updateUser = function (name,json,calllback) {
   console.log('---updateUser ---------------------------------------');
-  console.log('Debug : updateUser name='+name+" , password ="+password);
-  console.log('Debug : updateUser leve='+leve+" , autthz ="+autthz);
+  console.log('Debug : updateUser name='+name);
   var time = {
     date   : moment().format("YYYY-MM-DD HH:mm:ss"),
     year   : moment().format("YYYY"),
@@ -75,8 +75,9 @@ exports.updateUser = function (name,password,level,autthz,calllback) {
     minute : moment().format("YYYY-MM HH:mm"),
     cdate   : moment().format("YYYY-MM HH:mm")
   };
+  json.update_at=time;
 
-  if(password && name){
+  if(name){
     UserModel.find({ name: name },function(err,users){
       if(err){
         console.log('Debug : updateUser find user by name =>'+err);
