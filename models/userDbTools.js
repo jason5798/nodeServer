@@ -88,7 +88,7 @@ exports.updateUser = function (name,json,calllback) {
         console.log('Debug : getUserId device ' + users);
         console.log('Debug : getUserId : ' +userId);
         UserModel.update({_id : userId},
-          {password : password, level : level ,autthz:authz ,update_at:time},
+          json,
           {safe : true, upsert : true},
           (err, rawResponse)=>{
             if (err) {
