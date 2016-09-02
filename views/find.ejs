@@ -66,7 +66,7 @@
 
 				<div class="col-md-3">
 					<div class="form-group">
-						<% if (user.authz.a05==false) { %>
+						<% if (user.authz.a05==true) { %>
 							<button type="submit" name="edit" class="btn btn-primary btn-sm">
 						<% }else{ %>
 							<button type="submit" name="edit" class="btn btn-defaut btn-sm" disabled>
@@ -138,12 +138,7 @@
 	 $('#datepicker1').datepicker({dateFormat: 'yy-mm-dd', showOn: 'both',
     buttonImageOnly: true, buttonImage: 'images/calendar.png'});
 
-	 $(document).ready(function () {
-		setTimeout(function(){
-		    //do what you need here
-		    document.getElementById('error_message').innerText = '';
-		}, 3000);
-	});
+
 </script>
 
 

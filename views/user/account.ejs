@@ -35,68 +35,68 @@
 					</thead>
 					<tbody>
 					<% if (users) { %>
-						<% for(var i = 0;users.length;i++) { %>
+						<% for(var i = 0;i<users.length;i++) { %>
 							<tr>
 								<td>
 									<%= users[i].name %>
 								</td>
 								<td>
-								    <% if(user[i].enable) { %>
-										<input type="checkbox" name="data[]" value="enable" checked>
+								    <% if(users[i].enable) { %>
+										<input type="checkbox" name="enable" value="enable" checked onchange="enableCheck(<%= i%>,this)">
 									<% }else { %>
-										<input type="checkbox" name="data[]" value="enable">
+										<input type="checkbox" name="enable" value="enable" onchange="enableCheck(<%= i%>,this)">
 									<% } %>
 								</td>
 								<td>
-									<% if(user[i].authz.a01) { %>
-										<input type="checkbox" name="data[]" value="a01" checked>
+									<% if(users[i].authz.a01) { %>
+										<input type="checkbox" name="data" value="a01" checked>
 									<% }else { %>
-										<input type="checkbox" name="data[]" value="a01">
+										<input type="checkbox" name="data" value="a01">
 									<% } %>
 								</td>
 								<td>
-									<% if(user[i].authz.a02) { %>
-										<input type="checkbox" name="data[]" value="a01" checked>
+									<% if(users[i].authz.a02) { %>
+										<input type="checkbox" name="data" value="a02" checked>
 									<% }else { %>
-										<input type="checkbox" name="data[]" value="a01">
+										<input type="checkbox" name="data" value="a02">
 									<% } %>
 								</td>
 								<td>
-									<% if(user[i].authz.a03) { %>
-										<input type="checkbox" name="data[]" value="a01" checked>
+									<% if(users[i].authz.a03) { %>
+										<input type="checkbox" name="data" value="a03" checked>
 									<% }else { %>
-										<input type="checkbox" name="data[]" value="a01">
+										<input type="checkbox" name="data" value="a03">
 									<% } %>
 								</td>
 								<td>
-									<% if(user[i].authz.a04) { %>
-										<input type="checkbox" name="data[]" value="a01" checked>
+									<% if(users[i].authz.a04) { %>
+										<input type="checkbox" name="data" value="a04" checked>
 									<% }else { %>
-										<input type="checkbox" name="data[]" value="a01">
+										<input type="checkbox" name="data" value="a04">
 									<% } %>
 								</td>
 								<td>
-									<% if(user[i].authz.a05) { %>
-										<input type="checkbox" name="data[]" value="a01" checked>
+									<% if(users[i].authz.a05) { %>
+										<input type="checkbox" name="data" value="a05" checked>
 									<% }else { %>
-										<input type="checkbox" name="data[]" value="a01">
+										<input type="checkbox" name="data" value="a05">
 									<% } %>
 								</td>
 								<td>
-									<% if(user[i].authz.a06) { %>
-										<input type="checkbox" name="data[]" value="a01" checked>
+									<% if(users[i].authz.a06) { %>
+										<input type="checkbox" name="data" value="a06" checked>
 									<% }else { %>
-										<input type="checkbox" name="data[]" value="a01">
+										<input type="checkbox" name="data" value="a06">
 									<% } %>
 								</td>
 								<td>
-									<button type="button" name="edit" class="btn btn-primary btn-sm" onClick="editCheck(this)">
+									<button type="button" name="edit" class="btn btn-primary btn-sm" onClick="editCheck(<%= i %>,'<%= users[i].name %>')">
 										<span class="glyphicon glyphicon-edit"></span> 編輯
 									</button>
-									<button type="button" name="del" class="btn btn-danger btn-sm" onClick="refresh(user[i])">
+									<button type="button" name="cancel" class="btn btn-danger btn-sm" onClick="refresh(<%= i %>,<%= JSON.stringify(users[i].enable) %>,<%= JSON.stringify(users[i].authz) %>)">
 										<span class="glyphicon glyphicon-refresh"></span> 取消
 									</button>
-									<button type="button" name="del" class="btn btn-danger btn-sm" onClick="delCheck(this)">
+									<button type="button" name="del" class="btn btn-danger btn-sm" onClick="delCheck(<%= i %>,'<%= users[i].name %>')">
 										<span class="glyphicon glyphicon-trash"></span> 刪除
 									</button>
 								</td>
@@ -105,7 +105,7 @@
 					<% } %>
 					</tbody>
 				</table>
-				<input id="postMac" name="postMac" type="hidden"">
+				<input id="postSelect" name="postSelect" type="hidden"">
 				<input id="postName" name="postName" type="hidden"">
 			</form>
 
@@ -126,7 +126,7 @@
                刪除帳戶警告
             </h4>
          </div>
-         <div class="modal-body">
+         <div id="account" class="modal-body">
             確定刪除帳戶嗎?
          </div>
          <div class="modal-footer">
@@ -143,79 +143,130 @@
 	<script src="js/bootstrap-table.js"></script>
 
 <script class="code" type="text/javascript">
-	var socket = io.connect();
-	socket.on('connect',function(){
-        socket.emit('index_client','hello,index_client socket cient is ready');
-    });
 
-    socket.on('index_client_timeout',function(data){
-
-		//alert('index :'+data.index);
-		//alert('status :'+data.status);
-		if( data.status == 0 ){
-			$('[name=status]').eq(data.index).attr("src","/images/btn_normal.png");
-		}else if( data.status == 1 ){
-			$('[name=status]').eq(data.index).attr("src","/images/btn_alarm.png");
-		}else{
-			$('[name=status]').eq(data.index).attr("src","/images/btn_loss.png");
+	$(document).ready(function () {
+		var enable = $('[name=enable]');
+		//alert(enable.length);
+		for(var i=0;i<enable.length;i++){
+			if(!enable[i].checked){
+				toDisableCheckBox(i,true);
+			}
 		}
-
-
+		setTimeout(function(){
+		    //do what you need here
+		    document.getElementById('result').innerText = '';
+		}, 3000);
 	});
 
-	function editCheck(button){
 
-		var index = -1;
-		var postMac = document.getElementById("postMac");
+	function editCheck(index,name){
+		//alert(index+" : "+name);
+		var postSelect = document.getElementById("postSelect");
 		var postName = document.getElementById("postName");
+		postName.value = name;
 
-		if(unitList.del.length>0){
-			for(var i=0;i<unitList.edit.length;i++){
-				if(unitList.edit[i] == button){
-					index = i;
-					alert(i);
-					break;
-				}
+		var enable = $('[name=enable]');
+		var arrSelect = [];
+		arrSelect.push(enable[index].checked);
+		//alert('arrSelect :'+ arrSelect);
+		var data = $('[name=data]');
+
+		for(var i=0;i<data.length;i++){
+
+			if(i==0+(6*index)){
+				//alert(i+ ') checked :'+ data[i].checked);
+				arrSelect.push(data[i].checked);
+			}else if(i==1+(6*index)){
+				//alert(i+ ') checked :'+ data[i].checked);
+				arrSelect.push(data[i].checked);
+			}else if(i==2+(6*index)){
+				//alert(i+ ') checked :'+ data[i].checked);
+				arrSelect.push(data[i].checked);
+			}else if(i==3+(6*index)){
+				//alert(i+ ') checked :'+ data[i].checked);
+				arrSelect.push(data[i].checked);
+			}else if(i==4+(6*index)){
+				//alert(i+ ') checked :'+ data[i].checked);
+				arrSelect.push(data[i].checked);
+			}else if(i==5+(6*index)){
+				//alert(i+ ') checked :'+ data[i].checked);
+				arrSelect.push(data[i].checked);
 			}
-			//alert("行 :"+(index+1) + unitList.myMac[index].value + " "+unitList.myName[index].value);
-
-			postMac.value = unitList.myMac[index].value;
-			postName.value = unitList.myName[index].value;
-			//alert("行 :"+(index+1) + postMac.value + " "+postName.value);
-		}else{
-			postMac.value = unitList.myMac.value;
-			postName.value = unitList.myName.value;
 		}
-
+		//alert('arrSelect'+ arrSelect);
+		postSelect.value = arrSelect;
 		document.getElementById("unitList").submit();
 	}
 
-	function delCheck(button){
+	function delCheck(index,name){
 
-		var index = -1;
-		var postMac = document.getElementById("postMac");
-
-		if(unitList.del.length>0){
-			for(var i=0;i<unitList.del.length;i++){
-				if(unitList.del[i] == button){
-					index = i;
-					break;
-				}
-			}
-			//alert("行 :"+(index+1) + unitList.myMac[index].value + " "+unitList.myName[index].value);
-			postMac.value = unitList.myMac[index].value;
-			//alert("行 :"+(index+1) + " mac : "+postMac.value + " name : "+postName.value);
-		}else{
-			postMac.value = unitList.myMac.value;
-			//alert(postMac.value);
-		}
+		//alert(index+" : "+name);
+		postName.value = name;
+		document.getElementById("account").innerText='確定刪除 '+name+' 帳戶嗎?';
 		$('#myModal').modal('show');
 	}
 
-	function refresh(user){
+	function refresh(index,enable,authz){
+		$('[name=enable]').eq(index).prop("checked", enable);
+		var authzStr = JSON.stringify(authz);
 
-		alert('user : '+user);
+		var data = $('[name=data]');
+		//alert(data.length);
+
+		for(var i=0;i<data.length;i++){
+
+			if(i==0+(6*index)){
+				//alert(i+ ') authz.a01 :'+ authz.a01);
+				data.eq(i).prop("checked", authz.a01);
+			}else if(i==1+(6*index)){
+				//alert('authz.a02 :'+ authz.a02);
+				data.eq(i).prop("checked", authz.a02);
+			}else if(i==2+(6*index)){
+				//alert('authz.a03 :'+ authz.a03);
+				data.eq(i).prop("checked", authz.a03);
+			}else if(i==3+(6*index)){
+				//alert('authz.a04 :'+ authz.a04);
+				data.eq(i).prop("checked", authz.a04);
+			}else if(i==4+(6*index)){
+				//alert('authz.a05 :'+ authz.a05);
+				data.eq(i).prop("checked", authz.a05);
+			}else if(i==5+(6*index)){
+				//alert('authz.a06 :'+ authz.a06);
+				data.eq(i).prop("checked", authz.a06);
+			}
+		}
+		toDisableCheckBox(index,!enable);
 	}
+
+	function enableCheck(index,checkbox){
+		//alert(index);
+        toDisableCheckBox(index,!checkbox.checked);
+    }
+
+    function toDisableCheckBox(index,isDisable){
+
+    	var data = $('[name=data]');
+		//alert(data.length);
+
+		for(var i=0;i<data.length;i++){
+			if(i==0+(6*index)){
+				data.eq(i).prop("disabled", isDisable);
+			}else if(i==1+(6*index)){
+				data.eq(i).prop("disabled", isDisable);
+			}else if(i==2+(6*index)){
+				data.eq(i).prop("disabled", isDisable);
+			}else if(i==3+(6*index)){
+				data.eq(i).prop("disabled", isDisable);
+			}else if(i==4+(6*index)){
+				data.eq(i).prop("disabled", isDisable);
+			}else if(i==5+(6*index)){
+				data.eq(i).prop("disabled", isDisable);
+			}
+		}
+    	/*$('[name=data]').each(function(){
+			$(this).prop("disabled", isDisable);
+        });*/
+    }
 
 	function toSubmit(){
 		$('#myModal').modal('hide');

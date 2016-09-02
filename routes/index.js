@@ -169,12 +169,16 @@ module.exports = function(app){
 		});
 	}else{
 		//Register submit with post method
-		/*UserDbTools.removeAllUsers(function(err,result){
-			if(err){
-				console.log('removeAllUsers :'+err);
-			}
-			console.log('removeAllUsers : '+result);
-		});*/
+		var test = false;
+		if(test == true){ //for debug to remove all users
+			UserDbTools.removeAllUsers(function(err,result){
+				if(err){
+					console.log('removeAllUsers :'+err);
+				}
+				console.log('removeAllUsers : '+result);
+			});
+		}
+
 		UserDbTools.findUserByName(name,function(err,user){
 			if(err){
 				errorMessae = err;
@@ -463,6 +467,118 @@ module.exports = function(app){
 		req.flash('name', post_name);
 		req.flash('email', post_email);
 		return res.redirect('/info');
+  	});
+
+  	app.get('/account', checkLogin);
+    app.get('/account', function (req, res) {
+
+		console.log('render to account.ejs');
+		var refresh = req.flash('refresh').toString();
+		var myuser = req.session.user;
+		var myusers = req.session.userS;
+		var successMessae,errorMessae;
+		var post_name = req.flash('name').toString();
+
+		console.log('Debug account get -> refresh :'+refresh);
+		UserDbTools.findAllUsers(function (err,users){
+			if(err){
+				errorMessae = err;
+			}
+			if(refresh == 'delete'){
+				successMessae = '刪除帳號['+post_name+']成功';
+			}else if(refresh == 'edit'){
+				successMessae = '編輯帳號['+post_name+']成功';
+			}
+			req.session.userS = users;
+			console.log('Debug account get -> users:'+users.length+'\n'+users);
+			console.log('----------------------------------------------------------------');
+			console.log('Debug account get -> users:'+users[0].authz.a01);
+			console.log('----------------------------------------------------------------');
+			//console.log('Debug account get -> user:'+mUser.name);
+			res.render('user/account', { title: '帳號管理', // user/account : ejs path
+				user:myuser,//current user : administrator
+				users:users,//All users
+				error: errorMessae,
+				success: successMessae
+			});
+		});
+    });
+
+  	app.post('/account', checkLogin);
+  	app.post('/account', function (req, res) {
+  		var	post_name = req.body.postName;
+		var postSelect = req.body.postSelect;
+		console.log('post_name:'+post_name);
+		console.log('postSelect:'+postSelect);
+		var successMessae,errorMessae;
+		req.flash('name',post_name);//For refresh users data
+
+		if(postSelect == ""){//Delete mode
+			UserDbTools.removeUserByName(post_name,function(err,result){
+				if(err){
+					console.log('removeUserByName :'+post_name+ " fail! \n" + err);
+					errorMessae = err;
+				}else{
+					console.log('removeUserByName :'+post_name + 'success');
+					successMessae = successMessae;
+				}
+				UserDbTools.findAllUsers(function (err,users){
+					console.log('????????????'+users.length);
+				});
+				req.flash('refresh','delete');//For refresh users data
+				return res.redirect('/account');
+			});
+
+		}else{//Edit modej
+			console.log('postSelect[0] :'+typeof(postSelect) );
+			var arr = postSelect.split(",");
+			var authz = {a01:arr[1],a02:arr[2],a03:arr[3],a04:arr[4],a05:arr[5],a06:arr[6]};
+			if(arr[1]=='true'){
+				authz.a01 = true;
+			}else{
+				authz.a01 = false;
+			}
+			if(arr[2]=='true'){
+				authz.a02 = true;
+			}else{
+				authz.a02 = false;
+			}
+			if(arr[3]=='true'){
+				authz.a03 = true;
+			}else{
+				authz.a03 = false;
+			}
+			if(arr[4]=='true'){
+				authz.a04 = true;
+			}else{
+				authz.a04 = false;
+			}
+			if(arr[5]=='true'){
+				authz.a05 = true;
+			}else{
+				authz.a05 = false;
+			}
+			if(arr[6]=='true'){
+				authz.a06 = true;
+			}else{
+				authz.a06 = false;
+			}
+			var json = {enable:arr[0],authz:authz};
+
+			console.log('updateUser json:'+json );
+
+			UserDbTools.updateUser(post_name,json,function(err,result){
+				if(err){
+					console.log('updateUser :'+post_name + err);
+					errorMessae = err;
+				}else{
+					console.log('updateUser :'+post_name + 'success');
+					successMessae = successMessae;
+				}
+				req.flash('refresh','edit');//For refresh users data
+				return res.redirect('/account');
+			});
+		}
   	});
 };
 

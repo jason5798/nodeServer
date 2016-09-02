@@ -6,7 +6,7 @@ var userSchema = new Schema({
   name: { type: String},
   password: { type: String},
   email: { type: String},
-  enabe: { type: Boolean},
+  enable: { type: Boolean},
   level:{type: Number},//0:Hightest 1:normal
   authz: { type: Schema.Types.Mixed},
   update_at: { type: Schema.Types.Mixed},

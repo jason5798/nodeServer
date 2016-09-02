@@ -129,7 +129,7 @@ exports.removeAllUsers = function (calllback) {
 };
 
 exports.removeUserByName = function (name,calllback) {
-    UserModel.remove({namee:name}, (err)=>{
+    UserModel.remove({name:name}, (err)=>{
       console.log('---removeUserByName ---------------------------------------');
       if (err) {
         console.log('Debug : User remove name :'+name+' occur a error:', err);
