@@ -9,9 +9,6 @@ var flash = require('connect-flash');
 var settings = require('./settings');
 var routes = require('./routes/index');
 var moment = require('moment');
-var http = require('http'),
-    https = require('https');
-var ssl = require('./sslLicense');
 
 //require private module ------------------------------------------
 var UnitDbTools = require('./models/unitDbTools.js');
@@ -24,9 +21,6 @@ var JsonFileTools =  require('./models/jsonFileTools.js');
 //app setting-------------------------------------------------------
 var app = express();
 var port = process.env.PORT || 3000;
-app.set('port', port);
-app.set('httpsport', 8080);
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(flash());
@@ -44,14 +38,8 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-//
+
 routes(app);
-var server = http.createServer(app);
-var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
-var socket = require('socket.io').listen(server.listen(port));
-
-
-
 
 /*app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
@@ -59,7 +47,7 @@ var socket = require('socket.io').listen(server.listen(port));
 
 console.log('settings.cookieSecret : '+settings.cookieSecret);
 console.log('settings.db : '+settings.db);
-
+var socket = require('socket.io').listen(app.listen(port));
 var isMqttConnection = false;
 var date = moment();
 var myUnits;
@@ -359,3 +347,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+
+//module.exports = app;
