@@ -48,7 +48,7 @@ app.use(session({
 routes(app);
 var server = http.createServer(app);
 //var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
-var socket = require('socket.io').listen(server.listen(port));
+var sock = require('socket.io').listen(server.listen(port));
 
 
 
@@ -83,7 +83,7 @@ var myUnits;
 });*/
 
 
-socket.on('connection',function(client){
+sock.on('connection',function(client){
 
 	//for register ----------------------------------------------------------------------------
 	/*client.on('reg_client',function(data){
@@ -111,7 +111,7 @@ socket.on('connection',function(client){
 
 	});*/
 
-	//for index ----------------------------------------------------------------------------
+	//for index timeoue ceck--------------------------------------------------------------------
 	client.on('index_client',function(data){
 		console.log('Debug index ------------------------------------------------------------start' );
 		console.log('Debug index :' + data );
@@ -252,10 +252,11 @@ socket.on('connection',function(client){
 		//Jason modiy on 2016.07.21
 		var index = 0;
 		for(var k = 0; k<myUnits.length; k++){
-			if(obj.macAddr === myUnits[k].macAddr){
+			if(macAddress === myUnits[k].macAddr){
 				index  = k;
 			}
 		}
+		mData = '00fk03a900fb01d701e7';//Jason add for test
 		var arrData = tools.getDataArray( mData);
 		var mTmp1 = arrData[0];
 		var mHum1 = arrData[1];

@@ -28,7 +28,7 @@ GIotClient.on('connect', function()  {
 	GIotClient.subscribe(settings.gIoTopic,{qos:2});
 });
 
-var messageJSON,test = true;
+var messageJSON,test = false;
 
 if(test == false){
 	GIotClient.on('message', function(topic, message) {
@@ -51,7 +51,7 @@ if(test == false){
 	});
 
 }else{//for test
-	message = '{"id":"2512c9fd-5719-4271-8991-6bb9e019d955","macAddr":"04000496","data":"00fc03a900fb01d701e7","buff":"2016-08-30T01:07:18.852Z","recv":"2016-09-06T01:07:17.000Z","extra":{"gwip":"134.208.228.32","gwid":"00001c497b431fa9","repeater":"00000000ffffffff","systype":4,"rssi":-119,"snr":-120}}';
+	message = '{"id":"2512c9fd-5719-4271-8991-6bb9e019d955","macAddr":"04000496","data":"01fc03a900fb01d701e7","buff":"2016-08-30T01:07:18.852Z","recv":"2016-09-06T01:07:17.000Z","extra":{"gwip":"134.208.228.32","gwid":"00001c497b431fa9","repeater":"00000000ffffffff","systype":4,"rssi":-119,"snr":-120}}';
 	obj = JSON.parse(message);
 	saveAndSendMessage(obj);
 	GIotClient.end();
@@ -83,7 +83,7 @@ function saveAndSendMessage(_JSON){
 		console.log('getJsonFromFile error message :'+e.toString());
 		return;
 	}*/
-	var mData = obj.data;
+	var mData = _JSON.data;
 	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],_JSON['recv'],function(err,voltage){
 		if(err){
 			console.log('Debug saveDevice fail : '+err);
@@ -95,7 +95,7 @@ function saveAndSendMessage(_JSON){
 			}
 			//Verify unit status is same
 			//console.log('Debug findBymac : '+obj.macAddr);
-			UnitDbTools.findByMac(obj.macAddr,function(err,unit){
+			UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
 				if(err == null){
 					if(unit){
 						if(unit.status != status){

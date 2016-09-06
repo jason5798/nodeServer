@@ -45,7 +45,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 module.exports = function(app){
   app.get('/', checkLogin);
   app.get('/', function (req, res) {
-  		if(req.session.user){
+  		/*if(req.session.user){
   			findUnitsAndShowList(req,res,false);
   		}else{
   			//req.flash('error','尚未登入')
@@ -53,7 +53,8 @@ module.exports = function(app){
 			res.render('user/login', { title: '登入',
 				error: ''
 			});
-  		}
+  		}*/
+		findUnitsAndShowList(req,res,false);
   });
 
   app.post('/', checkLogin);
@@ -87,12 +88,6 @@ module.exports = function(app){
 		}
 
 	});
-
-  app.get('/logout', function (req, res) {
-    req.session.user = null;
-    req.flash('success', '');
-    res.redirect('/login');
-  });
 
   app.get('/login', checkNotLogin);
   app.get('/login', function (req, res) {
@@ -230,6 +225,12 @@ module.exports = function(app){
 		req.flash('post_password', post_password);
 		req.flash('post_email', post_email);
 		return res.redirect('/register');
+  });
+
+  app.get('/logout', function (req, res) {
+    req.session.user = null;
+    req.flash('success', '');
+    res.redirect('/login');
   });
 
   app.get('/chart', checkLogin);
@@ -586,14 +587,16 @@ function checkLogin(req, res, next) {
   if (!req.session.user) {
     req.flash('error', '');
     res.redirect('/login');
+  }else{
+	  next();
   }
-  next();
 }
 
 function checkNotLogin(req, res, next) {
   if (req.session.user) {
     req.flash('error', '');
     res.redirect('back');//返回之前的頁面
+  }else{
+	  next();
   }
-  next();
 }
