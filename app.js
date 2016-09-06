@@ -9,18 +9,24 @@ var flash = require('connect-flash');
 var settings = require('./settings');
 var routes = require('./routes/index');
 var moment = require('moment');
+var http = require('http'),
+    https = require('https');
+var ssl = require('./sslLicense');
 
 //require private module ------------------------------------------
 var UnitDbTools = require('./models/unitDbTools.js');
 var DeviceDbTools = require('./models/deviceDbTools.js');
 var UserDbTools = require('./models/userDbTools.js');
-var GIotClient =  require('./models/gIotClient.js');
+//var GIotClient =  require('./models/gIotClient.js');
 var tools =  require('./models/tools.js');
 var JsonFileTools =  require('./models/jsonFileTools.js');
 
 //app setting-------------------------------------------------------
 var app = express();
 var port = process.env.PORT || 3000;
+app.set('port', port);
+app.set('httpsport', 8080);
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(flash());
@@ -38,8 +44,14 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-
+//
 routes(app);
+var server = http.createServer(app);
+//var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
+var socket = require('socket.io').listen(server.listen(port));
+
+
+
 
 /*app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
@@ -47,12 +59,12 @@ routes(app);
 
 console.log('settings.cookieSecret : '+settings.cookieSecret);
 console.log('settings.db : '+settings.db);
-var socket = require('socket.io').listen(app.listen(port));
+
 var isMqttConnection = false;
 var date = moment();
 var myUnits;
 
-GIotClient.on('connect', function()  {
+/*GIotClient.on('connect', function()  {
 	if(isMqttConnection == false){
 		console.log('Debug appjs -> Connect to mqtt topic:'+settings.gIoTopic);
   		GIotClient.subscribe(settings.gIoTopic,{qos:2});
@@ -68,7 +80,7 @@ GIotClient.on('connect', function()  {
 			console.log('Debug appjs -> Connect to mqtt topic:'+settings.gIoTopic);
 		}
 	}
-});
+});*/
 
 
 socket.on('connection',function(client){
@@ -149,7 +161,7 @@ socket.on('connection',function(client){
 	});
 
 	//for receive mqtt message to updata new message----------------------------------------------------------
-	GIotClient.on('message', function( topic, message) {
+	/*GIotClient.on('message', function( topic, message) {
 		console.log('topic:'+topic.toString());
 		console.log('message:'+message.toString());
 		console.log('message type :'+getType(message));
@@ -190,7 +202,7 @@ socket.on('connection',function(client){
 		console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
 
 		client.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
-	});
+	});*/
 	//----------------------------------------------------------------------------
 	client.on('chart_client',function(data){
 		console.log('Debug cart_client ------------------------------------------------------------start' );
@@ -220,6 +232,43 @@ socket.on('connection',function(client){
 		});
 
 	});
+
+	//for new message ----------------------------------------------------------------------------
+	client.on('giot_client',function(data){
+		console.log('Debug giot_client ------------------------------------------------------------start' );
+		console.log('Debug giot_client :' + data );
+	});
+
+
+	client.on('giot_client_message',function(data){
+		console.log('Debug giot_client_message :'+data );
+		var macAddress = data['macAddr'];
+        var mData = data['data'];
+        var mRecv = data['recv'];
+        console.log('Debug giot_client_message -> macAddress : '+macAddress);
+        console.log('Debug giot_client_message -> mData : '+mData);
+        console.log('Debug giot_client_message -> mRecv : '+mRecv);
+        var mCreate = new Date();
+		//Jason modiy on 2016.07.21
+		var index = 0;
+		for(var k = 0; k<myUnits.length; k++){
+			if(obj.macAddr === myUnits[k].macAddr){
+				index  = k;
+			}
+		}
+		var arrData = tools.getDataArray( mData);
+		var mTmp1 = arrData[0];
+		var mHum1 = arrData[1];
+		var mTmp2 = arrData[2];
+		var mHum2 = arrData[3];
+		var mV = arrData[4];
+        var mCreate = new Date();
+		var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
+		console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
+
+		client.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
+	});
+
 });
 
 /**toCheckDeviceTimeout
@@ -347,6 +396,3 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-
-//module.exports = app;

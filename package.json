@@ -19,6 +19,7 @@
     "mqtt": "^1.11.2",
 	"connect-flash":"0.1.1",
 	"socket.io":"*",
+	"socket.io-client": "^1.4.8",
 	"moment":"*"
   }
 }
