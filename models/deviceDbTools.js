@@ -124,29 +124,29 @@ exports.findLastDeviceByUnit = function (unit,calllback) {
 exports.findDevicesByDate = function (dateStr,mac,dateOption,order,calllback) {
     console.log('---findDevices---------------------------------------');
     console.log('-mac : '+mac);
-
-    var testDate = moment().format('YYYY-MM-DD');
+    var testTime = moment().format(' HH:mm:ss');
+    var testDate = moment().format('YYYY-MM-DD')+testTime;
     if(dateStr){
-        testDate = dateStr;
+        testDate = dateStr+testTime;
     }
     var now = moment(testDate).toDate();
 
     var from;
     switch(dateOption) {
     case 0:
-        from =  moment(testDate).subtract(4,'hours').toDate();
+        from =  moment(testDate).subtract(1,'days').toDate();
         break;
     case 1:
-        from =  moment(testDate).subtract(1,'days').toDate();
-        break;
-    case 2:
         from =  moment(testDate).subtract(1,'weeks').toDate();
         break;
-    case 3:
+    case 2:
         from =  moment(testDate).subtract(1,'months').toDate();
         break;
+    case 3:
+        from =  moment(testDate).subtract(3,'months').toDate();
+        break;
     default:
-        from =  moment(testDate).subtract(1,'days').toDate();
+        from =  moment(testDate).subtract(3,'months').toDate();
     }
     console.log( 'now :'+now );
     console.log( 'from :'+from );
