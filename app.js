@@ -119,8 +119,8 @@ sock.on('connection',function(client){
 	});
 
 	//for new message ----------------------------------------------------------------------------
-	client.on('new_message_client',function(data){
-		console.log('Debug new_message_client :'+data );
+	client.on('new_message_client',function(id, data){
+
 		UnitDbTools.findAllUnits(function(err,units){
 			if(err){
 				console.log('Debug ')
@@ -158,6 +158,10 @@ sock.on('connection',function(client){
 
 	client.on('disconnect',function(){
          console.log('Server has disconnected!');
+	});
+
+	client.on('new_message_test',function(data){
+		client.emit('new_message_receive_mqtt','new_message_test');
 	});
 
 	//for receive mqtt message to updata new message----------------------------------------------------------
@@ -256,7 +260,7 @@ sock.on('connection',function(client){
 				index  = k;
 			}
 		}
-		mData = '00fk03a900fb01d701e7';//Jason add for test
+		//mData = '00fk03a900fb01d701e7';//Jason add for test
 		var arrData = tools.getDataArray( mData);
 		var mTmp1 = arrData[0];
 		var mHum1 = arrData[1];
@@ -267,7 +271,7 @@ sock.on('connection',function(client){
 		var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
 		console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
 
-		client.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
+		client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
 	});
 
 });

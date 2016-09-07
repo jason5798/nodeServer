@@ -41,13 +41,27 @@
 	            <% } %>
 	        </label>
 		</div> <!-- column-->
+		<div class="col-md-12">
+			<button type="button" name="edit" class="btn btn-primary btn-sm" onClick = "test()">
+				<span class="glyphicon glyphicon-list-alt"></span> test
+			</button>
+		</div> <!-- col-md-3 -->
 	</div>	<!--row-->
 
 <script>
-    $(document).ready(function(){
-        var socket = io.connect();
 
-		socket.on('connect',function(){
+	var socket = io.connect();
+
+	function test(){
+		//alert('test');
+		socket.emit('new_message_test','new_message_test');
+	}
+
+
+
+    $(document).ready(function(){
+    	socket.on('connect',function(){
+
 			$("#created").text( 'Client has connected to server!' );
 			socket.emit('new_message_client','hello,new message socket cient is ready');
 		});
@@ -55,24 +69,7 @@
 			$("#created").text( 'Client has disconnected!');
 		});
 		socket.on('new_message_receive_mqtt',function(data){
-
-			var index = data.index;
-			var status = '正常';
-			if(data.vol<300){
-				status = '低電壓';
-			}
-			//alert(index);
-			//alert(($('[name=name]').eq(index).text()));
-			$('[name=tmp1]').eq(index).text(data.tmp1);
-			$('[name=tmp2]').eq(index).text(data.tmp2);
-			$('[name=hum1]').eq(index).text(data.hum1);
-			$('[name=hum2]').eq(index).text(data.hum2);
-			$('[name=voltage]').eq(index).text(status);
-			$('[nametime]').eq(index).text(data.time);
-		});
-
-		socket.on('new_message_db_findLast',function(data){
-
+			//alert(data.time);
 			var index = data.index;
 			var status = '正常';
 			if(data.vol<300){
@@ -88,12 +85,27 @@
 			$('[name=time]').eq(index).text(data.time);
 		});
 
-		$(document).ready(function () {
-			setTimeout(function(){
+		socket.on('new_message_db_findLast',function(data){
+			//alert('data');
+			var index = data.index;
+			var status = '正常';
+			if(data.vol<300){
+				status = '低電壓';
+			}
+			//alert(index);
+			//alert(($('[name=name]').eq(index).text()));
+			$('[name=tmp1]').eq(index).text(data.tmp1);
+			$('[name=tmp2]').eq(index).text(data.tmp2);
+			$('[name=hum1]').eq(index).text(data.hum1);
+			$('[name=hum2]').eq(index).text(data.hum2);
+			$('[name=voltage]').eq(index).text(status);
+			$('[name=time]').eq(index).text(data.time);
+		});
+
+		setTimeout(function(){
     		//do what you need here
 		    document.getElementById('error_message').innerText = '';
 		}, 3000);
-	});
 
     });
 
