@@ -17,7 +17,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 			errorMessae = err;
 		}else{
 			if(+units.length>0){
-				successMessae = '查詢'+units.length+"個裝置";
+				successMessae = '查詢到'+units.length+'筆資料';
 			}
 			for(var i=0;i<units.length;i++){
 			if(units[i].macAddr){
@@ -45,16 +45,8 @@ function findUnitsAndShowList(req,res,isUpdate){
 module.exports = function(app){
   app.get('/', checkLogin);
   app.get('/', function (req, res) {
-  		/*if(req.session.user){
-  			findUnitsAndShowList(req,res,false);
-  		}else{
-  			//req.flash('error','尚未登入')
-			//res.redirect('/login');
-			res.render('user/login', { title: '登入',
-				error: ''
-			});
-  		}*/
-		findUnitsAndShowList(req,res,false);
+  		
+	findUnitsAndShowList(req,res,false);
   });
 
   app.post('/', checkLogin);
@@ -75,7 +67,8 @@ module.exports = function(app){
 			});
 
 		}else{//Edit mode
-			UnitDbTools.updateUnit(post_mac,post_name,true,function(err,result){
+			var type = 'd001';
+			UnitDbTools.updateUnit(type,post_mac,post_name,true,function(err,result){
 				if(err){
 					console.log('removeUnitByMac :'+post_mac + err);
 					errorMessae = err;
@@ -116,7 +109,7 @@ module.exports = function(app){
 				//login fail
 				errorMessae = '無此帳號';
 				res.render('user/login', { title: '登入',
-					error: errorMessae
+					error: errorMˊessae
 				});
 			}else{
 				//login success
@@ -183,7 +176,7 @@ module.exports = function(app){
 			}
 			console.log('Debug register user -> name: '+user);
 			if(user != null ){
-				errorMessae = '已有相同帳號';
+				errorMessae = '已有此帳號';
 				res.render('user/register', { title: '註冊',
 					error: errorMessae
 				});
@@ -194,7 +187,7 @@ module.exports = function(app){
 				}
 				UserDbTools.saveUser(name,password,email,level,function(err,result){
 					if(err){
-						errorMessae = '新增帳戶失敗';
+						errorMessae = '註冊帳戶失敗';
 						res.render('user/register', { title: '註冊',
 							error: errorMessae
 						});
@@ -244,49 +237,18 @@ module.exports = function(app){
 		var timeStr = '';
 		console.log('Debug chart get -> find mac:'+find_mac);
 		console.log('Debug chart get -> find option:'+option);
-		//if(find_mac == ""){
-			res.render('chart', { title: '圖表分析',
-				units:req.session.units,
-				user:req.session.user,
-				mac:find_mac,
-				option:option,
-				mdate:moment().format('YYYY-MM-DD'),
-				devices: null,
-				timeStr:timeStr,
-				success: successMessae,
-				error: errorMessae
-			});
-		/*}else{
-			DeviceDbTools.findDevicesByDate(find_mac,Number(option),'desc',function(err,devices){
-				if(err){
-					console.log('Debug chart get -> find name:'+find_mac);
-					req.flash('error', err);
-					return res.redirect('/find');
-				}
-				console.log("Debug chart get -> find all of mac "+find_mac+" : "+devices);
-
-				if (devices.length>0) {
-					console.log('Debug chart get -> find '+devices.length+' records');
-					successMessae = '找到'+devices.length+'筆資料';
-					timeStr = JsonFileTools.saveDataAndGetTimeeString(option,devices);
-				}else{
-					console.log('Debug chart get -> can not find');
-					errorMessae = '無法找到資料';
-				}
-
-				console.log('Debug chart get -> timeStr'+timeStr);
-
-				res.render('chart', { title: '圖表分析',
-					units:req.session.units,
-					mac:find_mac,
-					option:option,
-					devices: devices,
-					timeStr:timeStr,
-					success: successMessae,
-					error: errorMessae
-				});
-			});
-		}*/
+		res.render('chart', { title: '圖表分析',
+			units:req.session.units,
+			user:req.session.user,
+			mac:find_mac,
+			option:option,
+			mdate:moment().format('YYYY-MM-DD'),
+			devices: null,
+			timeStr:timeStr,
+			success: successMessae,
+			error: errorMessae
+		});
+			
   });
 
   /*app.post('/chart', function (req, res) {
@@ -345,7 +307,7 @@ module.exports = function(app){
 				});*/
 
 				console.log('Debug find get mac '+find_mac+'-> find '+devices.length+' records');
-				successMessae = '找到'+devices.length+'筆資料';
+				successMessae = '查詢到'+devices.length+'筆資料';
 
 				res.render('find', { title: '資料查詢',
 					units:req.session.units,
@@ -413,10 +375,7 @@ module.exports = function(app){
 			req.flash('mac', post_mac);
 			req.flash('name', post_name);
 			return res.redirect('/setting');
-		}/*else{
-	　   	req.flash('error', '輸入資料不正確,請重新輸入!');
-			return res.redirect('/setting');
-		}*/
+		}
   	});
 
    app.get('/info', checkLogin);
@@ -448,7 +407,7 @@ module.exports = function(app){
 					return res.redirect('/info');
 				}
 				req.session.user = null;
-				errorMessae = '密碼已更換,請重新登入!';
+				errorMessae = '密碼已更改請重新登入';
 				res.render('user/login', { title: '登入',
 					error: errorMessae
 				});
@@ -486,9 +445,9 @@ module.exports = function(app){
 				errorMessae = err;
 			}
 			if(refresh == 'delete'){
-				successMessae = '刪除帳號['+post_name+']成功';
+				successMessae = '刪除帳號['+post_name+']完成';
 			}else if(refresh == 'edit'){
-				successMessae = '編輯帳號['+post_name+']成功';
+				successMessae = '編輯帳號['+post_name+']完成';
 			}
 			req.session.userS = users;
 			console.log('Debug account get -> users:'+users.length+'\n'+users);
@@ -496,7 +455,7 @@ module.exports = function(app){
 			console.log('Debug account get -> users:'+users[0].authz.a01);
 			console.log('----------------------------------------------------------------');
 			//console.log('Debug account get -> user:'+mUser.name);
-			res.render('user/account', { title: '帳號管理', // user/account : ejs path
+			res.render('user/account', { title: '帳戶管理', // user/account : ejs path
 				user:myuser,//current user : administrator
 				users:users,//All users
 				error: errorMessae,
@@ -524,7 +483,7 @@ module.exports = function(app){
 					successMessae = successMessae;
 				}
 				UserDbTools.findAllUsers(function (err,users){
-					console.log('????????????'+users.length);
+					console.log('查詢到帳戶 :'+users.length);
 				});
 				req.flash('refresh','delete');//For refresh users data
 				return res.redirect('/account');
@@ -595,7 +554,7 @@ function checkLogin(req, res, next) {
 function checkNotLogin(req, res, next) {
   if (req.session.user) {
     req.flash('error', '');
-    res.redirect('back');//返回之前的頁面
+    res.redirect('back');
   }else{
 	  next();
   }

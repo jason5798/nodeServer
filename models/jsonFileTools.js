@@ -23,19 +23,19 @@ exports.saveDataAndGetTimeeString = function (option,devices) {
 };
 
 function getTimeRangeString(option,devices){
-    var interval = '1 hour';
+    var interval = '2 hour';
     var formatStr =  'YYYY/MM/DD H';
     if(option==0){
-        interval = '1 hour';
+        interval = '2 hour';
         formatStr = 'YYYY/MM/DD H';
     }else if(option==1){
-        interval = '2 hour';
-            formatStr = 'YYYY/MM/DD H';
-    }else if(option==2){
         interval = '1 day';
             formatStr = 'YYYY/MM/DD';
+    }else if(option==2){
+        interval = '2 day';
+            formatStr = 'YYYY/MM/DD';
     }else if(option==3){
-        interval = '1 day';
+        interval = '7 day';
         formatStr = 'YYYY/MM/DD';
     }
 
@@ -44,7 +44,7 @@ function getTimeRangeString(option,devices){
     if(option==0){
         max = max.add(1,'hours').format(formatStr);
     }else if(option==1){
-        max = max.add(1,'hours').format(formatStr);
+        max = max.add(1,'days').format(formatStr);
     }else if(option==2){
         max = max.add(1,'days').format(formatStr);
     }else if(option==3){

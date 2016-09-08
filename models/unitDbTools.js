@@ -16,6 +16,7 @@ exports.saveUnit = function (macAddress,name,callback) {
 
 	console.log('Debug saveUnit: time.date'+time.date);
 	var newUnit = new UnitModel({
+		type       : type,
 		macAddr    : macAddress,
 		name 	   : name,
 		status     : 0,
@@ -32,10 +33,7 @@ exports.saveUnit = function (macAddress,name,callback) {
 	});
 };
 
-/*
-*Update unit name,date
-*/
-exports.updateUnit = function (find_mac,name,status,calllback) {
+function toUpdateUint(type,find_mac,name,status,calllback) {
     console.log('---updateUnit ---------------------------------------');
     console.log('Debug : updateUnit mac='+find_mac+" , name ="+name);
 	var time = {
@@ -53,12 +51,24 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 			console.log('Debug : updateUnit find unit by mac =>'+err);
 			return calllback(err);
 		}
+		var JSON = {status : status , update_at:time};
+
 		if(units.length>0){
+			if(name){
+				if(units[0].name ==null || units[0].name != name){
+					JSON.name = name;
+				}
+			}
+			if(type){
+				if(units[0].type ==null || units[0].type != type){
+					JSON.type = type;
+				}
+			}
 			var unitId = units[0]._id;
 			//console.log('Debug : getUnitId device ' + units);
 			//console.log('Debug : getUnitId : ' +unitId);
         	UnitModel.update({_id : unitId},
-	        	{name : name, status : status , update_at:time},
+	        	JSON,
 	        	{safe : true, upsert : true},
 	        	(err, rawResponse)=>{
  		        	if (err) {
@@ -79,11 +89,25 @@ exports.updateUnit = function (find_mac,name,status,calllback) {
 		console.log('Debug : updateUnit no reerance');
         return calllback('Referance nul!');
 	}
+}
+
+/*
+*Update unit name,date,type,status
+*/
+exports.updateUnitStatus = function (mac,status,calllback) {
+    return toUpdateUint(null,find_mac,null,status,calllback);
+};
+
+/*
+*Update unit name,date,type,status
+*/
+exports.updateUnit = function (type,find_mac,name,status,calllback) {
+    return toUpdateUint(type,find_mac,name,status,calllback);
 };
 
 /*
 *Remove all of unit
-*Return -1:資料存取錯誤 0:刪除完成 1:刪除失敗
+*Return -1:資�?存�??�誤 0:?�除完�? 1:?�除失�?
 */
 exports.removeAllUnits = function (calllback) {
     UnitModel.remove({}, (err)=>{
@@ -136,7 +160,7 @@ exports.findByMac = function (mac,calllback) {
 			console.log('find '+units.length+' records');
 			return calllback(err,units[0]);
 		}else{
-			console.log('找不到資料!');
+			console.log('?��??��???');
 			return calllback(err,units);
 		}
     });

@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var unitSchema = new Schema({
+  type: { type: String},
   macAddr: { type: String},
   name: { type: String},
   status:{ type: Number},
