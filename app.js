@@ -313,11 +313,11 @@ function toCheckDeviceTimeout(client){
 						/*if(units[mIndex].status == 2){
 							return;
 						}*/
-						UnitDbTools.updateUnit(device.macAddr,units[mIndex].name,2,function(err,result){
+						UnitDbTools.updateUnitStatus(device.macAddr,2,function(err,result){
 							if(err){
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit timeout is fail :'+err);
+								console.log('Debug toCheckDeviceStatus -> '+device.macAddr+' updat unit timeout is fail :'+err);
 							}else{
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit timeout success');
+								console.log('Debug toCheckDeviceStatus -> '+device.macAddr+' updat unit timeout success');
 								console.log('index :'+macList.indexOf(device.macAddr));
 								//console.log('mac :'+device.macAddr);
 								client.emit('index_client_timeout',{index:macList.indexOf(device.macAddr),status:2});
@@ -328,11 +328,11 @@ function toCheckDeviceTimeout(client){
 						if(units[mIndex].status == 0){
 							return;
 						}
-						UnitDbTools.updateUnit(device.macAddr,units[mIndex].name,0,function(err,result){
+						UnitDbTools.updateUnitStatus(device.macAddr,0,function(err,result){
 							if(err){
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit normal is fail :'+err);
+								console.log('Debug toCheckDeviceStatus ->  '+device.macAddr+' updat unit normal is fail :'+err);
 							}else{
-								console.log('Debug toCheckDeviceStatus -> updateUnit '+device.macAddr+' updat unit normal success');
+								console.log('Debug toCheckDeviceStatus ->  '+device.macAddr+' updat unit normal success');
 								console.log('index :'+macList.indexOf(device.macAddr));
 								//console.log('mac :'+device.macAddr);
 								client.emit('index_client_timeout',{index:macList.indexOf(device.macAddr),status:0});

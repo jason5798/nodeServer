@@ -12,6 +12,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 	UnitDbTools.findAllUnits(function(err,units){
 		var successMessae,errorMessae;
 		var macList = [];
+		var macTypeMap = {};
 
 		if(err){
 			errorMessae = err;
@@ -20,9 +21,13 @@ function findUnitsAndShowList(req,res,isUpdate){
 				successMessae = '查詢到'+units.length+'筆資料';
 			}
 			for(var i=0;i<units.length;i++){
-			if(units[i].macAddr){
+				console.log( "unit :"+units[i] );
+				if(units[i].macAddr){
 					console.log('mac ('+i+'):'+units[i].macAddr);
 					macList.push(units[i].macAddr);
+					if(units[i].type){
+						macTypeMap[units[i].macAddr]=units[i].type;
+					}
 				}
 			}
 			//Jason add for save mac array on 2016.08.18
@@ -45,7 +50,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 module.exports = function(app){
   app.get('/', checkLogin);
   app.get('/', function (req, res) {
-  		
+
 	findUnitsAndShowList(req,res,false);
   });
 
@@ -67,19 +72,15 @@ module.exports = function(app){
 			});
 
 		}else{//Edit mode
-			var type = 'd001';
-			UnitDbTools.updateUnit(type,post_mac,post_name,true,function(err,result){
+			UnitDbTools.updateUnitName(post_mac,post_name,function(err,result){
 				if(err){
-					console.log('removeUnitByMac :'+post_mac + err);
-					errorMessae = err;
+					console.log('edit  :'+post_mac + err);
 				}else{
-					console.log('removeUnitByMac :'+post_mac + 'success');
-					successMessae = successMessae;
+					console.log('edit :'+post_mac + 'success');
 				}
 				findUnitsAndShowList(req,res,false);
 			});
 		}
-
 	});
 
   app.get('/login', checkNotLogin);
@@ -248,7 +249,7 @@ module.exports = function(app){
 			success: successMessae,
 			error: errorMessae
 		});
-			
+
   });
 
   /*app.post('/chart', function (req, res) {
@@ -342,11 +343,12 @@ module.exports = function(app){
 		console.log('render to find.ejs');
 		var save_mac = req.flash('mac').toString();
 		var save_name = req.flash('name').toString();
+		var save_type = req.flash('type').toString();
 		var successMessae,errorMessae;
 		console.log('save_mac:'+save_mac);
 		console.log('save_name:'+save_name);
 		if(save_mac.length>0 && save_name.length>0 ){
-			UnitDbTools.saveUnit(save_mac,save_name,function(err,result){
+			UnitDbTools.saveUnit(save_mac,save_name,save_type,function(err,result){
 				if(err){
 					req.flash('error', err);
 					return res.redirect('/setting');
@@ -368,12 +370,14 @@ module.exports = function(app){
   app.post('/setting', function (req, res) {
 		var	post_mac = req.body.mac;
 		var post_name = req.body.name;
+		var post_type = req.body.type_option;
 
 		if(	post_mac && post_name && post_mac.length>=1 && post_name.length>=1){
 			console.log('post_mac:'+post_mac);
 			console.log('post_name:'+post_name);
 			req.flash('mac', post_mac);
 			req.flash('name', post_name);
+			req.flash('type', post_type);
 			return res.redirect('/setting');
 		}
   	});

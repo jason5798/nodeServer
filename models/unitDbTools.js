@@ -2,7 +2,7 @@
 var UnitModel = require('./unit.js');
 var moment = require('moment');
 
-exports.saveUnit = function (macAddress,name,callback) {
+exports.saveUnit = function (macAddress,name,type,callback) {
     console.log('---saveUnit ---------------------------------------');
 	var time = {
 		date   : moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -51,18 +51,24 @@ function toUpdateUint(type,find_mac,name,status,calllback) {
 			console.log('Debug : updateUnit find unit by mac =>'+err);
 			return calllback(err);
 		}
-		var JSON = {status : status , update_at:time};
+		var JSON = { update_at:time};
 
 		if(units.length>0){
 			if(name){
+				//console.log('units[0].name : '+units[0].name);
 				if(units[0].name ==null || units[0].name != name){
 					JSON.name = name;
 				}
 			}
 			if(type){
+				//console.log('units[0].type : '+units[0].type);
 				if(units[0].type ==null || units[0].type != type){
 					JSON.type = type;
 				}
+			}
+			if(status){
+				console.log('units[0].name : '+units[0].name);
+				JSON.status = status;
 			}
 			var unitId = units[0]._id;
 			//console.log('Debug : getUnitId device ' + units);
@@ -92,10 +98,17 @@ function toUpdateUint(type,find_mac,name,status,calllback) {
 }
 
 /*
-*Update unit name,date,type,status
+*Update unit status
 */
 exports.updateUnitStatus = function (mac,status,calllback) {
-    return toUpdateUint(null,find_mac,null,status,calllback);
+    return toUpdateUint(null,mac,null,status,calllback);
+};
+
+/*
+*Update unit name
+*/
+exports.updateUnitName = function (mac,name,calllback) {
+    return toUpdateUint(null,mac,name,null,calllback);
 };
 
 /*
@@ -107,7 +120,7 @@ exports.updateUnit = function (type,find_mac,name,status,calllback) {
 
 /*
 *Remove all of unit
-*Return -1:è³‡æ?å­˜å??¯èª¤ 0:?ªé™¤å®Œæ? 1:?ªé™¤å¤±æ?
+*Return -1:è³‡ï¿½?å­˜ï¿½??ï¿½èª¤ 0:?ï¿½é™¤å®Œï¿½? 1:?ï¿½é™¤å¤±ï¿½?
 */
 exports.removeAllUnits = function (calllback) {
     UnitModel.remove({}, (err)=>{
@@ -160,7 +173,7 @@ exports.findByMac = function (mac,calllback) {
 			console.log('find '+units.length+' records');
 			return calllback(err,units[0]);
 		}else{
-			console.log('?¾ä??°è???');
+			console.log('?ï¿½ï¿½??ï¿½ï¿½???');
 			return calllback(err,units);
 		}
     });
