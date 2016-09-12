@@ -31,8 +31,9 @@ function findUnitsAndShowList(req,res,isUpdate){
 				}
 			}
 			//Jason add for save mac array on 2016.08.18
-			if(isUpdate){
+			if(isUpdate){//For new and delete unit
 				JsonFileTools.saveJsonToFile('./public/data/macList.json',macList);
+				JsonFileTools.saveJsonToFile('./public/data/macTypeMap.json',macTypeMap);
 			}
 		}
 		req.session.units = units;

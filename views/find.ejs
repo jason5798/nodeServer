@@ -89,27 +89,52 @@
 						<td >時間</td>
 					</tr>
 					<% devices.forEach(function(device) { %>
+						<% if (device.info) { %>
+							<tr>
+								<td><%= device.info.temperature1 %>度</td>
+								<td><%= device.info.humidity1 %>%</td>
+								<td><%= device.info.temperature2 %>度</td>
+								<td><%= device.info.humidity2 %>%</td>
+							<td>
+							<% if (device.info.voltage) { %>
+								<% if (device.info.voltage>300) {  %>
+									<button type="button" class="btn btn-success btn-sm" >
+										<%= '正常('+device.info.voltage+')' %> 　
+									</button>　
+								<% }else{ %>
+									<button type="button" class="btn btn-danger btn-sm" >
+										<%= '低電壓'+device.info.voltage %>
+									</button>
+								<% } %>
+							<% } else { %>
+								無資料
+							<% } %>
+							</td>
 
-						<tr>
-							<td><%= device.temperature1 %>度</td>
+
+						<% }else{ %>
+							<td>須更改<%= device.temperature1 %>度</td>
 							<td><%= device.humidity1 %>%</td>
 							<td><%= device.temperature2 %>度</td>
 							<td><%= device.humidity2 %>%</td>
-						<td>
-						<% if (device.voltage) { %>
-							<% if (device.voltage>300) {  %>
-								<button type="button" class="btn btn-success btn-sm" >
-									<%= '正常('+device.voltage+')' %> 　
-								</button>　
-							<% }else{ %>
-								<button type="button" class="btn btn-danger btn-sm" >
-									<%= '低電壓'+device.voltage %>
-								</button>
+							<td>
+							<% if (device.voltage) { %>
+								<% if (device.voltage>300) {  %>
+									<button type="button" class="btn btn-success btn-sm" >
+										<%= '正常('+device.voltage+')' %> 　
+									</button>　
+								<% }else{ %>
+									<button type="button" class="btn btn-danger btn-sm" >
+										<%= '低電壓'+device.voltage %>
+									</button>
+								<% } %>
+							<% } else { %>
+								無資料
 							<% } %>
-						<% } else { %>
-							無資料
+							</td>
 						<% } %>
-						</td>
+
+
 							<td>
 								<% if (device.time) {  %>
 									<%= device.time.date %>

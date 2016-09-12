@@ -34,8 +34,8 @@ exports.saveUnit = function (macAddress,name,type,callback) {
 };
 
 function toUpdateUint(type,find_mac,name,status,calllback) {
-    console.log('---updateUnit ---------------------------------------');
-    console.log('Debug : updateUnit mac='+find_mac+" , name ="+name);
+    console.log('---update Unit ---------------------------------------');
+    console.log('Debug : update Unit mac='+find_mac+" , name ="+name);
 	var time = {
 		date   : moment().format("YYYY-MM-DD HH:mm:ss"),
 		year   : moment().format("YYYY"),
@@ -44,11 +44,11 @@ function toUpdateUint(type,find_mac,name,status,calllback) {
 		hour   : moment().format("YYYY-MM-DD HH"),
 		minute : moment().format("YYYY-MM HH:mm"),
 	};
-	console.log('Debug updateUnit: time.date'+time.date);
-	if(find_mac && name){
+	console.log('Debug update Unit: time.date'+time.date);
+	if(find_mac){
 		UnitModel.find({ macAddr: find_mac },function(err,units){
 		if(err){
-			console.log('Debug : updateUnit find unit by mac =>'+err);
+			console.log('Debug : update Unit find unit by mac =>'+err);
 			return calllback(err);
 		}
 		var JSON = { update_at:time};
@@ -78,21 +78,21 @@ function toUpdateUint(type,find_mac,name,status,calllback) {
 	        	{safe : true, upsert : true},
 	        	(err, rawResponse)=>{
  		        	if (err) {
-                        console.log('Debug : updateUnit : '+ err);
+                        console.log('Debug : update Unit : '+ err);
                         return calllback(err);
 		        	} else {
-                        console.log('Debug : updateUnit : success');
+                        console.log('Debug : update Unit : success');
 			            return calllback(err,'success');
 		            }
 	            }
             );
 		}else{
-			console.log('Debug : updateUnit can not find unit!');
+			console.log('Debug : update Unit can not find unit!');
 			return calllback('Can not find unit!');
 		}
 	});
 	}else{
-		console.log('Debug : updateUnit no reerance');
+		console.log('Debug : update Unit no reerance');
         return calllback('Referance nul!');
 	}
 }

@@ -1,41 +1,55 @@
 var DeviceModel = require('./device.js');
+var JsonFileTools =  require('./jsonFileTools.js');
 var Toos = require('./tools.js');
 var moment = require('moment');
 
+function toGetInfoByType(type,data){
+    var info = {};
+    if(type == 'd001'){
+        var arrData =Toos.getDataArray(data);
+        info.temperature1 = arrData[0];
+        info.humidity1 = arrData[1];
+        info.temperature2 = arrData[2];
+        info.humidity2 = arrData[3];
+        info.voltage = arrData[4];
+        console.log('data:'+data);
+        console.log('mTmp1:'+arrData[0]);
+        console.log('mHum1:'+arrData[1]);
+        console.log('mTmp2'+arrData[2]);
+        console.log('mHum2:'+arrData[3]);
+        console.log('mV:'+arrData[4]);
+    }
+    return info;
+}
+
 exports.saveDevice = function (macAddress,data,recv,callback) {
-    var arrData =Toos.getDataArray(data);
-    var mTmp1 = arrData[0];
-    var mHum1 = arrData[1];
-    var mTmp2 = arrData[2];
-    var mHum2 = arrData[3];
-    var mV = arrData[4];
+
     var mRecv =new Date(recv);
+    var macTypeMap = JsonFileTools.getJsonFromFile('./public/data/macTypeMap.json');
+    var type = macTypeMap[macAddress]
+    console.log('macTypeMap:'+macTypeMap);
+    console.log('type:'+type);
     console.log('macAddress:'+macAddress);
-    console.log('data:'+data);
-    console.log('mTmp1:'+mTmp1);
-    console.log('mHum1:'+mHum1);
-    console.log('mTmp2'+mTmp2);
-    console.log('mHum2:'+mHum2);
-    console.log('mV:'+mV);
     console.log('mRecv:'+mRecv);
+    var info = toGetInfoByType(type,data);
+    var mV = info.voltage;
+    console.log('mV:'+mV);
     var time = {
-        date   : moment().format("YYYY-MM-DD HH:mm:ss"),
-        year   : moment().format("YYYY"),
-        month  : moment().format("YYYY-MM"),
-        day    : moment().format("YYYY-MM-DD"),
-        hour   : moment().format("YYYY-MM-DD HH"),
-        minute : moment().format("YYYY-MM-DD HH:mm"),
-        cdate   : moment().format("YYYY年MM月DD日 HH時mm分ss秒")
+        date   : moment(recv).format("YYYY-MM-DD HH:mm:ss"),
+        year   : moment(recv).format("YYYY"),
+        month  : moment(recv).format("YYYY-MM"),
+        day    : moment(recv).format("YYYY-MM-DD"),
+        hour   : moment(recv).format("YYYY-MM-DD HH"),
+        minute : moment(recv).format("YYYY-MM-DD HH:mm"),
+        cdate   : moment(recv).format("YYYY年MM月DD日 HH時mm分ss秒")
     };
+
     var newDevice = new DeviceModel({
             macAddr    : macAddress,
             data       : data,
-            temperature1:mTmp1 ,
-            humidity1:mHum1,
-            temperature2:mTmp2,
-            humidity2:mHum2,
-            voltage:mV,
-            recv_at: mRecv,
+            type       : type,
+            info       : info,
+            recv_at    : mRecv,
             created_at : new Date(),
             time:time
         });
@@ -104,14 +118,14 @@ exports.findDevices = function (json,calllback) {
 };
 
 //Find last record by mac
-exports.findLastDeviceByUnit = function (unit,calllback) {
-    var mac = unit.macAddr;
+exports.findLastDeviceByMac = function (mac,calllback) {
+
     DeviceModel.find({macAddr:mac}).sort({recv_at: -1}).limit(1).exec(function(err,devices){
         if(err){
-            console.log('Debug deviceDbTools findLastDeviceByUnit -> err :'+err);
+            console.log('Debug deviceDbTools find Last Device By Unit -> err :'+err);
             return calllback(err);
         }else{
-            console.log('Debug deviceDbTools findLastDeviceByUnit('+mac+') -> device :'+devices.length);
+            console.log('Debug deviceDbTools find Last Device By Unit('+mac+') -> device :'+devices.length);
             return calllback(err,devices[0]);
         }
     });
@@ -119,7 +133,7 @@ exports.findLastDeviceByUnit = function (unit,calllback) {
 };
 
 /*Find devices by date
-*date option: 0:one ours 1:one days 2:one weeks 3:one months
+*date option: 0:one days 1:one weeks 2:one months 3:three months
 */
 exports.findDevicesByDate = function (dateStr,mac,dateOption,order,calllback) {
     console.log('---findDevices---------------------------------------');
@@ -299,5 +313,18 @@ exports.removeDevicesByDate = function (startDate,option,number,calllback) {
             console.log('Debug :findDevice success\n:',Devices.length);
             return calllback(err,Devices);
         }
+    });
+};
+
+exports.removeDeviceById = function (id,calllback) {
+    DeviceModel.remove({_id:id}, (err)=>{
+      console.log('---removeUserByName ---------------------------------------');
+      if (err) {
+        console.log('Debug : User remove id :'+id+' occur a error:', err);
+            return calllback(err);
+      } else {
+        console.log('Debug : User remove id :'+id+' success.');
+            return calllback(err,'success');
+      }
     });
 };

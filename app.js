@@ -20,7 +20,9 @@ var UserDbTools = require('./models/userDbTools.js');
 //var GIotClient =  require('./models/gIotClient.js');
 var tools =  require('./models/tools.js');
 var JsonFileTools =  require('./models/jsonFileTools.js');
-
+//Jason add for test
+//var auto =  require('./models/autoDataSubAndSave.js');
+var test =  require('./models/testTools.js');
 //app setting-------------------------------------------------------
 var app = express();
 var port = process.env.PORT || 3000;
@@ -133,7 +135,7 @@ sock.on('connection',function(client){
 					console.log('Debug new_message_client->unit : ('+i+') \n' + unit.macAddr );
 					var unitMac = unit.macAddr;
 
-					DeviceDbTools.findLastDeviceByUnit(unit,function(err,device){
+					DeviceDbTools.findLastDeviceByMac(unit.macAddr,function(err,device){
 						if(err){
 
 						}else{
@@ -145,7 +147,7 @@ sock.on('connection',function(client){
 									}
 								}
 								console.log('Debug new_message_client ->device ('+index+') :'+device.time.date );
-								client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.temperature1,hum1:device.humidity1,tmp2:device.temperature2,hum2:device.humidity2,vol:device.voltage});
+								client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.info.temperature1,hum1:device.info.humidity1,tmp2:device.info.temperature2,hum2:device.info.humidity2,vol:device.info.voltage});
 								console.log('Debug new_message_client ------------------------------------------------------------end' );
 						}
 
@@ -253,10 +255,11 @@ sock.on('connection',function(client){
         console.log('Debug giot_client_message -> mData : '+mData);
         console.log('Debug giot_client_message -> mRecv : '+mRecv);
         var mCreate = new Date();
+		var macList = JsonFileTools.getJsonFromFile('./public/data/macList.json');
 		//Jason modiy on 2016.07.21
 		var index = 0;
-		for(var k = 0; k<myUnits.length; k++){
-			if(macAddress === myUnits[k].macAddr){
+		for(var k = 0; k<macList.length; k++){
+			if(macAddress == macList[k]){
 				index  = k;
 			}
 		}
@@ -285,7 +288,7 @@ function toCheckDeviceTimeout(client){
 	UnitDbTools.findAllUnits(function(err,units){
 		var successMessae,errorMessae;
 		if(err){
-			console.log('Debug toCheckDeviceStatus -> findAllUnits is fail '+err);
+			console.log('Debug toCheck Device Timeout -> find All Units is fail '+err);
 			return;
 		}
 
@@ -296,28 +299,30 @@ function toCheckDeviceTimeout(client){
 
 		//units.forEach(function(unit) {
 		for(var i=0 ; i<units.length; i++){
-			console.log('Debug toCheckDeviceStatus -> findLastDeviceByUnit mac :'+units[i].macAddr);
-			DeviceDbTools.findLastDeviceByUnit(units[i],function(err,device){
+			console.log('Debug toCheckDeviceStatus -> mac :'+units[i]);
+			console.log('Debug toCheckDeviceStatus -> mac :'+units[i].macAddr);
+			DeviceDbTools.findLastDeviceByMac(units[i].macAddr,function(err,device){
 				if(err == null){
 
 					if(device == null){
 						return;
 					}
-					console.log('Debug toCheckDeviceStatus -> findLastDeviceByUnit :'+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss"));
+					console.log('Debug toCheck Device  :'+device);
+					console.log('Debug toCheck Device Status ->  :'+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss"));
 
 					//Verify is timeout or not?
 					if(now>Number(moment(device.recv_at)) ){
                         //Is timeout
-						console.log('Debug findUnitsAndShowList -> '+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss") +' is timeout ');
+						console.log('Debug find Units And ShowList -> '+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss") +' is timeout ');
 						var mIndex = macList.indexOf(device.macAddr);
 						/*if(units[mIndex].status == 2){
 							return;
 						}*/
 						UnitDbTools.updateUnitStatus(device.macAddr,2,function(err,result){
 							if(err){
-								console.log('Debug toCheckDeviceStatus -> '+device.macAddr+' updat unit timeout is fail :'+err);
+								console.log('Debug toCheck Device Status -> '+device.macAddr+' updat unit timeout is fail :'+err);
 							}else{
-								console.log('Debug toCheckDeviceStatus -> '+device.macAddr+' updat unit timeout success');
+								console.log('Debug toCheck Device Status -> '+device.macAddr+' updat unit timeout success');
 								console.log('index :'+macList.indexOf(device.macAddr));
 								//console.log('mac :'+device.macAddr);
 								client.emit('index_client_timeout',{index:macList.indexOf(device.macAddr),status:2});

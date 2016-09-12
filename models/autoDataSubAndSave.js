@@ -20,7 +20,7 @@ socket.on('connect',function(){
 
 
 
-var messageJSON,test = false;
+var messageJSON,test = true;
 
 if(test == false){
 	GIotClient.on('connect', function()  {
@@ -63,6 +63,10 @@ if(test == false){
 function saveAndSendMessage(_JSON){
 	//Notify update
 	socket.emit('giot_client_message',_JSON);
+	var time = _JSON['recv'];
+	if(test == true){
+		time =  new Date().toString();
+	}
 
 	console.log('Debug saveAndSendMessage -----------------------------start');
 	console.log('tmp_mac :'+tmp_mac + ', tmp_recv :'+tmp_recv);
@@ -89,27 +93,31 @@ function saveAndSendMessage(_JSON){
 	/*if(mData.length<10){
 		return;
 	}*/
+	console.log('Debug save Device time : '+time);
 
-	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],_JSON['recv'],function(err,voltage){
+	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],time,function(err,voltage){
+		console.log('Debug save Device -----------------------------');
 		if(err){
-			console.log('Debug saveDevice fail : '+err);
+			console.log('Debug save Device fail : '+err);
 		}else{
 			//Statu 0:normal 1:low power 2:loss
 			var status = 0;
 			if(voltage<300){
 				status = 1;
 			}
+			console.log('Debug save Device success ');
 			//Verify unit status is same
 			//console.log('Debug findBymac : '+obj.macAddr);
 			UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
+				console.log('Debug unit : '+unit);
 				if(err == null){
 					if(unit){
 						if(unit.status != status){
-							UnitDbTools.updateUnit(unit.macAddr,unit.name,status,function(err,resut){
+							UnitDbTools.updateUnitStatus(unit.macAddr,status,function(err,resut){
 								if(err){
-									console.log('Debug UnitDbTools.updateUnit fail : '+err);
+									console.log('Debug UnitDbTools.update Unit fail : '+err);
 								}else{
-									console.log('Debug UnitDbTools.updateUnit success');
+									console.log('Debug UnitDbTools.update Unit success');
 								}
 							});
 						}

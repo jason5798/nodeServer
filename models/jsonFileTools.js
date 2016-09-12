@@ -67,10 +67,18 @@ function saveDataToFile(option,devices){
         //console.log('date : '+ date);
         var timestamp = moment(date);
         //console.log('timestamp : '+ timestamp);
-        temArr1.push([Number(timestamp),devices[i].temperature1]);
-        temArr2.push([Number(timestamp),devices[i].temperature2]);
-        humArr1.push([Number(timestamp),devices[i].humidity1]);
-        humArr2.push([Number(timestamp),devices[i].humidity2]);
+        if(devices[i].info == null){
+            temArr1.push([Number(timestamp),devices[i].temperature1]);
+            temArr2.push([Number(timestamp),devices[i].temperature2]);
+            humArr1.push([Number(timestamp),devices[i].humidity1]);
+            humArr2.push([Number(timestamp),devices[i].humidity2]);
+        }else{
+            temArr1.push([Number(timestamp),devices[i].info.temperature1]);
+            temArr2.push([Number(timestamp),devices[i].info.temperature2]);
+            humArr1.push([Number(timestamp),devices[i].info.humidity1]);
+            humArr2.push([Number(timestamp),devices[i].info.humidity2]);
+        }
+
         /*console.log('temArr1 : ' + temArr1);
         console.log('temArr2 : ' + temArr2);
         console.log('humArr1 : ' + humArr1);

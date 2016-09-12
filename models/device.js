@@ -6,14 +6,11 @@ var Schema = mongoose.Schema;
 var deviceSchema = new Schema({
   macAddr: { type: String},
   data: { type: String},
-  temperature1:{type: Number},
-  temperature2:{type: Number},
-  humidity1:{type: Number},
-  humidity2:{type: Number},
-  voltage:{type: Number},
+  type: { type: String},
+  info: { type: Schema.Types.Mixed},
   recv_at: { type: Date},
   created_at: { type: Date},
-  time: { type: Schema.Types.Mixed},
+  time: { type: Schema.Types.Mixed}
 });
 
 // the schema is useless so far
