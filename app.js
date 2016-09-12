@@ -145,7 +145,7 @@ sock.on('connection',function(client){
 									}
 								}
 								console.log('Debug new_message_client ->device ('+index+') :'+device.time.date );
-								client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.temperature1,hum1:device.humidity2,tmp2:device.temperature2,hum2:device.humidity2,vol:device.voltage});
+								client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.temperature1,hum1:device.humidity1,tmp2:device.temperature2,hum2:device.humidity2,vol:device.voltage});
 								console.log('Debug new_message_client ------------------------------------------------------------end' );
 						}
 

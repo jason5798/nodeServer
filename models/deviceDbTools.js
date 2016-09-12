@@ -124,11 +124,13 @@ exports.findLastDeviceByUnit = function (unit,calllback) {
 exports.findDevicesByDate = function (dateStr,mac,dateOption,order,calllback) {
     console.log('---findDevices---------------------------------------');
     console.log('-mac : '+mac);
-    var testTime = moment().format(' HH:mm:ss');
-    var testDate = moment().format('YYYY-MM-DD')+testTime;
-    if(dateStr){
-        testDate = dateStr+testTime;
-    }
+    /*var testDate = moment().format('YYYY-MM-DD');
+    if(dateStr && dateStr == testDate){
+        testDate = testTime;
+    }else{
+        testDate = moment(dateStr).add(1,'days').toDate();
+    }*/
+    testDate = moment(dateStr).add(1,'days').toDate();
     var now = moment(testDate).toDate();
 
     var from;
