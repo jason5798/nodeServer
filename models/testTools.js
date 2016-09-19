@@ -19,13 +19,6 @@ deviceDbTools.findAllDevices(function(err,devices){
             console.log('devices ('+i+'): '+devices[i]);
             console.log('info : '+devices[i].info);
             saveDevice(devices[i]);
-            deviceDbTools.saveDevice(devices[i].macAddr,devices[i].data,devices[i].recv_at,function(err,voltage){
-                console.log('Debug save Device -----------------------------');
-                if(err){
-                    console.log('Debug save Device fail : '+err);
-                }
-                console.log('Debug save Device success ');
-            });
         }
     }
 });
@@ -42,8 +35,8 @@ function saveDevice(device){
         }
         console.log('Debug save Device success ');
         console.log('Debug info.voltage : '+info.voltage);
+		delDeviceById(device._id);
     });
-    delDeviceById(device._id);
 }
 
 function delDeviceById(_id){
