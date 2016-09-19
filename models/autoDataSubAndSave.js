@@ -20,7 +20,7 @@ socket.on('connect',function(){
 
 
 
-var messageJSON,test = true;
+var messageJSON,test = false;
 
 if(test == false){
 	GIotClient.on('connect', function()  {
@@ -65,7 +65,7 @@ function saveAndSendMessage(_JSON){
 	socket.emit('giot_client_message',_JSON);
 	var time = _JSON['recv'];
 	if(test == true){
-		time =  new Date().toString();
+		time =  moment().format('YYYY-MM-DDThh:mm:ss');
 	}
 
 	console.log('Debug saveAndSendMessage -----------------------------start');
@@ -82,32 +82,23 @@ function saveAndSendMessage(_JSON){
 		count ++;
 		console.log('Debug saveAndSendMessage -----------------------------(count :'+ count);
 	}
-	/*try {
-		// 需要測試的語句
-		macList = JsonFileTools.getJsonFromFile('../public/data/macList.json');
-	}
-	catch (e) {
-		console.log('getJsonFromFile error message :'+e.toString());
-		return;
-	}*/
-	/*if(mData.length<10){
-		return;
-	}*/
+	
 	console.log('Debug save Device time : '+time);
 
-	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],time,function(err,voltage){
+	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],time,function(err,info){
 		console.log('Debug save Device -----------------------------');
 		if(err){
 			console.log('Debug save Device fail : '+err);
 		}else{
 			//Statu 0:normal 1:low power 2:loss
 			var status = 0;
-			if(voltage<300){
-				status = 1;
+			//For device type = 'd001'  ----------------------------- -----------------------------
+			if(info.voltage == undefined){
+				return;
 			}
 			console.log('Debug save Device success ');
 			//Verify unit status is same
-			//console.log('Debug findBymac : '+obj.macAddr);
+			//console.log('Debug findBymac : '+obj}.macAddr);
 			UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
 				console.log('Debug unit : '+unit);
 				if(err == null){
@@ -130,10 +121,18 @@ function saveAndSendMessage(_JSON){
 	console.log('Debug mqtt data ------------------------------------------------------------end' );
 }
 
-
 function getType(p) {
     if (Array.isArray(p)) return 'array';
     else if (typeof p == 'string') return 'string';
     else if (p != null && typeof p == 'object') return 'object';
     else return 'other';
+}
+
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return true && JSON.stringify(obj) === JSON.stringify({});
 }

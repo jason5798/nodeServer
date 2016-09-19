@@ -173,7 +173,7 @@ exports.findByMac = function (mac,calllback) {
 			console.log('find '+units.length+' records');
 			return calllback(err,units[0]);
 		}else{
-			console.log('?��??��???');
+			console.log('資料庫無資料');
 			return calllback(err,units);
 		}
     });

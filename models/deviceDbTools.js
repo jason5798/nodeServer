@@ -5,27 +5,62 @@ var moment = require('moment');
 
 function toGetInfoByType(type,data){
     var info = {};
-    if(type == 'd001'){
-        var arrData =Toos.getDataArray(data);
-        info.temperature1 = arrData[0];
-        info.humidity1 = arrData[1];
-        info.temperature2 = arrData[2];
-        info.humidity2 = arrData[3];
-        info.voltage = arrData[4];
-        console.log('data:'+data);
-        console.log('mTmp1:'+arrData[0]);
-        console.log('mHum1:'+arrData[1]);
-        console.log('mTmp2'+arrData[2]);
-        console.log('mHum2:'+arrData[3]);
-        console.log('mV:'+arrData[4]);
+    
+    var arrData =Toos.getDataArray(data);
+    if(type){
+        if(type == 'd001'){
+            var a0 =  arrData[0];
+            var a1 =  arrData[1];
+            var a2 =  arrData[2];
+            var a3 =  arrData[3];
+            var a4 =  arrData[4];
+            info.temperature1 =a0;
+            info.humidity1 = a1;
+            info.temperature2 = a2;
+            info.humidity2 = a3;
+            info.voltage = a4;
+            console.log('data:'+data);
+            console.log('mTmp1:'+arrData[0]);
+            console.log('mHum1:'+arrData[1]);
+            console.log('mTmp2'+arrData[2]);
+            console.log('mHum2:'+arrData[3]);
+            console.log('mV:'+arrData[4]);
+        }
+    }else{//type undefined
+        if(data.length==20){
+            var a0 =  arrData[0];
+            var a1 =  arrData[1];
+            var a2 =  arrData[2];
+            var a3 =  arrData[3];
+            var a4 =  arrData[4];
+            info.temperature1 =a0;
+            info.humidity1 = a1;
+            info.temperature2 = a2;
+            info.humidity2 = a3;
+            info.voltage = a4;
+            console.log('data:'+data);
+            console.log('mTmp1:'+arrData[0]);
+            console.log('mHum1:'+arrData[1]);
+            console.log('mTmp2'+arrData[2]);
+            console.log('mHum2:'+arrData[3]);
+            console.log('mV:'+arrData[4]);
+        }
     }
+    
     return info;
 }
 
 exports.saveDevice = function (macAddress,data,recv,callback) {
 
     var mRecv =new Date(recv);
-    var macTypeMap = JsonFileTools.getJsonFromFile('./public/data/macTypeMap.json');
+    var macTypeMap = {};
+    try {
+        macTypeMap = JsonFileTools.getJsonFromFile('./public/data/macTypeMap.json');
+    } catch(e){
+        console.log('???? save Device -> get Json From File : '+e);
+        return;
+    }
+
     var type = macTypeMap[macAddress]
     console.log('macTypeMap:'+macTypeMap);
     console.log('type:'+type);
@@ -33,15 +68,20 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
     console.log('mRecv:'+mRecv);
     var info = toGetInfoByType(type,data);
     var mV = info.voltage;
+    console.log('info:'+JSON.stringify( info));
+    if(isEmpty(info)){
+       return callback('Data is not correct!!!');
+    }
+     
     console.log('mV:'+mV);
     var time = {
-        date   : moment(recv).format("YYYY-MM-DD HH:mm:ss"),
-        year   : moment(recv).format("YYYY"),
+        date   : moment(recv).format('YYYY-MM-DD HH:mm:ss'),
+        /*year   : moment(recv).format("YYYY"),
         month  : moment(recv).format("YYYY-MM"),
         day    : moment(recv).format("YYYY-MM-DD"),
         hour   : moment(recv).format("YYYY-MM-DD HH"),
-        minute : moment(recv).format("YYYY-MM-DD HH:mm"),
-        cdate   : moment(recv).format("YYYY年MM月DD日 HH時mm分ss秒")
+        minute : moment(recv).format("YYYY-MM-DD HH:mm"),*/
+        cdate   : moment(recv).format('YYYY-MM-DD HH:mm:ss')
     };
 
     var newDevice = new DeviceModel({
@@ -53,13 +93,14 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
             created_at : new Date(),
             time:time
         });
+    
     newDevice.save(function(err){
         if(err){
             console.log('Debug : Device save fail!');
             return callback(err);
         }
         console.log('Debug : Device save success!');
-        return callback(err,mV);
+        return callback(err,info);
     });
 };
 
@@ -224,11 +265,11 @@ exports.updateDeviceTime = function (unitId,updateTime,calllback) {
     console.log('Debug : updateDeviceTime id='+unitId+" , time ="+time);
     var time = {
         date   : moment(updateTime).format("YYYY-MM-DD HH:mm:ss"),
-        year   : moment(updateTime).format("YYYY"),
+        /*year   : moment(updateTime).format("YYYY"),
         month  : moment(updateTime).format("YYYY-MM"),
         day    : moment(updateTime).format("YYYY-MM-DD"),
         hour   : moment(updateTime).format("YYYY-MM-DD HH"),
-        minute : moment(updateTime).format("YYYY-MM HH:mm"),
+        minute : moment(updateTime).format("YYYY-MM HH:mm"),*/
         cdate   : moment(updateTime).format("YYYY年MM月DD日 HH時mm分ss秒")
     };
     console.log('Debug updateDeviceTime: time.date'+time.cdate);
@@ -328,3 +369,12 @@ exports.removeDeviceById = function (id,calllback) {
       }
     });
 };
+
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return true && JSON.stringify(obj) === JSON.stringify({});
+}

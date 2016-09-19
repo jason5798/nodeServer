@@ -22,7 +22,7 @@ var tools =  require('./models/tools.js');
 var JsonFileTools =  require('./models/jsonFileTools.js');
 //Jason add for test
 //var auto =  require('./models/autoDataSubAndSave.js');
-var test =  require('./models/testTools.js');
+//var test =  require('./models/testTools.js');
 //app setting-------------------------------------------------------
 var app = express();
 var port = process.env.PORT || 3000;
@@ -146,7 +146,7 @@ sock.on('connection',function(client){
 										 index = j;
 									}
 								}
-								console.log('Debug new_message_client ->device ('+index+') :'+device.time.date );
+								console.log('Debug new_message_client ->device ('+index+') :'+device.info.voltage );
 								client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.info.temperature1,hum1:device.info.humidity1,tmp2:device.info.temperature2,hum2:device.info.humidity2,vol:device.info.voltage});
 								console.log('Debug new_message_client ------------------------------------------------------------end' );
 						}
