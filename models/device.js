@@ -6,7 +6,6 @@ var Schema = mongoose.Schema;
 var deviceSchema = new Schema({
   macAddr: { type: String},
   data: { type: String},
-  type: { type: String},
   info: { type: Schema.Types.Mixed},
   recv_at: { type: Date},
   created_at: { type: Date},

@@ -9,15 +9,15 @@ var mytopic = 'client/200000166/200000166-GIOT-MAKER';
 
 var options = {
 	port:portNumber,
-    host: hostname,
-    clientId:client_Id,
-    username:name,
-    password:pw,
-    //keepalive: 60,
-	//reconnectPeriod: 1000,
+  host: hostname,
+  clientId:client_Id,
+  username:name,
+  password:pw,
+  keepalive: 0,
+	reconnectPeriod: 1000,
 	protocolId: 'MQIsdp',
 	protocolVersion: 3,
-	//clean: true,
+	clean: true,
 	encoding: 'utf8'
 };
 

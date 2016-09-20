@@ -146,8 +146,10 @@ sock.on('connection',function(client){
 										 index = j;
 									}
 								}
-								console.log('Debug new_message_client ->device ('+index+') :'+device.info.voltage );
-								client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.info.temperature1,hum1:device.info.humidity1,tmp2:device.info.temperature2,hum2:device.info.humidity2,vol:device.info.voltage});
+								if(device.info.data4){
+									console.log('Debug new_message_client ->device ('+index+') :'+device.info.data4 );
+									client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.info.data0,hum1:device.info.data1,tmp2:device.info.data2,hum2:device.info.data3,vol:device.info.data4});
+								}
 								console.log('Debug new_message_client ------------------------------------------------------------end' );
 						}
 
@@ -247,13 +249,13 @@ sock.on('connection',function(client){
 
 
 	client.on('giot_client_message',function(data){
-		console.log('Debug giot_client_message :'+data );
+		console.log('Debug giot client message :'+data );
 		var macAddress = data['macAddr'];
         var mData = data['data'];
         var mRecv = data['recv'];
-        console.log('Debug giot_client_message -> macAddress : '+macAddress);
-        console.log('Debug giot_client_message -> mData : '+mData);
-        console.log('Debug giot_client_message -> mRecv : '+mRecv);
+        console.log('Debug giot client message -> macAddress : '+macAddress);
+        console.log('Debug giot client message -> mData : '+mData);
+        console.log('Debug giot client message -> mRecv : '+mRecv);
         var mCreate = new Date();
 		var macList = JsonFileTools.getJsonFromFile('./public/data/macList.json');
 		//Jason modiy on 2016.07.21

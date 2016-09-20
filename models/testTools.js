@@ -19,6 +19,8 @@ deviceDbTools.findAllDevices(function(err,devices){
             console.log('devices ('+i+'): '+devices[i]);
             console.log('info : '+devices[i].info);
             saveDevice(devices[i]);
+        }else{
+            console.log('devices with info ('+i+'): '+devices[i]);
         }
     }
 });
@@ -34,9 +36,9 @@ function saveDevice(device){
             return;
         }
         console.log('Debug save Device success ');
-        console.log('Debug info.voltage : '+info.voltage);
-		delDeviceById(device._id);
+        console.log('Debug info.voltage : '+info.data4);
     });
+    delDeviceById(device._id);
 }
 
 function delDeviceById(_id){

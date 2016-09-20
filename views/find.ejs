@@ -91,19 +91,19 @@
 					<% devices.forEach(function(device) { %>
 						<% if (device.info) { %>
 							<tr>
-								<td><%= device.info.temperature1 %>度</td>
-								<td><%= device.info.humidity1 %>%</td>
-								<td><%= device.info.temperature2 %>度</td>
-								<td><%= device.info.humidity2 %>%</td>
+								<td><%= device.info.data0 %>度</td>
+								<td><%= device.info.data1 %>%</td>
+								<td><%= device.info.data2 %>度</td>
+								<td><%= device.info.data3 %>%</td>
 							<td>
-							<% if (device.info.voltage) { %>
-								<% if (device.info.voltage>300) {  %>
+							<% if (device.info.data4) { %>
+								<% if (device.info.data4>300) {  %>
 									<button type="button" class="btn btn-success btn-sm" >
-										<%= '正常('+device.info.voltage+')' %> 　
+										<%= '正常('+ device.info.data4 +')' %> 　
 									</button>　
 								<% }else{ %>
 									<button type="button" class="btn btn-danger btn-sm" >
-										<%= '低電壓'+device.info.voltage %>
+										<%= '低電壓'+device.info.data4 %>
 									</button>
 								<% } %>
 							<% } else { %>

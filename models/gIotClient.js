@@ -8,7 +8,7 @@ var options = {
     username:settings.name,
     password:settings.pw,
     keepalive: 0,
-	reconnectPeriod: 10000,
+	reconnectPeriod: 1000,
 	protocolId: 'MQIsdp',
 	protocolVersion: 3,
 	clean: true,

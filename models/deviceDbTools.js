@@ -1,78 +1,36 @@
 var DeviceModel = require('./device.js');
 var JsonFileTools =  require('./jsonFileTools.js');
-var Toos = require('./tools.js');
+var Tools = require('./tools.js');
 var moment = require('moment');
 
-function toGetInfoByType(type,data){
+function toGetInfoByData(mac,data){
     var info = {};
-    
-    var arrData =Toos.getDataArray(data);
-    if(type){
-        if(type == 'd001'){
-            var a0 =  arrData[0];
-            var a1 =  arrData[1];
-            var a2 =  arrData[2];
-            var a3 =  arrData[3];
-            var a4 =  arrData[4];
-            info.temperature1 =a0;
-            info.humidity1 = a1;
-            info.temperature2 = a2;
-            info.humidity2 = a3;
-            info.voltage = a4;
-            console.log('data:'+data);
-            console.log('mTmp1:'+arrData[0]);
-            console.log('mHum1:'+arrData[1]);
-            console.log('mTmp2'+arrData[2]);
-            console.log('mHum2:'+arrData[3]);
-            console.log('mV:'+arrData[4]);
-        }
-    }else{//type undefined
-        if(data.length==20){
-            var a0 =  arrData[0];
-            var a1 =  arrData[1];
-            var a2 =  arrData[2];
-            var a3 =  arrData[3];
-            var a4 =  arrData[4];
-            info.temperature1 =a0;
-            info.humidity1 = a1;
-            info.temperature2 = a2;
-            info.humidity2 = a3;
-            info.voltage = a4;
-            console.log('data:'+data);
-            console.log('mTmp1:'+arrData[0]);
-            console.log('mHum1:'+arrData[1]);
-            console.log('mTmp2'+arrData[2]);
-            console.log('mHum2:'+arrData[3]);
-            console.log('mV:'+arrData[4]);
-        }
+    var flag = 0;
+    if(mac != '04000496'){
+        flag = 1;
+    }
+    var arrData =Tools.getDataArray(flag,data);
+    for(var i = 0;i<arrData.length ;i++){
+        var a = 'data' + i;
+        info[a] = arrData[i];
     }
     
     return info;
 }
 
 exports.saveDevice = function (macAddress,data,recv,callback) {
+    var mRecv = new Date(recv);
+    var info = toGetInfoByData(macAddress,data);
+    var mV = info.data4;
 
-    var mRecv =new Date(recv);
-    var macTypeMap = {};
-    try {
-        macTypeMap = JsonFileTools.getJsonFromFile('./public/data/macTypeMap.json');
-    } catch(e){
-        console.log('???? save Device -> get Json From File : '+e);
-        return;
-    }
-
-    var type = macTypeMap[macAddress]
-    console.log('macTypeMap:'+macTypeMap);
-    console.log('type:'+type);
     console.log('macAddress:'+macAddress);
-    console.log('mRecv:'+mRecv);
-    var info = toGetInfoByType(type,data);
-    var mV = info.voltage;
+    console.log('mRecv:'+ mRecv);
     console.log('info:'+JSON.stringify( info));
+
     if(isEmpty(info)){
        return callback('Data is not correct!!!');
     }
-     
+
     console.log('mV:'+mV);
     var time = {
         date   : moment(recv).format('YYYY-MM-DD HH:mm:ss'),
@@ -84,16 +42,17 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
         cdate   : moment(recv).format('YYYY-MM-DD HH:mm:ss')
     };
 
+    console.log('time:'+JSON.stringify( time));
+
     var newDevice = new DeviceModel({
-            macAddr    : macAddress,
-            data       : data,
-            type       : type,
-            info       : info,
-            recv_at    : mRecv,
-            created_at : new Date(),
-            time:time
-        });
-    
+        macAddr    : macAddress,
+        data       : data,
+        info       : info,
+        recv_at    : mRecv,
+        created_at : new Date(),
+        time:time
+    });
+
     newDevice.save(function(err){
         if(err){
             console.log('Debug : Device save fail!');
@@ -291,7 +250,7 @@ exports.updateDeviceTime = function (unitId,updateTime,calllback) {
 exports.updateDeviceData = function (unitId,data,calllback) {
     console.log('---updateDeviceTime ---------------------------------------');
     console.log('Debug : updateDeviceTime id='+unitId+" , data ="+data);
-    var arrData =Toos.getDataArray(data);
+    var arrData =Tools.getDataArray(data);
     var mTmp1 = arrData[0];
     var mHum1 = arrData[1];
     var mTmp2 = arrData[2];
