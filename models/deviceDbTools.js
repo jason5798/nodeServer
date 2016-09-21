@@ -5,6 +5,7 @@ var moment = require('moment');
 
 function toGetInfoByData(mac,data){
     var info = {};
+    //Jason test
     var flag = 0;
     if(mac != '04000496'){
         flag = 1;

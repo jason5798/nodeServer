@@ -168,49 +168,6 @@ sock.on('connection',function(client){
 		client.emit('new_message_receive_mqtt','new_message_test');
 	});
 
-	//for receive mqtt message to updata new message----------------------------------------------------------
-	/*GIotClient.on('message', function( topic, message) {
-		console.log('topic:'+topic.toString());
-		console.log('message:'+message.toString());
-		console.log('message type :'+getType(message));
-
-		if(getType(message) !== 'object')
-			return;
-		try {
-			// 需要測試的語句
-			var obj = JSON.parse(message);
-		}
-		catch (e) {
-			console.log('parse json error message :'+e.toString());
-			return;
-		}
-
-        var index = 0;
-		for(var k = 0; k<myUnits.length; k++){
-			if(obj.macAddr === myUnits[k].macAddr){
-				index  = k;
-			}
-		}
-
-		console.log('macAddress:'+obj.macAddr +" , data : "+obj.data+" , recv : "+obj.recv);
-
-        var macAddress = obj.macAddr;
-        var mData = obj.data;
-        var mRecv = obj.recv;
-        var mCreate = new Date();
-		//Jason modiy on 2016.07.21
-		var arrData = tools.getDataArray('0104010c0105010f');
-		var mTmp1 = arrData[0];
-		var mHum1 = arrData[1];
-		var mTmp2 = arrData[2];
-		var mHum2 = arrData[3];
-		var mV = arrData[4];
-        var mCreate = new Date();
-		var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
-		console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
-
-		client.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
-	});*/
 	//----------------------------------------------------------------------------
 	client.on('chart_client',function(data){
 		console.log('Debug cart_client ------------------------------------------------------------start' );
@@ -266,7 +223,12 @@ sock.on('connection',function(client){
 			}
 		}
 		//mData = '00fk03a900fb01d701e7';//Jason add for test
-		var arrData = tools.getDataArray( mData);
+		//Jason test
+		var flag = 0;
+		if(mac != '04000496'){
+			flag = 1;
+		}
+		var arrData = tools.getDataArray( flag,mData);
 		var mTmp1 = arrData[0];
 		var mHum1 = arrData[1];
 		var mTmp2 = arrData[2];
