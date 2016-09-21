@@ -279,8 +279,9 @@ module.exports = function(app){
 		var find_mac = req.flash('mac').toString();
 		var option = req.flash('option').toString();
 		var mdate = req.flash('mdate').toString();
-		var successMessae,errorMessae;
+		var successMessae,errorMessae,findType;
 		var count = 0;
+
 		console.log('Debug find get -> mac:'+ find_mac);
 		console.log('Debug find get -> option:'+ option);
 		console.log('Debug find get -> date:'+ mdate);
@@ -293,9 +294,17 @@ module.exports = function(app){
 				mdate:moment().format('YYYY-MM-DD'),
 				devices: null,
 				success: successMessae,
-				error: errorMessae
+				error: errorMessae,
+				selectedType:findType
 			});
 		}else{
+			//Jason modify for get selected device type on 2016.0.21
+			req.session.units.forEach(function(unit) {
+				if(unit.macAddr == find_mac){
+					console.log('unit.type:'+unit.type);
+					findType = unit.type;
+				}
+			});
 			DeviceDbTools.findDevicesByDate(mdate,find_mac,Number(option),'asc',function(err,devices){
 				if(err){
 					console.log('find name:'+find_mac);
@@ -307,8 +316,9 @@ module.exports = function(app){
 					console.log('mac:'+device.macAddr + ', data :' +device.data);
 					count = count +1;
 				});*/
-
+				console.log('find type:'+findType);
 				console.log('Debug find get mac '+find_mac+'-> find '+devices.length+' records');
+				console.log('Debug find device '+find_mac+'-> find '+devices);
 				successMessae = '查詢到'+devices.length+'筆資料';
 
 				res.render('find', { title: '資料查詢',
@@ -319,7 +329,8 @@ module.exports = function(app){
 					mdate:mdate,
 					devices: devices,
 					success: successMessae,
-					error: errorMessae
+					error: errorMessae,
+					selectedType:findType
 				});
 			});
 		}

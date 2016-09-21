@@ -83,8 +83,10 @@
 					<tr>
 						<td >溫度1</td>
 						<td >濕度1</td>
-						<td >溫度2</td>
-						<td >濕度2</td>
+						<% if (selectedType!=null && selectedType == 'd001'){ %>
+							<td >溫度2</td>
+							<td >濕度2</td>
+						<% } %>
 						<td >電壓</td>
 						<td >時間</td>
 					</tr>
@@ -93,8 +95,10 @@
 							<tr>
 								<td><%= device.info.data0 %>度</td>
 								<td><%= device.info.data1 %>%</td>
-								<td><%= device.info.data2 %>度</td>
-								<td><%= device.info.data3 %>%</td>
+								<% if (selectedType!=null && selectedType == 'd001'){ %>
+									<td><%= device.info.data2 %>度</td>
+									<td><%= device.info.data3 %>%</td>
+								<% } %>
 							<td>
 							<% if (device.info.data4) { %>
 								<% if (device.info.data4>300) {  %>
@@ -115,8 +119,10 @@
 						<% }else{ %>
 							<td>須更改<%= device.temperature1 %>度</td>
 							<td><%= device.humidity1 %>%</td>
-							<td><%= device.temperature2 %>度</td>
-							<td><%= device.humidity2 %>%</td>
+							<% if (selectedType!=null && selectedType == 'd001'){ %>
+								<td><%= device.temperature2 %>度</td>
+								<td><%= device.humidity2 %>%</td>
+							<% } %>
 							<td>
 							<% if (device.voltage) { %>
 								<% if (device.voltage>300) {  %>
