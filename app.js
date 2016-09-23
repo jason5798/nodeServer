@@ -13,6 +13,13 @@ var http = require('http'),
     https = require('https');
 var ssl = require('./sslLicense');
 
+var yql = require('yql-node').formatAsJSON(); //will return JSON results 
+var query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="Hualien, tw") and u="c"';
+//returns JSON 
+  yql.execute(query, function(error,response){
+    console.log("yql:");
+    console.log(JSON.stringify(response));
+  });
 //require private module ------------------------------------------
 var UnitDbTools = require('./models/unitDbTools.js');
 var DeviceDbTools = require('./models/deviceDbTools.js');
@@ -49,7 +56,7 @@ app.use(session({
 //
 routes(app);
 var server = http.createServer(app);
-//var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
+var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
 var sock = require('socket.io').listen(server.listen(port));
 
 
@@ -225,7 +232,7 @@ sock.on('connection',function(client){
 		//mData = '00fk03a900fb01d701e7';//Jason add for test
 		//Jason test
 		var flag = 0;
-		if(mac != '04000496'){
+		if(macAddress != '04000496'){
 			flag = 1;
 		}
 		var arrData = tools.getDataArray( flag,mData);

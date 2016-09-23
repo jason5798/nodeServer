@@ -8,6 +8,7 @@
 <link href="css/datepicker3.css" rel="stylesheet">
 <link href="css/styles.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="/js/jqplot/jquery.jqplot.css"/>
+<link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <script src="js/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/jqplot/jquery.jqplot.min.js"></script>
@@ -103,18 +104,24 @@
 			<ol class="breadcrumb">
 				<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
 				<li class="active"><%= title%></li>
-
+				<li class="active"><% if (success) { %>
+						<%= success %>
+					<% } %>
+					<% if (error) { %>
+						<%= error %>
+					<% } %>
+				</li>
 			</ol>
 
-			<div class="panel panel-default">
-				<div class="panel-heading col-lg-2">
+			<div class="row">
+				<!--<div class="panel-heading col-lg-2">
 					<%= title %>
 				</div>  <!-- panel-heading -->
-				<div id="result" class="panel-heading col-lg-10">
+				<!--<div id="result" class="panel-heading col-lg-10">
 					<% if (success) { %>
 						<%= success %>
 					<% } %>
 					<% if (error) { %>
 						<%= error %>
 					<% } %>
-				</div>  <!-- panel-heading -->
+				</div> -->  <!-- panel-heading -->

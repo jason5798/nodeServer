@@ -85,7 +85,7 @@ function saveAndSendMessage(_JSON){
 		//Notify update
 		socket.emit('giot_client_message',_JSON);
 		count ++;
-		console.log('Debug saveAndSendMessage -----------------------------(count :'+ count);
+		//console.log('Debug saveAndSendMessage -----------------------------(count :'+ count);
 	//}
 
 	console.log('Debug save Device time : '+time);
@@ -101,7 +101,7 @@ function saveAndSendMessage(_JSON){
 			/*if(info.data4 == undefined){
 				return;
 			}*/
-			console.log('Debug save Device success ');
+			//console.log('Debug save Device success ');
 			//Verify unit status is same
 			//console.log('Debug findBymac : '+obj}.macAddr);
 			/*UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
