@@ -1,4 +1,4 @@
-﻿var express = require('express');
+var express = require('express');
 var router = express.Router();
 var DeviceDbTools = require('../models/deviceDbTools.js');
 var UnitDbTools = require('../models/unitDbTools.js');

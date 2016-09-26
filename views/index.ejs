@@ -218,8 +218,8 @@
 					<input id="postMac" name="postMac" type="hidden"">
 					<input id="postName" name="postName" type="hidden"">
 				</form>
-			</div>
-		</div> <!-- column-->
+			</div> <!-- col-md-12 column-->
+		</div> <!-- col-md-8 column-->
 		<div class="col-md-4 column col-centered">
 			<a href="http://www.accuweather.com/en/tw/hualien-county/3369306/weather-forecast/3369306" class="aw-widget-legal">
 			<!--
@@ -227,8 +227,8 @@
 			-->
 			</a>
 			<div id="awtd1474449223149" class="aw-widget-36hour"  data-locationkey="" data-unit="c" data-language="zh-tw" data-useip="false" data-uid="awtd1474449223149" data-editlocation="false">
-			</div>
-		</div> <!-- column-->
+			</div><!-- column-->
+		</div> <!-- col-md-4 column col-centered-->
 	</div>	<!--row-->
 	<div class="row">
 		<div class="col-md-12 column">
@@ -266,11 +266,10 @@
             <button type="button" onClick="toSubmit()" class="btn btn-danger">
                確定刪除
             </button>
-         </div>s
+         </div>
       </div><!-- /.modal-content -->
-</div><!-- /.modal -->
+</div><!-- /.modal-dialog -->
 
-	<script src="js/bootstrap-table.js"></script>
 
 <script class="code" type="text/javascript">
 	$(document).ready(function () {
@@ -288,19 +287,10 @@
         socket.emit('index_client','hello,index_client socket cient is ready');
     });
 
-    socket.on('index_client_timeout',function(data){
+    socket.on('index_weather_data',function(data){
 
-		//alert('index :'+data.index);
+		alert('index :'+data.data);
 		//alert('status :'+data.status);
-		if( data.status == 0 ){
-			$('[name=status]').eq(data.index).attr("src","/images/btn_normal.png");
-		}else if( data.status == 1 ){
-			$('[name=status]').eq(data.index).attr("src","/images/btn_alarm.png");
-		}else{
-			$('[name=status]').eq(data.index).attr("src","/images/btn_loss.png");
-		}
-
-
 	});
 
 	function editCheck(button){

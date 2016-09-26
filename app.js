@@ -8,18 +8,19 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var settings = require('./settings');
 var routes = require('./routes/index');
+var todos = require('./routes/todos');//Jason add on 2016.09.26
 var moment = require('moment');
 var http = require('http'),
     https = require('https');
 var ssl = require('./sslLicense');
 
-var yql = require('yql-node').formatAsJSON(); //will return JSON results 
-var query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="Hualien, tw") and u="c"';
-//returns JSON 
+var yql = require('yql-node').formatAsJSON(); //will return JSON results
+/*var query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="Hualien, tw") and u="c"';
+//returns JSON
   yql.execute(query, function(error,response){
     console.log("yql:");
     console.log(JSON.stringify(response));
-  });
+  });*/
 //require private module ------------------------------------------
 var UnitDbTools = require('./models/unitDbTools.js');
 var DeviceDbTools = require('./models/deviceDbTools.js');
@@ -27,6 +28,8 @@ var UserDbTools = require('./models/userDbTools.js');
 //var GIotClient =  require('./models/gIotClient.js');
 var tools =  require('./models/tools.js');
 var JsonFileTools =  require('./models/jsonFileTools.js');
+var schedule = require('node-schedule');
+var async = require('async');
 //Jason add for test
 //var auto =  require('./models/autoDataSubAndSave.js');
 //var test =  require('./models/testTools.js');
@@ -53,14 +56,66 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+//Jason add on 2016.09.26
+
+app.use('/todos', todos);
 //
 routes(app);
 var server = http.createServer(app);
 var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
 var sock = require('socket.io').listen(server.listen(port));
 
+var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
+	// do jobs here
+	console.log('time:'+new Date());
+	UnitDbTools.findAllUnits(function(err,units){
+  		async.each(units,function(unit,callback){
+			updateStatus(unit,function(){
+				callback();
+			});
+  		},function(err){
+  			console('Debug todos -> get unit err : '+err);
+  		});
+  	});
+});
+
+function updateStatus(unit,callback){
+
+	var tasks = ['find_last_device','compare_status'];
+	var last_timestamp = Number(moment().subtract(2,'hours'));
+	var status = 0;
+	DeviceDbTools.findLastDeviceByMac(unit.macAddr,function(err,device){
+		if(err){
+			return callback(unit.status);
+		}
+		var recv_timestamp = Number(moment(device.recv_at));
+		//console.log('unit : '+unit);
+		//console.log('device : '+device);
+		console.log('last_timestamp : '+last_timestamp + ' type :' +typeof(last_timestamp));
+		console.log('recv_timestamp : '+recv_timestamp);
 
 
+		if(last_timestamp >= recv_timestamp && unit.status != 2 ){
+			console.log('name : '+unit.name + 'is overtime');
+			status = 2;
+		}if(last_timestamp < recv_timestamp && unit.status == 2 ){
+			console.log('name : '+unit.name + 'is ok');
+			status = 0;
+		}else{
+			console.log('name : '+unit.name + ' status no change');
+			return;
+		}
+		UnitDbTools.updateUnitStatus(device.macAddr,status,function(err,result){
+			if(err){
+				console.log('update name : '+unit.name + 'err : '+err);
+				//return callback(unit.status);
+			}else{
+				console.log('update name : '+unit.name + ' status '+status+' is ok');
+				//return callback(status);
+			}
+		});
+	});
+}
 
 /*app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
@@ -124,7 +179,13 @@ sock.on('connection',function(client){
 	client.on('index_client',function(data){
 		console.log('Debug index ------------------------------------------------------------start' );
 		console.log('Debug index :' + data );
-		toCheckDeviceTimeout(client);
+		//toCheckDeviceTimeout(client);
+		DeviceDbTools.findLastDeviceByMac('04000496',function(err,device){
+		if(err){
+			return callback(unit.status);
+		}
+		client.emit('index_weather_data',device);
+	});
 	});
 
 	//for new message ----------------------------------------------------------------------------
@@ -254,7 +315,7 @@ sock.on('connection',function(client){
  * @param  {[client]}
  * @return client.emit to index page
  */
-function toCheckDeviceTimeout(client){
+/*unction toCheckDeviceTimeout(client){
 	var now = Number(moment().subtract(1,'days'));
 	UnitDbTools.findAllUnits(function(err,units){
 		var successMessae,errorMessae;
@@ -286,9 +347,7 @@ function toCheckDeviceTimeout(client){
                         //Is timeout
 						console.log('Debug find Units And ShowList -> '+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss") +' is timeout ');
 						var mIndex = macList.indexOf(device.macAddr);
-						/*if(units[mIndex].status == 2){
-							return;
-						}*/
+
 						UnitDbTools.updateUnitStatus(device.macAddr,2,function(err,result){
 							if(err){
 								console.log('Debug toCheck Device Status -> '+device.macAddr+' updat unit timeout is fail :'+err);
@@ -319,7 +378,7 @@ function toCheckDeviceTimeout(client){
 			});
 		}
 	});
-}
+}*/
 
 function getShortenDevices(devices){
 	var interval = Math.floor(devices.length/145)+1;
@@ -377,3 +436,4 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
