@@ -163,7 +163,7 @@
 									<td align="center">
 										<div  class="col-md-3">
 											<span class="pull-right">
-					                        	<img src="images\icon_detecter.png" width="50" height="50">
+					                        	<img src="/images/icon_detecter.png" width="50" height="50">
 					                        </span>
 
 										</div>
@@ -178,11 +178,11 @@
 									</td>
 									<td  align="center">
 										<% if(units[i].status == 0){ %>
-										   <img src="images\btn_normal.png" width="80" height="40" name="status">
+										   <img src="/images/btn_normal.png" width="80" height="40" name="status">
 										<% }else if(units[i].status == 1){ %>
-											<img src="images\btn_alarm.png" width="80" height="40" name="status">
+											<img src="/images/btn_alarm.png" width="80" height="40" name="status">
 										<% }else if(units[i].status == 2){ %>
-											<img src="images\btn_loss.png" width="80" height="40" name="status">
+											<img src="/images/btn_loss.png" width="80" height="40" name="status">
 										<% } %>
 									</td>
 								</tr>
@@ -264,20 +264,16 @@
 
     socket.on('index_weather_data',function(data){
 
-
 		if(data.index == 'aa01'){
 			//alert('index :'+ data.info.data0);
-			document.getElementById('pressure').innerText = data.info.data0;
-			document.getElementById('temperature').innerText = data.info.data2;
-			document.getElementById('humidity').innerText = data.info.data3;
-			document.getElementById('light').innerText = data.info.data4;
-			//document.getElementById('pm25').innerText = data.info.data2;
-			//document.getElementById('uv').innerText = data.info.data3;
-			//document.getElementById('co2').innerText = data.info.data4;
+			$("#pressure").text(data.info.data0);
+			$("#temperature").text(data.info.data2);
+			$("#humidity").text(data.info.data3);
+			$("#light").text(data.info.data4);
 		}else{
 			//alert('index :'+ data.info.data0);
-			document.getElementById('uv').innerText = data.info.data0;
-			document.getElementById('rain').innerText = data.info.data1;
+			$("#uv").text(data.info.data0);
+			$("#rain").text(data.info.data1);
 		}
 
 	});
