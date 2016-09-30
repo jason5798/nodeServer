@@ -17,7 +17,7 @@ var socket = io.connect('http://localhost:3000', {reconnect: true});
 socket.on('connect',function(){
     socket.emit('giot_client','hello,giot_client socket cient is ready');
 });
-
+console.log('time:'+new Date()+'-> mqtt topic:'+settings.gIoTopic);
 
 
 var messageJSON,test = false;

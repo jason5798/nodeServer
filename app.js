@@ -31,7 +31,8 @@ var JsonFileTools =  require('./models/jsonFileTools.js');
 var schedule = require('node-schedule');
 var async = require('async');
 //Jason add for test
-//var auto =  require('./models/autoDataSubAndSave.js');
+var auto =  require('./models/autoDataSubAndSave.js');
+//var autoTest =  require('./models/autoTest.js');
 //var test =  require('./models/testTools.js');
 //app setting-------------------------------------------------------
 var app = express();
@@ -181,13 +182,27 @@ sock.on('connection',function(client){
 	client.on('index_client',function(data){
 		console.log('Debug index ------------------------------------------------------------start' );
 		console.log('Debug index :' + data );
-		//toCheckDeviceTimeout(client);
-		DeviceDbTools.findLastDeviceByMac('04000496',function(err,device){
-		if(err){
-			return callback(unit.status);
-		}
-		client.emit('index_weather_data',device);
-	});
+
+		DeviceDbTools.findLastDevice({index:'aa01'},function(err,device){
+			if(err){
+				return callback(unit.status);
+			}
+			console.log('Debug index_client aa02 -> '+device);
+			if(device){
+				client.emit('index_weather_data',device);
+			}
+			
+		});
+		DeviceDbTools.findLastDevice({index:'aa02'},function(err,device){
+			if(err){
+				return callback(unit.status);
+			}
+			console.log('Debug index_client aa02 -> '+device);
+			if(device){
+				client.emit('index_weather_data',device);
+			}
+		});
+		//client.emit('index_weather_data',{pressue:mPressure,height:mHeight,tempretaure:mTempretaure,humidity:mHumidity,light:mLight,uv:mUv,rain:mRain});
 	});
 
 	//for new message ----------------------------------------------------------------------------
@@ -195,7 +210,7 @@ sock.on('connection',function(client){
 
 		UnitDbTools.findAllUnits(function(err,units){
 			if(err){
-				console.log('Debug ')
+				console.log('Debug ');
 			}else{
 				myUnits = units;
 				//console.log('Debug new_message_client-> units : '+units);

@@ -5,6 +5,28 @@
 			<div class="col-lg-4 col-md-4">
                 <div class="panel panel-primary">
 		            	<div class="panel-heading">
+							<span class="pull-center">
+									 <div class="fa fa-2x">氣壓</div>
+							</span>
+							<span class="pull-right">
+	                        		<div class="fa fa-2x">mb</div>
+	                        </span>
+						</div>
+		                <div class="panel-body">
+
+		                        <span class="pull-left">
+		                        	<img src="/images/icon_pressure.png" width="80" height="80">
+		                        </span>
+	                        	<span class="pull-right">
+	                        		 <div id="pressure" class="fa fa-2x">998</div>
+	                        	</span>
+
+		                </div>
+		            </div>
+            </div>
+			<div class="col-lg-4 col-md-4">
+                <div class="panel panel-primary">
+		            	<div class="panel-heading">
 							<span class="pull-left">
 									 <div class="fa fa-2x">溫度</div>
 							</span>
@@ -55,19 +77,19 @@
                 <div class="panel panel-primary">
 		            	<div class="panel-heading">
 							<span class="pull-center">
-									 <div class="fa fa-2x">粒子</div>
+									 <div class="fa fa-2x">照明</div>
 							</span>
 							<span class="pull-right">
-	                        		<div class="fa fa-2x">µg/m³</div>
+	                        		<div class="fa fa-2x">lux</div>
 	                        </span>
 						</div>
 		                <div class="panel-body">
 
 		                        <span class="pull-left">
-		                        	<img src="/images/icon_pm25.png" width="80" height="80">
+		                        	<img src="/images/icon_light.png" width="80" height="80">
 		                        </span>
 	                        	<span class="pull-right">
-	                        		 <div id="pm25" class="fa fa-2x">150</div>
+	                        		 <div id="light" class="fa fa-2x">ˋ420</div>
 	                        	</span>
 
 		                </div>
@@ -80,7 +102,7 @@
 									 <div class="fa fa-2x">紫外線</div>
 							</span>
 							<span class="pull-right">
-	                        		<div class="fa fa-2x">eV</div>
+	                        		<div class="fa fa-2x"></div>
 	                        </span>
 						</div>
 		                <div class="panel-body">
@@ -99,41 +121,19 @@
                 <div class="panel panel-primary">
 		            	<div class="panel-heading">
 							<span class="pull-center">
-									 <div class="fa fa-2x">CO2</div>
+								<div class="fa fa-2x">雨滴</div>
 							</span>
 							<span class="pull-right">
-	                        		<div class="fa fa-2x">g/cm3</div>
+	                        	<div class="fa fa-2x"></div>
 	                        </span>
 						</div>
 		                <div class="panel-body">
 
 		                        <span class="pull-left">
-		                        	<img src="/images/icon_co2.png" width="80" height="80">
+		                        	<img src="/images/icon_rain.png" width="80" height="80">
 		                        </span>
 	                        	<span class="pull-right">
-	                        		 <div id="co2" class="fa fa-2x">0.496</div>
-	                        	</span>
-
-		                </div>
-		            </div>
-            </div>
-            <div class="col-lg-4 col-md-4">
-                <div class="panel panel-primary">
-		            	<div class="panel-heading">
-							<span class="pull-center">
-									 <div class="fa fa-2x">氣壓</div>
-							</span>
-							<span class="pull-right">
-	                        		<div class="fa fa-2x">mb</div>
-	                        </span>
-						</div>
-		                <div class="panel-body">
-
-		                        <span class="pull-left">
-		                        	<img src="/images/icon_pressure.png" width="80" height="80">
-		                        </span>
-	                        	<span class="pull-right">
-	                        		 <div id="pressure" class="fa fa-2x">998</div>
+	                        		 <div id="rain" class="fa fa-2x">3</div>
 	                        	</span>
 
 		                </div>
@@ -264,15 +264,20 @@
 
     socket.on('index_weather_data',function(data){
 
-		//alert('index :'+data.data);
-		if(data.info){
+
+		if(data.index == 'aa01'){
 			//alert('index :'+ data.info.data0);
-			document.getElementById('temperature').innerText = data.info.data0;
-			document.getElementById('humidity').innerText = data.info.data1;
-			document.getElementById('pm25').innerText = data.info.data2;
-			document.getElementById('uv').innerText = data.info.data3;
-			document.getElementById('co2').innerText = data.info.data4;
 			document.getElementById('pressure').innerText = data.info.data0;
+			document.getElementById('temperature').innerText = data.info.data2;
+			document.getElementById('humidity').innerText = data.info.data3;
+			document.getElementById('light').innerText = data.info.data4;
+			//document.getElementById('pm25').innerText = data.info.data2;
+			//document.getElementById('uv').innerText = data.info.data3;
+			//document.getElementById('co2').innerText = data.info.data4;
+		}else{
+			//alert('index :'+ data.info.data0);
+			document.getElementById('uv').innerText = data.info.data0;
+			document.getElementById('rain').innerText = data.info.data1;
 		}
 
 	});
