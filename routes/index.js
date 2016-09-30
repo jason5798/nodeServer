@@ -48,6 +48,46 @@ function findUnitsAndShowList(req,res,isUpdate){
 	});
 }
 
+function findUnitsAndShowSetting(req,res,isUpdate){
+	UnitDbTools.findAllUnits(function(err,units){
+		var successMessae,errorMessae;
+		var macList = [];
+		var macTypeMap = {};
+
+		if(err){
+			errorMessae = err;
+		}else{
+			if(+units.length>0){
+				successMessae = '查詢到'+units.length+'筆資料';
+			}
+			for(var i=0;i<units.length;i++){
+				console.log( "unit :"+units[i] );
+				if(units[i].macAddr){
+					console.log('mac ('+i+'):'+units[i].macAddr);
+					macList.push(units[i].macAddr);
+					if(units[i].type){
+						macTypeMap[units[i].macAddr]=units[i].type;
+					}
+				}
+			}
+			//Jason add for save mac array on 2016.08.18
+			if(isUpdate){//For new and delete unit
+				JsonFileTools.saveJsonToFile('./public/data/macList.json',macList);
+				JsonFileTools.saveJsonToFile('./public/data/macTypeMap.json',macTypeMap);
+			}
+		}
+		req.session.units = units;
+
+		console.log( "successMessae:"+successMessae );
+		res.render('setting', { title: '裝置設定',
+			units:req.session.units,
+			user:req.session.user,
+			success: successMessae,
+			error: errorMessae
+		});
+	});
+}
+
 module.exports = function(app){
   app.get('/', checkLogin);
   app.get('/', function (req, res) {
@@ -352,30 +392,8 @@ module.exports = function(app){
 
   	app.get('/setting', checkLogin);
 	app.get('/setting', function (req, res) {
-		console.log('render to find.ejs');
-		var save_mac = req.flash('mac').toString();
-		var save_name = req.flash('name').toString();
-		var save_type = req.flash('type').toString();
-		var successMessae,errorMessae;
-		console.log('save_mac:'+save_mac);
-		console.log('save_name:'+save_name);
-		if(save_mac.length>0 && save_name.length>0 ){
-			UnitDbTools.saveUnit(save_mac,save_name,save_type,function(err,result){
-				if(err){
-					req.flash('error', err);
-					return res.redirect('/setting');
-				}
-				successMessae = result;
-				findUnitsAndShowList(req,res,true);
-			});
-
-		}else{
-			res.render('setting', { title: '裝置設定',
-				user:req.session.user,
-				success: req.flash('success').toString(),
-				error: req.flash('error').toString()
-			});
-		}
+		console.log('render to setting.ejs');
+		findUnitsAndShowSetting(req,res,true);
   });
 
   app.post('/setting', checkLogin);
@@ -383,14 +401,48 @@ module.exports = function(app){
 		var	post_mac = req.body.mac;
 		var post_name = req.body.name;
 		var post_type = req.body.type_option;
+		var post_mode = req.body.mode;
+		var typeString = req.body.typeString;
+		console.log('mode : '+post_mode);
+		if(post_mode == 'new'){
+			if(	post_mac && post_name && post_mac.length==8 && post_name.length>=1){
+				console.log('post_mac:'+post_mac);
+				console.log('post_name:'+post_name);
+				UnitDbTools.saveUnit(post_mac,post_name,post_type,typeString,function(err,result){
+					if(err){
+						req.flash('error', err);
+						return res.redirect('/setting');
+					}
+					findUnitsAndShowSetting(req,res,true);
+				});
+				return res.redirect('/setting');
+			}
+		}else if(post_mode == 'del'){//Delete mode
+			post_mac = req.body.postMac;
+			UnitDbTools.removeUnitByMac(post_mac,function(err,result){
+				if(err){
+					req.flash('error', err);
+					console.log('removeUnitByMac :'+post_mac + err);
+					return res.redirect('/setting');
+				}else{
+					req.flash('error', err);
+					console.log('removeUnitByMac :'+post_mac + 'success');
+				}
+				findUnitsAndShowSetting(req,res,false);
+			});
 
-		if(	post_mac && post_name && post_mac.length>=1 && post_name.length>=1){
-			console.log('post_mac:'+post_mac);
-			console.log('post_name:'+post_name);
-			req.flash('mac', post_mac);
-			req.flash('name', post_name);
-			req.flash('type', post_type);
-			return res.redirect('/setting');
+		}else{//Edit mode
+			post_mac = req.body.postMac;
+			UnitDbTools.updateUnit(post_type,post_mac,post_name,null,typeString,function(err,result){
+				if(err){
+					req.flash('error', err);
+					console.log('edit  :'+post_mac + err);
+					return res.redirect('/setting');
+				}else{
+					console.log('edit :'+post_mac + 'success');
+				}
+				findUnitsAndShowSetting(req,res,false);
+			});
 		}
   	});
 

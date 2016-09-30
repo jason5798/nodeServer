@@ -57,6 +57,8 @@ app.use(session({
   saveUninitialized: true
 }));
 //Jason add on 2016.09.26
+app.use(express.static(path.join(__dirname, 'bower_components/jquery-validation/dist/')));
+app.use(express.static(path.join(__dirname, 'bower_components/jquery-validation/src/')));
 
 app.use('/todos', todos);
 //
@@ -307,6 +309,18 @@ sock.on('connection',function(client){
 		console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
 
 		client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
+	});
+
+	client.on('setting_client',function(data){
+		console.log('Debug setting client------------------------------------------------------------start' );
+		console.log('Debug setting client :' + data );
+		UnitDbTools.findAllUnits(function(err,units){
+	  		if(err){
+	  			console.log('Debug setting client :' + err );
+	  		}else{
+	  			client.emit('setting_client_unitlist',units);
+	  		}
+  		});
 	});
 
 });

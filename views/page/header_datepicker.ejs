@@ -98,19 +98,30 @@
 	</div><!--/.sidebar-->
 
 <!-- main start-------------------------------------------------------------------------------------------------------- -->
-	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
-		<div class="row">
-			<div class="col-lg-12">
-				<ol class="breadcrumb">
-					<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
-					<li class="active"><%= title%></li>
-					<li class="active"><% if (success) { %>
-							<%= success %>
-						<% } %>
-						<% if (error) { %>
-							<%= error %>
-						<% } %>
-					</li>
-				</ol>
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+	<div class="row">
+		<div class="col-lg-12">
+			<ol class="breadcrumb">
+				<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
+				<li class="active"><%= title%></li>
+				<li class="active"><% if (success) { %>
+						<%= success %>
+					<% } %>
+					<% if (error) { %>
+						<%= error %>
+					<% } %>
+				</li>
+			</ol>
 
-
+			<div class="row">
+				<!--<div class="panel-heading col-lg-2">
+					<%= title %>
+				</div>  <!-- panel-heading -->
+				<!--<div id="result" class="panel-heading col-lg-10">
+					<% if (success) { %>
+						<%= success %>
+					<% } %>
+					<% if (error) { %>
+						<%= error %>
+					<% } %>
+				</div> -->  <!-- panel-heading -->
