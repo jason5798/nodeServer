@@ -59,16 +59,16 @@ function togGetDataArray1(dataString) {
 	var test = parseInt(dataString.substring(0,4),16);//AA01(16) -> 43521(10)
 	console.log('dataString.substring(0,4):'+dataString.substring(0,4) + ' , number = '+ test);
 	var data0 = parseInt(dataString.substring(4,8),16);
-	/*var data1 = parseInt(dataString.substring(8,12),16);
+	var data1 = parseInt(dataString.substring(8,12),16);
 	var data2 = parseInt(dataString.substring(12,14),16);
 	var data3 = parseInt(dataString.substring(14,16),16);
-	var data4 = parseInt(dataString.substring(16,20),16);*/
+	var data4 = parseInt(dataString.substring(16,20),16);
 
 	arrDevice.push(data0);
-	/*arrDevice.push(data1);
+	arrDevice.push(data1);
 	arrDevice.push(data2);
 	arrDevice.push(data3);
-	arrDevice.push(data4);*/
+	arrDevice.push(data4);
 	return arrDevice;
 }
 
