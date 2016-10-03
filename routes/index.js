@@ -151,7 +151,7 @@ module.exports = function(app){
 				//login fail
 				errorMessae = '無此帳號';
 				res.render('user/login', { title: '登入',
-					error: errorMˊessae
+					error: errorMessae
 				});
 			}else{
 				//login success
