@@ -16,9 +16,11 @@
                 <select id="mac" name="mac">
                     <% if(units) { %>
                         <% for(var i=0;i<units.length;i++){ %>
+                            <% if(units[i].type == 'd001')  { %>
                             <option value = "<%= units[i].macAddr %>" >
                                 <%= units[i].name %>
                             </option>
+                            <% } %>
                         <% } %>
                     <% } %>
                 </select>

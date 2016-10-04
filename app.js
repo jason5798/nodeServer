@@ -31,8 +31,7 @@ var JsonFileTools =  require('./models/jsonFileTools.js');
 var schedule = require('node-schedule');
 var async = require('async');
 //Jason add for test
-var auto =  require('./models/autoDataSubAndSave.js');
-//var autoTest =  require('./models/autoTest.js');
+//var auto =  require('./models/autoDataSubAndSave.js');
 //var test =  require('./models/testTools.js');
 //app setting-------------------------------------------------------
 var app = express();

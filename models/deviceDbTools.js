@@ -12,9 +12,9 @@ function toGetInfoByData(mac,data){
         flag = 1;
     }else if(tag == 'aa02'){
         flag = 2;
-    }else if(tag == 'AA03'){
+    }else if(tag == 'aa03'){
         flag = 3;
-    }else if(mac != '04000496'){
+    }else {
         flag = 4;//value/100 for new
     }
     var arrData =Tools.getDataArray(flag,data);

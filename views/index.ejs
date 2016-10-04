@@ -40,7 +40,7 @@
 		                        	<img src="/images/icon_temperature.png" width="80" height="80">
 		                        </span>
 	                        	<span class="pull-right">
-	                        		 <div id="temperature" class="fa fa-2x">150</div>
+	                        		 <div id="temperature" class="fa fa-2x">28</div>
 	                        	</span>
 
 		                </div>
@@ -265,7 +265,10 @@
     socket.on('index_weather_data',function(data){
 
 		if(data.index == 'aa01'){
-			//alert('index :'+ data.info.data0);
+			/*alert('index :'+ data.info.data0);
+			alert('index :'+ data.info.data2);
+			alert('index :'+ data.info.data3);
+			alert('index :'+ data.info.data4);*/
 			$("#pressure").text(data.info.data0);
 			$("#temperature").text(data.info.data2);
 			$("#humidity").text(data.info.data3);

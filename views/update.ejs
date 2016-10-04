@@ -7,25 +7,23 @@
 			<% if (user.authz.a03==true) { %>
 
 				<tr bgcolor="#428bca">
-					<td>位址</td>
-					<td>溫度1</td>
-					<td>濕度1</td>
-					<td>溫度2</td>
-					<td>濕度2</td>
+					<td>裝置</td>
+					<td>溫度</td>
+					<td>濕度</td>
 					<td>電壓</td>
 					<td>時間</td>
 				</tr>
 
 				<% units.forEach(function(unit) { %>
+					<% if(unit.type == 'd001')  { %>
 					<tr id="<%= unit.macAddr %>">
 						<td><div name ="name"><%= unit.name %></div></td>
-						<td><div name ="tmp1"></div></td>
-						<td><div name ="hum1"></div></td>
-						<td><div name ="tmp2"></div></td>
-						<td><div name ="hum2"></td>
+						<td><div name ="tmp1"></td>
+						<td><div name ="hum1"></td>
 						<td><div name ="voltage"></td>
 						<td><div name ="time"></div></td>
 					</tr>
+					<% } %>
 				<% }); %>
 			<% } %>
 		</table>
@@ -78,9 +76,7 @@
 			//alert(index);
 			//alert(($('[name=name]').eq(index).text()));
 			$('[name=tmp1]').eq(index).text(data.tmp1);
-			$('[name=tmp2]').eq(index).text(data.tmp2);
 			$('[name=hum1]').eq(index).text(data.hum1);
-			$('[name=hum2]').eq(index).text(data.hum2);
 			$('[name=voltage]').eq(index).text(status);
 			$('[name=time]').eq(index).text(data.time);
 		});
@@ -92,14 +88,12 @@
 			if(data.vol<300){
 				status = '低電壓';
 			}
-			//alert(index);
+			//alert(data.hum1);
 			//alert(($('[name=name]').eq(index).text()));
 			$('[name=tmp1]').eq(index).text(data.tmp1);
-			$('[name=tmp2]').eq(index).text(data.tmp2);
 			$('[name=hum1]').eq(index).text(data.hum1);
-			$('[name=hum2]').eq(index).text(data.hum2);
 			$('[name=voltage]').eq(index).text(status);
-			$('[name=time]').eq(index).text(data.time);
+			$('[name=time').eq(index).text(data.time);
 		});
 
 		setTimeout(function(){

@@ -67,7 +67,7 @@ function saveDataToFile(option,devices){
         //console.log('date : '+ date);
         var timestamp = moment(date);
         //console.log('timestamp : '+ timestamp);
-        if(devices[i].info == null){
+        /*if(devices[i].info == null){
             temArr1.push([Number(timestamp),devices[i].temperature1]);
             temArr2.push([Number(timestamp),devices[i].temperature2]);
             humArr1.push([Number(timestamp),devices[i].humidity1]);
@@ -77,17 +77,18 @@ function saveDataToFile(option,devices){
             temArr2.push([Number(timestamp),devices[i].info.data2]);
             humArr1.push([Number(timestamp),devices[i].info.data1]);
             humArr2.push([Number(timestamp),devices[i].info.data3]);
-        }
-
+        }*/
+        temArr1.push([Number(timestamp),devices[i].info.data0]);
+        humArr1.push([Number(timestamp),devices[i].info.data1]);
         /*console.log('temArr1 : ' + temArr1);
-        console.log('temArr2 : ' + temArr2);
+        console.log('temArr2 : ' + temArr2); 
         console.log('humArr1 : ' + humArr1);
         console.log('humArr2 : ' + humArr2);*/
     }
     temArr.push(temArr1);
-    temArr.push(temArr2);
+    //temArr.push(temArr2);
     humArr.push(humArr1);
-    humArr.push(humArr2);
+    //humArr.push(humArr2);
 
     //console.log('temArr : ' + temArr);
     //console.log('humArr : ' + humArr);
