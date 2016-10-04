@@ -66,9 +66,14 @@ routes(app);
 var server = http.createServer(app);
 var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
 var sock = require('socket.io').listen(server.listen(port));
+updateAllUnitsStatus();
 
 var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
 	// do jobs here
+	updateAllUnitsStatus();
+});
+
+function updateAllUnitsStatus(){
 	console.log('time:'+new Date());
 	UnitDbTools.findAllUnits(function(err,units){
   		async.each(units,function(unit,callback){
@@ -79,7 +84,7 @@ var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
   			console('Debug todos -> get unit err : '+err);
   		});
   	});
-});
+}
 
 function updateStatus(unit,callback){
 
@@ -93,14 +98,15 @@ function updateStatus(unit,callback){
 		var recv_timestamp = Number(moment(device.recv_at));
 		//console.log('unit : '+unit);
 		//console.log('device : '+device);
-		console.log('last_timestamp : '+last_timestamp + ' type :' +typeof(last_timestamp));
-		console.log('recv_timestamp : '+recv_timestamp);
+		console.log( moment().subtract(2,'hours').format('YYYY/MM/DD , hh:mm:ss a') +' ->last 2 hours timestamp : '+last_timestamp );
+		console.log(device.recv_at+' -> recv timestamp : '+recv_timestamp);
+		console.log(' unit.status : '+unit.status);
 
 
 		if(last_timestamp >= recv_timestamp && unit.status != 2 ){
 			console.log('name : '+unit.name + 'is overtime');
 			status = 2;
-		}if(last_timestamp < recv_timestamp && unit.status == 2 ){
+		}else if(last_timestamp < recv_timestamp && unit.status == 2 ){
 			console.log('name : '+unit.name + 'is ok');
 			status = 0;
 		}else{
@@ -190,7 +196,7 @@ sock.on('connection',function(client){
 			if(device){
 				client.emit('index_weather_data',device);
 			}
-			
+
 		});
 		DeviceDbTools.findLastDevice({index:'aa02'},function(err,device){
 			if(err){

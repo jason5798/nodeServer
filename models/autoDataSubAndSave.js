@@ -95,21 +95,13 @@ function saveAndSendMessage(_JSON){
 		if(err){
 			console.log('Debug save Device fail : '+err);
 		}else{
-			//Statu 0:normal 1:low power 2:loss
-			var status = 0;
-			//For device type = 'd001'  ----------------------------- -----------------------------
-			/*if(info.data4 == undefined){
-				return;
-			}*/
-			//console.log('Debug save Device success ');
-			//Verify unit status is same
-			//console.log('Debug findBymac : '+obj}.macAddr);
-			/*UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
+
+			UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
 				console.log('Debug unit : '+unit);
 				if(err == null){
 					if(unit){
-						if(unit.status != status){
-							UnitDbTools.updateUnitStatus(unit.macAddr,status,function(err,resut){
+						if(unit.status == 2){
+							UnitDbTools.updateUnitStatus(unit.macAddr,0,function(err,resut){
 								if(err){
 									console.log('Debug UnitDbTools.update Unit fail : '+err);
 								}else{
@@ -119,7 +111,7 @@ function saveAndSendMessage(_JSON){
 						}
 					}
 				}
-			})*/
+			})
 		}
 
 	});

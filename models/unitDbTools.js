@@ -67,7 +67,7 @@ function toUpdateUint(type,find_mac,name,status,typeString,calllback) {
 					JSON.type = type;
 				}
 			}
-			if(status){
+			if(status != null ){
 				console.log('units[0].name : '+units[0].name);
 				JSON.status = status;
 			}
