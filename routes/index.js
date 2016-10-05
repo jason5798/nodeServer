@@ -305,9 +305,19 @@ module.exports = function(app){
 
   app.get('/update', checkLogin);
   app.get('/update', function (req, res) {
+	  //Jason add for filter weather device start
+  		var newUnits = [];
+  		var units = req.session.units;
+  		for(var i = 0;i<units.length;i++){
+  			console.log('Debug update -> check '+ units[i].name +' type : '+ units[i].type);
+  			if(units[i].type == 'd001'){
+  				newUnits.push(units[i]);
+  			}
+  		}
+		//Jason add for filter weather device -- end
 		res.render('update', { title: '最新訊息',
-			units  : req.session.units,
-			user:req.session.user,
+			units  : newUnits,
+			user   : req.session.user,
 			success: null,
 			error  : null
 		});
