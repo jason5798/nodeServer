@@ -3,7 +3,7 @@ var moment = require('moment');
 
 
 exports.saveUser = function (name,password,email,level,callback) {
-  console.log('---saveUser ---------------------------------------');
+  console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : saveUser()');
   var isEnable = false;
   var authz = {
     a01 : false,//user setting
@@ -64,7 +64,7 @@ exports.saveUser = function (name,password,email,level,callback) {
 *json:{password : password, level : level ,autthz:authz }
 */
 exports.updateUser = function (name,json,calllback) {
-  console.log('---updateUser ---------------------------------------');
+  console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : updateUser()');
   console.log('Debug : updateUser name='+name);
   var time = {
     date   : moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -117,7 +117,7 @@ exports.updateUser = function (name,json,calllback) {
 */
 exports.removeAllUsers = function (calllback) {
     UserModel.remove({}, (err)=>{
-      console.log('---removeAllUsers ---------------------------------------');
+      console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : removeAllUsers');
       if (err) {
         console.log('Debug : User remove all occur a error:', err);
             return calllback(err);
@@ -130,7 +130,7 @@ exports.removeAllUsers = function (calllback) {
 
 exports.removeUserByName = function (name,calllback) {
     UserModel.remove({name:name}, (err)=>{
-      console.log('---removeUserByName ---------------------------------------');
+      console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : removeUserByName()');
       if (err) {
         console.log('Debug : User remove name :'+name+' occur a error:', err);
             return calllback(err);
@@ -144,7 +144,7 @@ exports.removeUserByName = function (name,calllback) {
 /*Find all of users
 */
 exports.findAllUsers = function (calllback) {
-    console.log('---findAllUsers---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findAllUsers()');
     UserModel.find((err, users) => {
       if (err) {
         console.log('Debug : findAllUsers err:', err);
@@ -157,7 +157,7 @@ exports.findAllUsers = function (calllback) {
 };
 
 exports.findUserByName = function (name,calllback) {
-    console.log('---findUserByName---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findUserByName()');
     UserModel.find({ name: name }, function(err,users){
       if(err){
         return callback(err);

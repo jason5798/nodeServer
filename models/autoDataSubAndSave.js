@@ -97,7 +97,7 @@ function saveAndSendMessage(_JSON){
 		}else{
 
 			UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
-				console.log('Debug unit : '+unit);
+				//console.log('Debug unit : '+unit);
 				if(err == null){
 					if(unit){
 						if(unit.status == 2){

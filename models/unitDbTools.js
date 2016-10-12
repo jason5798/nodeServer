@@ -3,7 +3,7 @@ var UnitModel = require('./unit.js');
 var moment = require('moment');
 
 exports.saveUnit = function (macAddress,name,type,typeString,callback) {
-    console.log('---saveUnit ---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : saveUnit()');
 	var time = {
 		date   : moment().format("YYYY-MM-DD HH:mm:ss"),
 		year   : moment().format("YYYY"),
@@ -35,7 +35,7 @@ exports.saveUnit = function (macAddress,name,type,typeString,callback) {
 };
 
 function toUpdateUint(type,find_mac,name,status,typeString,calllback) {
-    console.log('---update Unit ---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : toUpdateUint()');
     console.log('Debug : update Unit mac='+find_mac+" , name ="+name);
 	var time = {
 		date   : moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -129,7 +129,7 @@ exports.updateUnit = function (type,find_mac,name,status,typeString,calllback) {
 */
 exports.removeAllUnits = function (calllback) {
     UnitModel.remove({}, (err)=>{
-	    console.log('---removeAllUnits ---------------------------------------');
+	    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : removeAllUnits()');
 	    if (err) {
 		    console.log('Debug : Unit remove all occur a error:', err);
             return calllback(err);
@@ -142,7 +142,7 @@ exports.removeAllUnits = function (calllback) {
 
 exports.removeUnitByMac = function (mac,calllback) {
     UnitModel.remove({macAddr:mac}, (err)=>{
-	    console.log('---removeUnitByMac ---------------------------------------');
+	    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : removeUnitByMac()');
 	    if (err) {
 		    console.log('Debug : Unit remove mac :'+mac+' occur a error:', err);
             return calllback(err);
@@ -156,7 +156,7 @@ exports.removeUnitByMac = function (mac,calllback) {
 /*Find all of unit
 */
 exports.findAllUnits = function (calllback) {
-    console.log('---findAllUnits---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findAllUnits()');
     UnitModel.find((err, units) => {
 	    if (err) {
 		    console.log('Debug : findAllUnits err:', err);
@@ -169,7 +169,7 @@ exports.findAllUnits = function (calllback) {
 };
 
 exports.findByMac = function (mac,calllback) {
-    console.log('---findByMac---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findByMac()');
     UnitModel.find({ macAddr: mac }, function(err,units){
 		if(err){
 			return callback(err);

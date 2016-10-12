@@ -192,7 +192,7 @@ sock.on('connection',function(client){
 			if(err){
 				return callback(unit.status);
 			}
-			console.log('Debug index_client aa02 -> '+device);
+			//console.log('Debug index_client aa02 -> '+device);
 			if(device){
 				client.emit('index_weather_data',device);
 			}
@@ -202,11 +202,53 @@ sock.on('connection',function(client){
 			if(err){
 				return callback(unit.status);
 			}
-			console.log('Debug index_client aa02 -> '+device);
+			//console.log('Debug index_client aa02 -> '+device);
 			if(device){
 				client.emit('index_weather_data',device);
 			}
 		});
+
+		var now = moment();
+		var from = moment().subtract(2, 'hours');
+
+		var json1 = {macAddr:'040004b8',
+				index:'aa01',
+                recv_at:{
+                    $gte:from,
+                    $lt:now
+                }
+        };
+
+        var json2 = {macAddr:'040004b8',
+				index:'aa02',
+                recv_at:{
+                    $gte:from,
+                    $lt:now
+                }
+        };
+
+
+	    DeviceDbTools.findDevices(json1,(err, Devices) => {
+	        if (err) {
+	            console.log('Debug : findDevice err:', err);
+	            return calllback(err);
+	        } else {
+	        	console.log('Debug : index aa01 -------------------------------------------------------------');
+	            console.log('Debug : find Device success\n:',Devices.length);
+				client.emit('index_weather_chart1_data',Devices);
+	        }
+	    });
+
+	    DeviceDbTools.findDevices(json2,(err, Devices) => {
+	        if (err) {
+	            console.log('Debug : findDevice err:', err);
+	            return calllback(err);
+	        } else {
+	        	console.log('Debug : index aa02 -------------------------------------------------------------');
+	            console.log('Debug :findDevice success\n:',Devices.length);
+				client.emit('index_weather_chart2_data',Devices);
+	        }
+	    });
 		//client.emit('index_weather_data',{pressue:mPressure,height:mHeight,tempretaure:mTempretaure,humidity:mHumidity,light:mLight,uv:mUv,rain:mRain});
 	});
 
@@ -290,19 +332,19 @@ sock.on('connection',function(client){
 
 	//for new message ----------------------------------------------------------------------------
 	client.on('giot_client',function(data){
-		console.log('Debug giot_client ------------------------------------------------------------start' );
-		console.log('Debug giot_client :' + data );
+		//console.log('Debug giot_client ------------------------------------------------------------start' );
+		console.log(moment().format('YYYY-MM_DD HH:mm:ss')+' Debug giot_client :' + data );
 	});
 
 
 	client.on('giot_client_message',function(data){
-		console.log('Debug giot client message :'+data );
+		console.log(moment().format('YYYY-MM_DD HH:mm:ss')+' Debug giot client message :'+data );
 		var macAddress = data['macAddr'];
         var mData = data['data'];
         var mRecv = data['recv'];
-        console.log('Debug giot client message -> macAddress : '+macAddress);
-        console.log('Debug giot client message -> mData : '+mData);
-        console.log('Debug giot client message -> mRecv : '+mRecv);
+        //console.log('Debug giot client message -> macAddress : '+macAddress);
+        //console.log('Debug giot client message -> mData : '+mData);
+        //console.log('Debug giot client message -> mRecv : '+mRecv);
         var mCreate = new Date();
 		var macList = JsonFileTools.getJsonFromFile('./public/data/macList.json');
 		//Jason modiy on 2016.07.21
@@ -315,20 +357,32 @@ sock.on('connection',function(client){
 		//mData = '00fk03a900fb01d701e7';//Jason add for test
 		//Jason test
 		var flag = 0;
-		if(macAddress != '04000496'){
+		var index = mData.substring(0,4);
+		if(index == 'aa01'){
 			flag = 1;
+		}else if(index == 'aa02'){
+			flag = 2;
 		}
-		var arrData = tools.getDataArray( flag,mData);
-		var mTmp1 = arrData[0];
-		var mHum1 = arrData[1];
-		var mTmp2 = arrData[2];
-		var mHum2 = arrData[3];
-		var mV = arrData[4];
-        var mCreate = new Date();
-		var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
-		console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
 
-		client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
+		var arrData = tools.getDataArray( flag,mData);
+		if(flag == 0){
+			var mTmp1 = arrData[0];
+			var mHum1 = arrData[1];
+			var mTmp2 = arrData[2];
+			var mHum2 = arrData[3];
+			var mV = arrData[4];
+		    var mCreate = new Date();
+			var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
+			console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
+
+			client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
+		}else if(flag == 1){
+			var time = Number(moment(mRecv));
+			client.broadcast.emit('index_update_weather_chart1',{time:time,array:arrData});
+		}else{
+			var time = Number(moment(mRecv));
+			client.broadcast.emit('index_update_weather_chart2',{time:time,array:arrData});
+		}
 	});
 
 	client.on('setting_client',function(data){

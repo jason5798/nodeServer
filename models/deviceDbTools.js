@@ -107,7 +107,7 @@ exports.findByMac = function (find_mac,callback) {
 /*Find all of unit
 */
 exports.findAllDevices = function (calllback) {
-    console.log('---findAllUnits---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Deb u All Units');
     DeviceModel.find((err, Devices) => {
         if (err) {
             console.log('Debug : findAllDevices err:', err);
@@ -120,7 +120,7 @@ exports.findAllDevices = function (calllback) {
 };
 
 function toFindDevices(json,calllback) {
-    console.log('---findDevices---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : toFindDevices()');
     DeviceModel.find(json,(err, Devices) => {
         if (err) {
             console.log('Debug : findDevice err:', err);
@@ -133,7 +133,7 @@ function toFindDevices(json,calllback) {
 }
 
 function toFindLastDevice(json,calllback) {
-    console.log('---findDevices---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : toFindLastDevice()' );
     DeviceModel.find(json).sort({recv_at: -1}).limit(1).exec(function(err,devices){
         if(err){
             console.log('Debug deviceDbTools find Last Device By Unit -> err :'+err);
@@ -146,13 +146,13 @@ function toFindLastDevice(json,calllback) {
 }
 
 exports.findDevices = function (json,calllback) {
-    console.log('---findDevices---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findDevices()');
     DeviceModel.find(json,(err, Devices) => {
         if (err) {
             console.log('Debug : findDevice err:', err);
             return calllback(err);
         } else {
-            console.log('Debug :findDevice success\n:',Devices);
+            console.log('Debug :findDevice success\n:',Devices.length);
             return calllback(err,Devices);
         }
     });
@@ -172,7 +172,7 @@ exports.findLastDevice = function (json,calllback) {
 *date option: 0:one days 1:one weeks 2:one months 3:three months
 */
 exports.findDevicesByDate = function (dateStr,mac,dateOption,order,calllback) {
-    console.log('---findDevices---------------------------------------');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findDevicesByDate()');
     console.log('-mac : '+mac);
     /*var testDate = moment().format('YYYY-MM-DD');
     if(dateStr && dateStr == testDate){
@@ -373,3 +373,45 @@ function isEmpty(obj) {
 
     return true && JSON.stringify(obj) === JSON.stringify({});
 }
+
+exports.saveTestDevice = function (macAddress,tag,info,recv,callback) {
+    var mRecv = new Date(recv);
+
+    var index = tag;
+
+    console.log('macAddress:'+macAddress);
+    console.log('mRecv:'+ mRecv);
+    console.log('info:'+JSON.stringify( info));
+
+    var time = {
+        date   : moment(recv).format('YYYY-MM-DD HH:mm:ss'),
+        /*year   : moment(recv).format("YYYY"),
+        month  : moment(recv).format("YYYY-MM"),
+        day    : moment(recv).format("YYYY-MM-DD"),
+        hour   : moment(recv).format("YYYY-MM-DD HH"),
+        minute : moment(recv).format("YYYY-MM-DD HH:mm"),*/
+        cdate   : moment(recv).format('YYYY-MM-DD HH:mm:ss')
+    };
+
+    console.log('time:'+JSON.stringify( time));
+
+    var newDevice = new DeviceModel({
+        macAddr    : macAddress,
+        index      : index,
+        data       : null,
+        info       : info,
+        recv_at    : mRecv,
+        created_at : new Date(),
+        time:time
+    });
+
+    newDevice.save(function(err){
+        if(err){
+            console.log('Debug : Device save fail!');
+            return callback(err);
+        }
+        console.log('Debug : Device save success!');
+        return callback(err,info);
+    });
+};
+

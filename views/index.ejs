@@ -1,144 +1,144 @@
 <%- include page/header_datepicker %>
 	<div class="row">
 
+		<div class="col-md-8">
+            <div class="form-group">
+            	<div class="col-lg-2 col-md-2">
+            		 <label>選擇時間</label>
+            	</div>
+            	<div class="col-lg-2 col-md-2">
+            		<select id="time_option" name="time_option">
+	                    <option value="0">一小時</option>
+	    　               <option value="1">半小時</option>
+	    　               <option value="2">十分鐘</option>
+	    　               <option value="3">5分鐘</option>
+	                </select>
+				</div>
+				<div class="col-lg-2 col-md-2">
+            		 <button>更新</button>
+            	</div>
+            </div> <!-- form-group -->
+        </div> <!-- col-md-3 -->
 		<div class="col-md-8 column">
-			<div class="col-lg-4 col-md-4">
+			<div class="col-lg-6 col-md-6">
                 <div class="panel panel-primary">
-		            	<div class="panel-heading">
-							<span class="pull-center">
-									 <div class="fa fa-2x">氣壓</div>
-							</span>
-							<span class="pull-right">
-	                        		<div class="fa fa-2x">mb</div>
-	                        </span>
-						</div>
-		                <div class="panel-body">
-
-		                        <span class="pull-left">
-		                        	<img src="/images/icon_pressure.png" width="80" height="80">
-		                        </span>
-	                        	<span class="pull-right">
-	                        		 <div id="pressure" class="fa fa-2x">998</div>
-	                        	</span>
-
-		                </div>
-		            </div>
+	            	<div class="panel-heading">
+	            		<span class="pull-left">
+                    		<img src="/images/icon_pressure.png" width="40" height="40">
+                        </span>
+						<span class="pull-left">
+							<div class="fa fa-2x">氣壓</div>
+						</span>
+                        <span class="pull-right">
+                    		 <div id="pressure" class="fa fa-2x">1000mb</div>
+                    	</span>
+					</div>
+	                <div class="panel-body">
+	                         <div id="pChart" style="height:150px; width:100%;"></div>
+	                </div>
+	            </div>
             </div>
-			<div class="col-lg-4 col-md-4">
+			<div class="col-lg-6 col-md-6">
                 <div class="panel panel-primary">
-		            	<div class="panel-heading">
-							<span class="pull-left">
-									 <div class="fa fa-2x">溫度</div>
-							</span>
-							<span class="pull-right">
-	                        		<div class="fa fa-2x">℃</div>
-	                        </span>
-						</div>
-		                <div class="panel-body">
+	            	<div class="panel-heading">
+	            		<span class="pull-left">
+                    		<img src="/images/icon_temperature.png" width="40" height="40">
+                        </span>
+						<span class="pull-left">
+							<div class="fa fa-2x">溫度</div>
+						</span>
+                        <span class="pull-right">
+                    		 <div id="temperature" class="fa fa-2x">28℃</div>
+                    	</span>
+					</div>
+	                <div class="panel-body">
 
-		                        <span class="pull-left">
-		                        	<img src="/images/icon_temperature.png" width="80" height="80">
-		                        </span>
-	                        	<span class="pull-right">
-	                        		 <div id="temperature" class="fa fa-2x">28</div>
-	                        	</span>
+	                         <div id="tChart" style="height:150px; width:100%;"></div>
 
-		                </div>
-		                <!--<div class="panel-footer">
-	                        <span class="pull-left">View Details</span>
-	                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-	                        <div class="clearfix"></div>
-	                    </div>-->
-		            </div>
+	                </div>
+		        </div>
             </div>
-            <div class="col-lg-4 col-md-4">
+            <div class="col-lg-6 col-md-6">
                 <div class="panel panel-primary">
-		            	<div class="panel-heading">
-							<span class="pull-center">
-									 <div class="fa fa-2x">濕度</div>
-							</span>
-							<span class="pull-right">
-	                        		<div class="fa fa-2x">%</div>
-	                        </span>
-						</div>
-		                <div class="panel-body">
+	            	<div class="panel-heading">
+	            		<span class="pull-left">
+                    		<img src="/images/icon_humidity.png" width="40" height="40">
+                        </span>
+						<span class="pull-left">
+							<div class="fa fa-2x">濕度</div>
+						</span>
+                        <span class="pull-right">
+                    		 <div id="humidity" class="fa fa-2x">60%</div>
+                    	</span>
+					</div>
+	                <div class="panel-body">
 
-		                        <span class="pull-left">
-		                        	<img src="/images/icon_humidity.png" width="80" height="80">
-		                        </span>
-	                        	<span class="pull-right">
-	                        		 <div id="humidity" class="fa fa-2x">70</div>
-	                        	</span>
+	                         <div id="hChart" style="height:150px; width:100%;"></div>
 
-		                </div>
-		            </div>
+	                </div>
+	            </div>
             </div>
-            <div class="col-lg-4 col-md-4">
+            <div class="col-lg-6 col-md-6">
                 <div class="panel panel-primary">
-		            	<div class="panel-heading">
-							<span class="pull-center">
-									 <div class="fa fa-2x">照明</div>
-							</span>
-							<span class="pull-right">
-	                        		<div class="fa fa-2x">lux</div>
-	                        </span>
-						</div>
-		                <div class="panel-body">
+	            	<div class="panel-heading">
+	            		<span class="pull-left">
+                    		<img src="/images/icon_light.png" width="40" height="40">
+                        </span>
+						<span class="pull-left">
+							<div class="fa fa-2x">照明</div>
+						</span>
+                        <span class="pull-right">
+                    		 <div id="light" class="fa fa-2x">420lux</div>
+                    	</span>
+					</div>
+	                <div class="panel-body">
 
-		                        <span class="pull-left">
-		                        	<img src="/images/icon_light.png" width="80" height="80">
-		                        </span>
-	                        	<span class="pull-right">
-	                        		 <div id="light" class="fa fa-2x">ˋ420</div>
-	                        	</span>
+	                         <div id="lChart" style="height:150px; width:100%;"></div>
 
-		                </div>
-		            </div>
+	                </div>
+	            </div>
             </div>
-			<div class="col-lg-4 col-md-4">
+            <div class="col-lg-6 col-md-6">
                 <div class="panel panel-primary">
-		            	<div class="panel-heading">
-							<span class="pull-left">
-									 <div class="fa fa-2x">紫外線</div>
-							</span>
-							<span class="pull-right">
-	                        		<div class="fa fa-2x"></div>
-	                        </span>
-						</div>
-		                <div class="panel-body">
+	            	<div class="panel-heading">
+	            		<span class="pull-left">
+                    		<img src="/images/icon_uv.png" width="40" height="40">
+                        </span>
+						<span class="pull-left">
+							<div class="fa fa-2x">紫外線</div>
+						</span>
+                        <span class="pull-right">
+                    		 <div id="uv" class="fa fa-2x">4</div>
+                    	</span>
+					</div>
+	                <div class="panel-body">
 
-		                        <span class="pull-left">
-		                        	<img src="/images/icon_uv.png" width="80" height="80">
-		                        </span>
-	                        	<span class="pull-right">
-	                        		 <div id="uv" class="fa fa-2x">4</div>
-	                        	</span>
+	                         <div id="uChart" style="height:150px; width:100%;"></div>
 
-		                </div>
-		            </div>
+	                </div>
+	            </div>
             </div>
-            <div class="col-lg-4 col-md-4">
+            <div class="col-lg-6 col-md-6">
                 <div class="panel panel-primary">
-		            	<div class="panel-heading">
-							<span class="pull-center">
-								<div class="fa fa-2x">雨滴</div>
-							</span>
-							<span class="pull-right">
-	                        	<div class="fa fa-2x"></div>
-	                        </span>
-						</div>
-		                <div class="panel-body">
+	            	<div class="panel-heading">
+	            		<span class="pull-left">
+                    		<img src="/images/icon_rain.png" width="40" height="40">
+                        </span>
+						<span class="pull-left">
+							<div class="fa fa-2x">雨滴</div>
+						</span>
+                        <span class="pull-right">
+                    		 <div id="rain" class="fa fa-2x">1020</div>
+                    	</span>
+					</div>
+	                <div class="panel-body">
 
-		                        <span class="pull-left">
-		                        	<img src="/images/icon_rain.png" width="80" height="80">
-		                        </span>
-	                        	<span class="pull-right">
-	                        		 <div id="rain" class="fa fa-2x">3</div>
-	                        	</span>
+	                         <div id="rChart" style="height:150px; width:100%;"></div>
 
-		                </div>
-		            </div>
+	                </div>
+	            </div>
             </div>
+
 			<div class="col-md-12 column">
 				<form method = "post" id="unitList" name="unitList">
 					<table width="100%" border="1">
@@ -206,6 +206,9 @@
 		</div> <!-- col-md-4 column col-centered-->
 	</div>	<!--row-->
 	<div class="row">
+
+
+
 		<div class="col-md-12 column">
 			<label id="error_message" class="checkbox">
 	            <font color="red"><b></b>
@@ -247,12 +250,51 @@
 
 
 <script class="code" type="text/javascript">
-	$(document).ready(function () {
-		setTimeout(function(){
-		    //do what you need here
-		    document.getElementById('error_message').innerText = '';
-		}, 3000);
+	var pData = [],tData = [],hData = [];
+	var lData = [],uData = [],rData = [];
+	var plot1,plot2,plot3,plot4,plot5,plot6;
+	var t = 1000;
+	var n = 60*60;
+	var max = (new Date()).getTime();
+    var min =  max - (n*1000);
+	var options = {
+            axes: {
+                xaxis: {
+                    numberTicks: 4,
+                    renderer:$.jqplot.DateAxisRenderer,
+                    tickOptions:{formatString:'%H:%M:%S'}
+                },
+                yaxis: {
+                    numberTicks: 6,
+                    tickOptions:{formatString:'%d'}
+                }
+            },
+            seriesDefaults: {
+                rendererOptions: { smooth: true}
+            }
+        };
+	$(document).ready(function(){
+
+		setTimeout(doUpdate, 5);
+    });
+
+	$('[name=time_option]').change(function() {
+    	$( "select option:selected" ).each(function() {
+	      //alert( $( this ).val() );
+	      if($( this ).val() == 0){
+	      	n = 60*60;//1 hours
+	      }else if($( this ).val() == 1){
+	      	n = 30*60;//half hours
+	      }else if($( this ).val() == 2){
+	      	n = 10*60;//10 minutes
+	      }else{
+	      	n = 5*60;//5 minutes
+	      }
+	    });
+
 	});
+
+
 	var callbackFunction = function(data) {
 	    var wind = data.query.results.channel.wind;
 	    //alert(wind.chill);
@@ -262,6 +304,13 @@
         socket.emit('index_client','hello,index_client socket cient is ready');
     });
 
+    $('button').click( function(){
+            /*doUpdate();
+            $(this).hide();*/
+        socket.emit('index_client','index_client hello,refresh weather data');
+    });
+
+
     socket.on('index_weather_data',function(data){
 
 		if(data.index == 'aa01'){
@@ -269,10 +318,10 @@
 			alert('index :'+ data.info.data2);
 			alert('index :'+ data.info.data3);
 			alert('index :'+ data.info.data4);*/
-			$("#pressure").text(data.info.data0);
-			$("#temperature").text(data.info.data2);
-			$("#humidity").text(data.info.data3);
-			$("#light").text(data.info.data4);
+			$("#pressure").text(data.info.data0 + 'mb');
+			$("#temperature").text(data.info.data2 + '℃');
+			$("#humidity").text(data.info.data3 + '%');
+			$("#light").text(data.info.data4 + 'lux');
 		}else{
 			//alert('index :'+ data.info.data0);
 			$("#uv").text(data.info.data0);
@@ -280,6 +329,96 @@
 		}
 
 	});
+	socket.on('index_weather_chart1_data',function(data){
+		pData = [];
+    	tData = [];
+    	hData = [];
+    	lData = [];
+
+		//alert(data.length);
+		for(var i=0 ; i<data.length; i++){
+			var date = (new Date(data[i].recv_at));
+			var time = date.getTime(); // current time
+			//alert(date+ " : " +data[i].info.data0 + ' : ' + data[i].info.data2 + typeof(data[i].info.data2));
+			pData.push([time,data[i].info.data0]);
+			tData.push([time,data[i].info.data2]);
+			hData.push([time,data[i].info.data3]);
+			lData.push([time,data[i].info.data4]);
+		}
+		options.axes.xaxis.min = min;
+        options.axes.xaxis.max = max;
+		plot1 = $.jqplot ('pChart', [pData],options);
+		plot2 = $.jqplot ('tChart', [tData],options);
+		plot3 = $.jqplot ('hChart', [hData],options);
+		plot4 = $.jqplot ('lChart', [lData],options);
+
+	});
+
+	socket.on('index_weather_chart2_data',function(data){
+		uData = [];
+    	rData = [];
+		//alert('index_weather_chart2_data');
+		for(var i=0;i<data.length;i++){
+			var date = new Date(data[i].recv_at);
+			var time = date.getTime(); // current time
+			//alert(date + " : " + time);
+			uData.push([time,data[i].info.data0]);
+			rData.push([time,data[i].info.data1]);
+		}
+		plot5 = $.jqplot ('uChart', [uData],options);
+		plot6 = $.jqplot ('rChart', [rData],options);
+	});
+
+	socket.on('index_update_weather_chart1',function(data){
+		//alert('index_update_weather_chart1'+data.array[0]);
+		$("#pressure").text(data.array[0] + 'mb');
+		$("#temperature").text(data.array[2] + '℃');
+		$("#humidity").text(data.array[3] + '%');
+		$("#light").text(data.array[4] + 'lux');
+		pData.push([data.time,data.array[0]]);
+		tData.push([data.time,data.array[2]]);
+		hData.push([data.time,data.array[3]]);
+		lData.push([data.time,data.array[4]]);
+	});
+
+	socket.on('index_update_weather_chart2',function(data){
+		alert('index_update_weather_chart2'+data.array[0]);
+		$("#uv").text(data.array[0]);
+		$("#rain").text(data.array[1]);
+		uData.push([data.time,data.array[0]]);
+		rData.push([data.time,data.array[1]]);
+	});
+
+	function chartUpdate(myplot,myData,myChart) {
+        	max = (new Date()).getTime();
+            min =  max - (n*1000);
+            //alert('min : '+min + " myData[0][0] : "+myData[0][0]);
+            /*if(myData[0][0]<min){
+            	myData.shift();
+            }*/
+
+            if (myplot) {
+                myplot.destroy();
+            }
+            //myplot.series[0].data = myData;
+            /*options.axes.xaxis.min = myData[0][0];
+            options.axes.xaxis.max = (new Date()).getTime();*/
+
+            options.axes.xaxis.min = min;
+            options.axes.xaxis.max = max;
+            myplot = $.jqplot (myChart, [myData],options);
+        }
+
+        function doUpdate() {
+            //alert('doUpdate() ');
+            chartUpdate(plot1, pData,'pChart');
+            chartUpdate(plot2, tData,'tChart');
+            chartUpdate(plot3, hData,'hChart');
+            chartUpdate(plot4, lData,'lChart');
+            chartUpdate(plot5, uData,'uChart');
+            chartUpdate(plot6, rData,'rChart');
+            setTimeout(doUpdate, t);
+        }
 </script>
 <script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>
 <script src="https://query.yahooapis.com/v1/public/yql?q= select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='Hualien, tw') and u='c'&format=json&callback=callbackFunction"></script>
