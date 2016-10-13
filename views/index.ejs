@@ -270,7 +270,19 @@
                 }
             },
             seriesDefaults: {
+            	showLine: true,
+            	showMarker: true,
+            	fillAndStroke: true,
+            	fill: true,
+            	fillAlpha: 0.2,
                 rendererOptions: { smooth: true}
+            },
+            highlighter: {
+            	show: false
+            },
+            cursor: {
+            	show: true,
+            	tooltipLocation: 'se'
             }
         };
 	$(document).ready(function(){
