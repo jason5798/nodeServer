@@ -81,7 +81,7 @@ function updateAllUnitsStatus(){
 				callback();
 			});
   		},function(err){
-  			console('Debug todos -> get unit err : '+err);
+  			console.log('Debug todos -> get unit err : '+err);
   		});
   	});
 }

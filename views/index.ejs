@@ -382,7 +382,7 @@
 	});
 
 	socket.on('index_update_weather_chart2',function(data){
-		alert('index_update_weather_chart2'+data.array[0]);
+		//alert('index_update_weather_chart2'+data.array[0]);
 		$("#uv").text(data.array[0]);
 		$("#rain").text(data.array[1]);
 		uData.push([data.time,data.array[0]]);
