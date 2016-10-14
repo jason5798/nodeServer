@@ -303,7 +303,7 @@
 	      	n = 5*60;//5 minutes
 	      }
 	    });
-
+		doUpdateOne();
 	});
 
 
@@ -419,6 +419,15 @@
             options.axes.xaxis.min = min;
             options.axes.xaxis.max = max;
             myplot = $.jqplot (myChart, [myData],options);
+        }
+
+		function doUpdateOne() {
+            chartUpdate(plot1, pData,'pChart');
+            chartUpdate(plot2, tData,'tChart');
+            chartUpdate(plot3, hData,'hChart');
+            chartUpdate(plot4, lData,'lChart');
+            chartUpdate(plot5, uData,'uChart');
+            chartUpdate(plot6, rData,'rChart');
         }
 
         function doUpdate() {
