@@ -33,6 +33,7 @@ var async = require('async');
 //Jason add for test
 //var auto =  require('./models/autoDataSubAndSave.js');
 //var test =  require('./models/testTools.js');
+var blink  =  require('./models/blink.js');
 //app setting-------------------------------------------------------
 var app = express();
 var port = process.env.PORT || 3000;
@@ -72,6 +73,10 @@ var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
 	// do jobs here
 	updateAllUnitsStatus();
 });
+
+var sendValue = false;
+
+
 
 function updateAllUnitsStatus(){
 	console.log('time:'+new Date());
@@ -395,6 +400,20 @@ sock.on('connection',function(client){
 	  			client.emit('setting_client_unitlist',units);
 	  		}
   		});
+	});
+
+	client.on('control_client',function(data){
+		console.log('Debug control_client ------------------------------------------------------------start' );
+		console.log(moment().format('YYYY-MM_DD HH:mm:ss')+' Debug giot_client :' + data );
+	});
+	client.on('control_client_setSwitch',function(data){
+		//console.log('Debug giot_client ------------------------------------------------------------start' );
+		console.log(moment().format('YYYY-MM_DD HH:mm:ss')+' Debug control_client_setSwitch :' + data );
+		if(data=='on'){
+			blink.setSwitch(true);
+		}else{
+			blink.setSwitch(false);
+		}
 	});
 
 });

@@ -15,6 +15,7 @@
     "ejs": "~2.4.1",
     "express": "~4.13.4",
     "express-session": "~1.9.1",
+    "firmata": "^0.14.1",
     "moment": "*",
     "mongoose": "~4.5.1",
     "morgan": "~1.7.0",

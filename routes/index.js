@@ -618,6 +618,15 @@ module.exports = function(app){
 			});
 		}
   	});
+  	app.get('/account', checkLogin);
+    app.get('/control', function (req, res) {
+    	res.render('control', { title: '控制',
+			user:req.session.user,
+			error: null,
+			success: null,
+			units:null
+		});
+    });
 };
 
 function checkLogin(req, res, next) {
