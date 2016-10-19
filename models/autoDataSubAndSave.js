@@ -10,6 +10,7 @@ var allUnits;
 var macList;
 var tmp_mac,tmp_recv;
 var count = 0;
+var mac_tag_map = {};
 
 var io = require('socket.io-client');
 var socket = io.connect('http://localhost:3000', {reconnect: true});
@@ -37,16 +38,16 @@ var messageJSON,test = false;
 
 	GIotClient.on('message', function(topic, message) {
 
-		console.log('Debug mqtt data -----------------------------------------------------start' );
+		//console.log('Debug mqtt data -----------------------------------------------------start' );
 		//console.log('topic:'+topic.toString());
-		console.log('message:'+message.toString());
+		//console.log('message:'+message.toString());
 		//console.log('message type :'+getType(message));
 
 		try {
 			messageJSON = JSON.parse(message.toString());
 		}
 		catch (e) {
-			console.log('parse json error message :'+e.toString());
+			//console.log('parse json error message :'+e.toString());
 			return;
 		}
 		saveAndSendMessage(messageJSON);
@@ -63,7 +64,21 @@ var messageJSON,test = false;
 	saveAndSendMessage(obj);
 }*/
 
-
+function isSameTagCheck(data,mac){
+	var data0 = data.substring(0,4);
+	var data1 = data.substring(4,6);
+	var tag = mac_tag_map[mac];
+	console.log('mac : ' +mac + ' => tag : '+tag);
+	if(data0 !='aa00'){
+		return false;
+	}
+	if (tag == data1){
+		return true;
+	}else{
+		mac_tag_map[mac] = data1;
+		return false;
+	}
+}
 
 function saveAndSendMessage(_JSON){
 
@@ -72,9 +87,9 @@ function saveAndSendMessage(_JSON){
 		time =  moment().format('YYYY-MM-DDThh:mm:ss');
 	}
 
-	console.log('Debug saveAndSendMessage -----------------------------start');
-	console.log('tmp_mac :'+tmp_mac + ', tmp_recv :'+tmp_recv);
-	console.log('macAddr : '+ _JSON['macAddr'] + ',  recv : '+ _JSON['recv']);
+	console.log(moment().format('YYYY-MM-DDThh:mm:ss')+'Debug saveAndSendMessage -----------------------------start');
+	//console.log('tmp_mac :'+tmp_mac + ', tmp_recv :'+tmp_recv);
+	console.log('macAddr : '+ _JSON['macAddr'] + ',  recv : '+ _JSON['recv'] + ',  data : '+ _JSON['data']);
 
 	/*if(tmp_mac == _JSON['macAddr'] && tmp_recv == _JSON['recv'] && test == false){
 		console.log('Dbuge saveAndSendMessage -----------------------------reject' );
@@ -85,6 +100,10 @@ function saveAndSendMessage(_JSON){
 		//Notify update
 		socket.emit('giot_client_message',_JSON);
 		count ++;
+		/*if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
+			console.log('Debug drop same tag ');
+			return;
+		}*/
 		//console.log('Debug saveAndSendMessage -----------------------------(count :'+ count);
 	//}
 

@@ -12,8 +12,8 @@ function toGetInfoByData(mac,data){
         flag = 1;
     }else if(tag == 'aa02'){
         flag = 2;
-    }else if(tag == 'aa03'){
-        flag = 3;
+    }else if(tag == 'aa00'){
+        flag = 0;
     }else {
         flag = 4;//value/100 for new
     }
@@ -31,7 +31,7 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
 
     var index = '';
     var tag = data.substring(0,4);
-    if( tag == 'aa01' ||  tag == 'aa02' ){
+    if( tag == 'aa01' ||  tag == 'aa02' || tag == 'aa00'){
         index = data.substring(0,4);
     }else{
         console.log('mV:'+info.data4);

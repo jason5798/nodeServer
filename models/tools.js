@@ -2,24 +2,22 @@ function togGetDataArray(dataString) {
 	var arrDevice = [];
 	var length = dataString.length;
 	var arrLength = length/4;
+	var tmpNumber = 0;
 
-	//console.log('dataString :'+dataString);
+	console.log('dataString :'+dataString);
+	var index = dataString.substring(0,4);
 
-	for(var i = 0;i<dataString.length;i=i+4){
-        var tmp = dataString.substring(i,i+4);
-		console.log('tmp '+i+':'+tmp);
-		var tmpNumber = 0;
-		if(i<(arrLength-1)*4){
-			//console.log('i:'+i+'value = vaue/10');
-			tmpNumber = parseInt(tmp,16)/10;
-		}else{
-			//console.log('i:'+i+'value = vaue');
-			tmpNumber = parseInt(tmp,16);
-		}
-		//arrDevice.push(tmpNumber.toString());
-		arrDevice.push(tmpNumber);
-	}
+	var test = parseInt(dataString.substring(0,4),16);//AA01(16) -> 43521(10)
+	console.log('dataString.substring(0,4):'+dataString.substring(0,4) + ' , number = '+ test);
+	var data0 = parseInt(dataString.substring(6,10),16)/100;
+	var data1 = parseInt(dataString.substring(10,14),16)/100;
+	var data2 = parseInt(dataString.substring(14,18),16);
+
+	arrDevice.push(data0);
+	arrDevice.push(data1);
+	arrDevice.push(data2);
 	return arrDevice;
+
 }
 
 function togGetDataArray4(dataString) {
