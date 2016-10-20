@@ -74,10 +74,6 @@ var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
 	updateAllUnitsStatus();
 });
 
-var sendValue = false;
-
-
-
 function updateAllUnitsStatus(){
 	console.log('time:'+new Date());
 	UnitDbTools.findAllUnits(function(err,units){
@@ -260,11 +256,19 @@ sock.on('connection',function(client){
 	//for new message ----------------------------------------------------------------------------
 	client.on('new_message_client',function(id, data){
 
-		UnitDbTools.findAllUnits(function(err,units){
+		UnitDbTools.findAllUnits(function(err,allUnits){
 			if(err){
 				console.log('Debug ');
 			}else{
 				myUnits = units;
+				var units = [];
+				//console.log('Debug new_message_client-> allUnits : '+allUnits);
+				for(var i = 0;i<allUnits.length;i++){
+		  			console.log('Debug update -> check '+ allUnits[i].name +' type : '+ allUnits[i].type);
+		  			if(allUnits[i].type == 'd001'){
+		  				units.push(allUnits[i]);
+		  			}
+		  		}
 				//console.log('Debug new_message_client-> units : '+units);
 				console.log('Debug new_message_client ------------------------------------------------------------start' );
 				for(var i=0;i<units.length;i++){
@@ -278,12 +282,16 @@ sock.on('connection',function(client){
 						}else{
 							if(device){
 								var index = 0;
+
 								for(var j=0;j<units.length;j++){
 									if(units[j].macAddr == device.macAddr){
 										 index = j;
 									}
 								}
-								if(device.info.data4){
+								if(device.index == 'aa00'){
+									console.log('Debug new_message_client ->device ('+index+') :'+device.info.data2 );
+									client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.info.data0,hum1:device.info.data1,vol:device.info.data2});
+								}else if(device.info.data4){
 									console.log('Debug new_message_client ->device ('+index+') :'+device.info.data4 );
 									client.emit('new_message_db_findLast',{index:index,macAddr:device.macAddr,data:device.data,time:device.time.date,create:device.created_at,tmp1:device.info.data0,hum1:device.info.data1,tmp2:device.info.data2,hum2:device.info.data3,vol:device.info.data4});
 								}

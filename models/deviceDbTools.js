@@ -92,7 +92,7 @@ exports.findByMac = function (find_mac,callback) {
 
                 if (devices.length>0) {
                     console.log('find '+devices.length+' records');
-                    return calllback(err,devices);
+                    return callback(err,devices);
                 }else{
                     console.log('找不到資料!');
                     return callback('找不到資料!');

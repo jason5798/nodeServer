@@ -94,19 +94,36 @@
 								<td><%= device.info.data0 %>度</td>
 								<td><%= device.info.data1 %>%</td>
 								<td>
-								<% if (device.info.data4) { %>
-									<% if (device.info.data4>300) {  %>
-										<button type="button" class="btn btn-success btn-sm" >
-											<%= '正常('+ device.info.data4 +')' %> 　
-										</button>　
-									<% }else{ %>
-										<button type="button" class="btn btn-danger btn-sm" >
-											<%= '低電壓'+device.info.data4 %>
-										</button>
+								<% if (device.index == 'aa00') { %>
+									<% if (device.info.data2) { %>
+										<% if (device.info.data2>300) {  %>
+											<button type="button" class="btn btn-success btn-sm" >
+												<%= '正常('+ device.info.data2 +')' %> 　
+											</button>　
+										<% }else{ %>
+											<button type="button" class="btn btn-danger btn-sm" >
+												<%= '低電壓'+device.info.data2 %>
+											</button>
+										<% } %>
+									<% } else { %>
+										無資料
 									<% } %>
-								<% } else { %>
-									無資料
+								<% }else{ %>
+									<% if (device.info.data4) { %>
+										<% if (device.info.data4>300) {  %>
+											<button type="button" class="btn btn-success btn-sm" >
+												<%= '正常('+ device.info.data4 +')' %> 　
+											</button>　
+										<% }else{ %>
+											<button type="button" class="btn btn-danger btn-sm" >
+												<%= '低電壓'+device.info.data4 %>
+											</button>
+										<% } %>
+									<% } else { %>
+										無資料
+									<% } %>
 								<% } %>
+
 								</td>
 
 
