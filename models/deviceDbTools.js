@@ -37,8 +37,8 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
         console.log('mV:'+info.data4);
     }
 
-    console.log('macAddress:'+macAddress);
-    console.log('mRecv:'+ mRecv);
+    //console.log('macAddress:'+macAddress);
+    //console.log('mRecv:'+ mRecv);
     console.log('info:'+JSON.stringify( info));
 
     if(isEmpty(info)){
@@ -56,7 +56,7 @@ exports.saveDevice = function (macAddress,data,recv,callback) {
         cdate   : moment(recv).format('YYYY-MM-DD HH:mm:ss')
     };
 
-    console.log('time:'+JSON.stringify( time));
+    //console.log('time:'+JSON.stringify( time));
 
     var newDevice = new DeviceModel({
         macAddr    : macAddress,
@@ -161,6 +161,10 @@ exports.findDevices = function (json,calllback) {
 //Find last record by mac
 exports.findLastDeviceByMac = function (mac,calllback) {
     return toFindLastDevice({macAddr:mac},calllback);
+};
+
+exports.findLastDeviceByMacIndex = function (mac,_index,calllback) {
+    return toFindLastDevice({macAddr:mac,index:_index},calllback);
 };
 
 //Find last record by json

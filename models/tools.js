@@ -4,11 +4,11 @@ function togGetDataArray(dataString) {
 	var arrLength = length/4;
 	var tmpNumber = 0;
 
-	console.log('dataString :'+dataString);
+	//console.log('dataString :'+dataString);
 	var index = dataString.substring(0,4);
 
 	var test = parseInt(dataString.substring(0,4),16);//AA01(16) -> 43521(10)
-	console.log('dataString.substring(0,4):'+dataString.substring(0,4) + ' , number = '+ test);
+	//console.log('dataString.substring(0,4):'+dataString.substring(0,4) + ' , number = '+ test);
 	var data0 = parseInt(dataString.substring(6,10),16)/100;
 	var data1 = parseInt(dataString.substring(10,14),16)/100;
 	var data2 = parseInt(dataString.substring(14,18),16);
@@ -51,11 +51,11 @@ function togGetDataArray1(dataString) {
 	var arrLength = length/4;
 	var tmpNumber = 0;
 
-	console.log('dataString :'+dataString);
+	//console.log('dataString :'+dataString);
 	var index = dataString.substring(0,4);
 
 	var test = parseInt(dataString.substring(0,4),16);//AA01(16) -> 43521(10)
-	console.log('dataString.substring(0,4):'+dataString.substring(0,4) + ' , number = '+ test);
+	//console.log('dataString.substring(0,4):'+dataString.substring(0,4) + ' , number = '+ test);
 	var data0 = parseInt(dataString.substring(4,8),16);
 	var data1 = parseInt(dataString.substring(8,12),16);
 	var data2 = parseInt(dataString.substring(12,14),16);

@@ -18,27 +18,25 @@ var socket = io.connect('http://localhost:3000', {reconnect: true});
 socket.on('connect',function(){
     socket.emit('giot_client','hello,giot_client socket cient is ready');
 });
+
 console.log('time:'+new Date()+'-> mqtt topic:'+settings.gIoTopic);
-
-
 var messageJSON,test = false;
+var isSubscribe = false;
 
 //if(test == false){
 	GIotClient.on('connect', function()  {
-		//console.log('time:'+new Date()+'-> mqtt topic:'+settings.gIoTopic);
-		/*GIotClient.subscribe(settings.gIoTopic,{qos:2},function(err,granted){
-			if(err){
-				console.log('subscribe fail: '+err);
-			}
-			console.log('subscribe success: '+JSON.stringify(granted));
-		});*/
-		//GIotClient.subscribe(settings.gIoTopic,{qos:2});
-		GIotClient.subscribe(settings.gIoTopic);
-	});
+		console.log('mqtt connect');
+		if(isSubscribe == false){
+			isSubscribe = true;
+			GIotClient.subscribe(settings.gIoTopic);
+		}
+  });
+
+
 
 	GIotClient.on('message', function(topic, message) {
 
-		//console.log('Debug mqtt data -----------------------------------------------------start' );
+		console.log('Debug mqtt data -----------------------------------------------------start' );
 		//console.log('topic:'+topic.toString());
 		//console.log('message:'+message.toString());
 		//console.log('message type :'+getType(message));
@@ -50,6 +48,7 @@ var messageJSON,test = false;
 			//console.log('parse json error message :'+e.toString());
 			return;
 		}
+		console.log(messageJSON['recv'],', mac : '+ messageJSON['macAddr'] + ',  data : '+ messageJSON['data']);
 		saveAndSendMessage(messageJSON);
 	});
 
@@ -87,30 +86,18 @@ function saveAndSendMessage(_JSON){
 		time =  moment().format('YYYY-MM-DDThh:mm:ss');
 	}
 
-	console.log(moment().format('YYYY-MM-DDThh:mm:ss')+'Debug saveAndSendMessage -----------------------------start');
-	//console.log('tmp_mac :'+tmp_mac + ', tmp_recv :'+tmp_recv);
-	console.log('macAddr : '+ _JSON['macAddr'] + ',  recv : '+ _JSON['recv'] + ',  data : '+ _JSON['data']);
+	//console.log('macAddr : '+ _JSON['macAddr'] + ',  recv : '+ _JSON['recv'] + ',  data : '+ _JSON['data']);
 
-	/*if(tmp_mac == _JSON['macAddr'] && tmp_recv == _JSON['recv'] && test == false){
-		console.log('Dbuge saveAndSendMessage -----------------------------reject' );
+	socket.emit('giot_client_message',_JSON);
+
+	/*if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
+		console.log('Debug drop same tag ');
 		return;
-	}else{*/
-		tmp_mac = _JSON['macAddr'];
-		tmp_recv = _JSON['recv'];
-		//Notify update
-		socket.emit('giot_client_message',_JSON);
-		count ++;
-		/*if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
-			console.log('Debug drop same tag ');
-			return;
-		}*/
-		//console.log('Debug saveAndSendMessage -----------------------------(count :'+ count);
-	//}
+	}*/
 
-	console.log('Debug save Device time : '+time);
 
 	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],time,function(err,info){
-		console.log('Debug save Device -----------------------------');
+
 		if(err){
 			console.log('Debug save Device fail : '+err);
 		}else{
@@ -132,9 +119,7 @@ function saveAndSendMessage(_JSON){
 				}
 			})
 		}
-
 	});
-	console.log('Debug mqtt data ------------------------------------------------------------end' );
 }
 
 function getType(p) {

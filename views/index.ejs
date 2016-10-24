@@ -257,6 +257,7 @@
 	var n = 60*60;
 	var max = (new Date()).getTime();
     var min =  max - (n*1000);
+    var noDataTime =  max - (2*n*1000);
 	var options = {
             axes: {
                 xaxis: {
@@ -265,7 +266,7 @@
                     tickOptions:{formatString:'%H:%M:%S'}
                 },
                 yaxis: {
-                    numberTicks: 6,
+                    numberTicks: 4,
                     tickOptions:{formatString:'%d'}
                 }
             },
@@ -356,6 +357,18 @@
 			hData.push([time,data[i].info.data3]);
 			lData.push([time,data[i].info.data4]);
 		}
+		if(pData.length==0){
+			pData.push([noDataTime,1000]);
+		}
+		if(tData.length==0){
+			tData.push([noDataTime,27]);
+		}
+		if(hData.length==0){
+			hData.push([noDataTime,75]);
+		}
+		if(lData.length==0){
+			lData.push([noDataTime,288]);
+		}
 		options.axes.xaxis.min = min;
         options.axes.xaxis.max = max;
 		plot1 = $.jqplot ('pChart', [pData],options);
@@ -375,6 +388,12 @@
 			//alert(date + " : " + time);
 			uData.push([time,data[i].info.data0]);
 			rData.push([time,data[i].info.data1]);
+		}
+		if(uData.length==0){
+			uData.push([noDataTime,2]);
+		}
+		if(rData.length==0){
+			rData.push([noDataTime,1023]);
 		}
 		plot5 = $.jqplot ('uChart', [uData],options);
 		plot6 = $.jqplot ('rChart', [rData],options);

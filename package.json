@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "MQTTClient": "0.0.1",
     "async": "^2.0.1",
     "body-parser": "~1.15.1",
     "bson": "~0.4.23",
@@ -19,6 +20,7 @@
     "moment": "*",
     "mongoose": "~4.5.1",
     "morgan": "~1.7.0",
+    "mosquito": "0.0.0",
     "mqtt": "^1.11.2",
     "node-schedule": "^1.1.1",
     "serve-favicon": "~2.3.0",

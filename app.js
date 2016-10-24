@@ -66,6 +66,51 @@ app.use('/todos', todos);
 routes(app);
 var server = http.createServer(app);
 var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
+
+//Jason modify on 2016.05.23
+//app.use('/', routes);
+//app.use('/users', users);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
+
+var max = 0,min =0;
+var json = JsonFileTools.getJsonFromFile('./public/data/temp.json');
+//console.log(typeof(json));
+if(json != null){
+	max = Number(json['max']);
+	min =  Number(json['min']);
+	switchBySetting(max,min);
+}
+
 var sock = require('socket.io').listen(server.listen(port));
 updateAllUnitsStatus();
 
@@ -74,57 +119,7 @@ var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
 	updateAllUnitsStatus();
 });
 
-function updateAllUnitsStatus(){
-	console.log('time:'+new Date());
-	UnitDbTools.findAllUnits(function(err,units){
-  		async.each(units,function(unit,callback){
-			updateStatus(unit,function(){
-				callback();
-			});
-  		},function(err){
-  			console.log('Debug todos -> get unit err : '+err);
-  		});
-  	});
-}
 
-function updateStatus(unit,callback){
-
-	var tasks = ['find_last_device','compare_status'];
-	var last_timestamp = Number(moment().subtract(2,'hours'));
-	var status = 0;
-	DeviceDbTools.findLastDeviceByMac(unit.macAddr,function(err,device){
-		if(err){
-			return callback(unit.status);
-		}
-		var recv_timestamp = Number(moment(device.recv_at));
-		//console.log('unit : '+unit);
-		//console.log('device : '+device);
-		console.log( moment().subtract(2,'hours').format('YYYY/MM/DD , hh:mm:ss a') +' ->last 2 hours timestamp : '+last_timestamp );
-		console.log(device.recv_at+' -> recv timestamp : '+recv_timestamp);
-		console.log(' unit.status : '+unit.status);
-
-
-		if(last_timestamp >= recv_timestamp && unit.status != 2 ){
-			console.log('name : '+unit.name + 'is overtime');
-			status = 2;
-		}else if(last_timestamp < recv_timestamp && unit.status == 2 ){
-			console.log('name : '+unit.name + 'is ok');
-			status = 0;
-		}else{
-			console.log('name : '+unit.name + ' status no change');
-			return;
-		}
-		UnitDbTools.updateUnitStatus(device.macAddr,status,function(err,result){
-			if(err){
-				console.log('update name : '+unit.name + 'err : '+err);
-				//return callback(unit.status);
-			}else{
-				console.log('update name : '+unit.name + ' status '+status+' is ok');
-				//return callback(status);
-			}
-		});
-	});
-}
 
 /*app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
@@ -236,6 +231,19 @@ sock.on('connection',function(client){
 	        } else {
 	        	console.log('Debug : index aa01 -------------------------------------------------------------');
 	            console.log('Debug : find Device success\n:',Devices.length);
+	            if(Devices.length>0){
+					//console.log('Debug : find Device success\n:',Devices[Devices.length-1]);
+					
+					var device = Devices[Devices.length-1];
+					var temp = device.info.data2;
+					console.log('Debug : max = '+max,' , min = '+min+ ' , temp = '+temp);
+					if(temp>max){
+						blink.setSwitch(true);
+					}if(temp<min){
+						blink.setSwitch(false);
+					}
+	            }
+
 				client.emit('index_weather_chart1_data',Devices);
 	        }
 	    });
@@ -424,7 +432,34 @@ sock.on('connection',function(client){
 		}
 	});
 
+	client.on('control_client_setTempLimit',function(data){
+		//console.log('Debug giot_client ------------------------------------------------------------start' );
+		console.log(moment().format('YYYY-MM_DD HH:mm:ss')+' Debug control_client_setTempLimit :' + JSON.stringify(data) );
+		max = Number(data['max']);
+		min = Number(data['min']);
+		switchBySetting(max,min);
+	});
+
 });
+
+function switchBySetting(_max,_min){
+	DeviceDbTools.findLastDeviceByMacIndex('040004b8','aa01',function(err,device){
+			if(err){
+
+			}else{
+				if(device){
+					console.log('Debug new_message_client ->device  :'+device);
+					var temp = device.info.data2;
+					if(temp>_max){
+						blink.setSwitch(true);
+					}if(temp<_min){
+						blink.setSwitch(false);
+					}
+				}
+			}
+		});
+}
+
 
 /**toCheckDeviceTimeout
  * @param  {[client]}
@@ -516,39 +551,54 @@ function getType(p) {
     else return 'other';
 }
 
-
-//Jason modify on 2016.05.23
-//app.use('/', routes);
-//app.use('/users', users);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
+function updateAllUnitsStatus(){
+	console.log('time:'+new Date());
+	UnitDbTools.findAllUnits(function(err,units){
+  		async.each(units,function(unit,callback){
+			updateStatus(unit,function(){
+				callback();
+			});
+  		},function(err){
+  			console.log('Debug todos -> get unit err : '+err);
+  		});
+  	});
 }
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
+function updateStatus(unit,callback){
 
+	var tasks = ['find_last_device','compare_status'];
+	var last_timestamp = Number(moment().subtract(2,'hours'));
+	var status = 0;
+	DeviceDbTools.findLastDeviceByMac(unit.macAddr,function(err,device){
+		if(err){
+			return callback(unit.status);
+		}
+		var recv_timestamp = Number(moment(device.recv_at));
+		//console.log('unit : '+unit);
+		//console.log('device : '+device);
+		console.log( moment().subtract(2,'hours').format('YYYY/MM/DD , hh:mm:ss a') +' ->last 2 hours timestamp : '+last_timestamp );
+		console.log(device.recv_at+' -> recv timestamp : '+recv_timestamp);
+		console.log(' unit.status : '+unit.status);
+
+
+		if(last_timestamp >= recv_timestamp && unit.status != 2 ){
+			console.log('name : '+unit.name + 'is overtime');
+			status = 2;
+		}else if(last_timestamp < recv_timestamp && unit.status == 2 ){
+			console.log('name : '+unit.name + 'is ok');
+			status = 0;
+		}else{
+			console.log('name : '+unit.name + ' status no change');
+			return;
+		}
+		UnitDbTools.updateUnitStatus(device.macAddr,status,function(err,result){
+			if(err){
+				console.log('update name : '+unit.name + 'err : '+err);
+				//return callback(unit.status);
+			}else{
+				console.log('update name : '+unit.name + ' status '+status+' is ok');
+				//return callback(status);
+			}
+		});
+	});
+}

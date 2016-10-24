@@ -169,13 +169,13 @@ exports.findAllUnits = function (calllback) {
 };
 
 exports.findByMac = function (mac,calllback) {
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findByMac()');
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug unitDbTools : findByMac()');
     UnitModel.find({ macAddr: mac }, function(err,units){
 		if(err){
 			return callback(err);
 		}
 		if (units.length>0) {
-			console.log('find '+units.length+' records');
+			console.log('find '+units.length+' units');
 			return calllback(err,units[0]);
 		}else{
 			console.log('資料庫無資料');

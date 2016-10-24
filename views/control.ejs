@@ -11,7 +11,7 @@
 									<div class="form-group">
 										<label class="col-md-3 control-label" for="name">溫度超過</label>
 										<div class="col-md-9">
-											<input id="max" name="max" type="text" placeholder="請輸入最高溫度"  class="form-control" required/>
+											<input id="max" name="max" type="text" placeholder="請輸入最高溫度" value="<%= max %>" class="form-control" required/>
 										</div>
 									</div>
 
@@ -19,7 +19,7 @@
 									<div class="form-group">
 										<label class="col-md-3 control-label" for="email">溫度低於</label>
 										<div class="col-md-9">
-											<input id="min" name="min" type="text" placeholder="請輸入最低溫度" class="form-control" required/>
+											<input id="min" name="min" type="text" placeholder="請輸入最低溫度" value="<%= min %>" class="form-control" required/>
 										</div>
 									</div>
 								</div>
@@ -110,8 +110,12 @@
 	}
 
 	function editCheck(button){
+		//alert('test');
 
-		$("#mode").val("edit");
+		var max_val = $('#max').val();
+		var min_val = $('#min').val();
+		//alert('max : '+max_val);
+		socket.emit('control_client_setTempLimit',{max:max_val,min:min_val});
 		document.getElementById("editDevice").submit();
 	}
 

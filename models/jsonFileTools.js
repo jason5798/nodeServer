@@ -9,7 +9,7 @@ exports.saveJsonToFile = function (path,obj){
     saveJaonFile(path,obj);
 }
 
-exports.getJsonFromFile = function (path,obj){
+exports.getJsonFromFile = function (path){
     return getJaonFile(path);
 }
 
@@ -81,7 +81,7 @@ function saveDataToFile(option,devices){
         temArr1.push([Number(timestamp),devices[i].info.data0]);
         humArr1.push([Number(timestamp),devices[i].info.data1]);
         /*console.log('temArr1 : ' + temArr1);
-        console.log('temArr2 : ' + temArr2); 
+        console.log('temArr2 : ' + temArr2);
         console.log('humArr1 : ' + humArr1);
         console.log('humArr2 : ' + humArr2);*/
     }
@@ -140,10 +140,19 @@ function saveJaonFile(path,obj){
 
 function getJaonFile(path){
     console.log("Debug jsonFileTools getJaonFile -> path: "+ path);
-    var text = fs.readFileSync(path, 'utf8');
-    console.log('read text :'+text);
-    var json = JSON.parse(text);
-    return json;
+    if (fs.existsSync(path) == false) {
+        return null;
+    }else{
+        var text = fs.readFileSync(path, 'utf8');
+        console.log('read text :'+text);
+        if(text.length>0){
+            var json = JSON.parse(text);
+            return json;
+        }else{
+            return null;
+        }
+        
+    }
 }
 
 function setByOption(option){
