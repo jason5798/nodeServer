@@ -618,15 +618,32 @@ module.exports = function(app){
 			});
 		}
   	});
-  	app.get('/account', checkLogin);
+  	app.get('/control', checkLogin);
     app.get('/control', function (req, res) {
+    	var _max='',_min='';
+    	var json = JsonFileTools.getJsonFromFile('./public/data/temp.json');
+    	if(json){
+    		_max = json['max'];
+    		_min = json['min'];
+    	}
     	res.render('control', { title: '控制',
 			user:req.session.user,
 			error: null,
 			success: null,
-			units:null
+			units:null,
+			max:_max,
+			min:_min
 		});
     });
+
+    app.post('/control', checkLogin);
+  	app.post('/control', function (req, res) {
+		var	post_max = req.body.max;
+		var post_min = req.body.min;
+		var json = {max:post_max,min:post_min};
+		JsonFileTools.saveJsonToFile('./public/data/temp.json',json);
+		return res.redirect('/control');
+	});
 };
 
 function checkLogin(req, res, next) {
