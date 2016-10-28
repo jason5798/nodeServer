@@ -1,15 +1,10 @@
 var settings = require('../settings');
 var GIotClient =  require('./gIotClient.js');
 var DeviceDbTools =  require('./deviceDbTools.js');
-var UnitDbTools =  require('./unitDbTools.js');
+//var UnitDbTools =  require('./unitDbTools.js');
 var JsonFileTools =  require('./jsonFileTools.js');
 var moment = require('moment');
 var date = moment();
-var isMqttConnection = false;
-var allUnits;
-var macList;
-var tmp_mac,tmp_recv;
-var count = 0;
 var mac_tag_map = {};
 
 var io = require('socket.io-client');
@@ -21,16 +16,11 @@ socket.on('connect',function(){
 
 console.log('time:'+new Date()+'-> mqtt topic:'+settings.gIoTopic);
 var messageJSON,test = false;
-var isSubscribe = false;
 
 //if(test == false){
-	GIotClient.on('connect', function()  {
-		console.log('mqtt connect');
-		if(isSubscribe == false){
-			isSubscribe = true;
-			GIotClient.subscribe(settings.gIoTopic);
-		}
-  });
+	//GIotClient.on('connect', function()  {
+		GIotClient.subscribe(settings.gIoTopic);
+    //});
 
 
 
@@ -101,8 +91,8 @@ function saveAndSendMessage(_JSON){
 		if(err){
 			console.log('Debug save Device fail : '+err);
 		}else{
-
-			UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
+			console.log('Debug save Device success');
+			/*UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
 				//console.log('Debug unit : '+unit);
 				if(err == null){
 					if(unit){
@@ -117,7 +107,7 @@ function saveAndSendMessage(_JSON){
 						}
 					}
 				}
-			})
+			});*/
 		}
 	});
 }

@@ -11,7 +11,6 @@ var moment = require('moment');
 function findUnitsAndShowList(req,res,isUpdate){
 	UnitDbTools.findAllUnits(function(err,units){
 		var successMessae,errorMessae;
-		var macList = [];
 		var macTypeMap = {};
 
 		if(err){
@@ -24,7 +23,6 @@ function findUnitsAndShowList(req,res,isUpdate){
 				console.log( "unit :"+units[i] );
 				if(units[i].macAddr){
 					console.log('mac ('+i+'):'+units[i].macAddr);
-					macList.push(units[i].macAddr);
 					if(units[i].type){
 						macTypeMap[units[i].macAddr]=units[i].type;
 					}
@@ -32,7 +30,6 @@ function findUnitsAndShowList(req,res,isUpdate){
 			}
 			//Jason add for save mac array on 2016.08.18
 			if(isUpdate){//For new and delete unit
-				JsonFileTools.saveJsonToFile('./public/data/macList.json',macList);
 				JsonFileTools.saveJsonToFile('./public/data/macTypeMap.json',macTypeMap);
 			}
 		}
@@ -51,7 +48,6 @@ function findUnitsAndShowList(req,res,isUpdate){
 function findUnitsAndShowSetting(req,res,isUpdate){
 	UnitDbTools.findAllUnits(function(err,units){
 		var successMessae,errorMessae;
-		var macList = [];
 		var macTypeMap = {};
 
 		if(err){
@@ -64,7 +60,6 @@ function findUnitsAndShowSetting(req,res,isUpdate){
 				console.log( "unit :"+units[i] );
 				if(units[i].macAddr){
 					console.log('mac ('+i+'):'+units[i].macAddr);
-					macList.push(units[i].macAddr);
 					if(units[i].type){
 						macTypeMap[units[i].macAddr]=units[i].type;
 					}
@@ -72,7 +67,6 @@ function findUnitsAndShowSetting(req,res,isUpdate){
 			}
 			//Jason add for save mac array on 2016.08.18
 			if(isUpdate){//For new and delete unit
-				JsonFileTools.saveJsonToFile('./public/data/macList.json',macList);
 				JsonFileTools.saveJsonToFile('./public/data/macTypeMap.json',macTypeMap);
 			}
 		}

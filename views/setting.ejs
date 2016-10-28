@@ -26,8 +26,8 @@
 								<div class="col-md-6 column">
 									<!-- Type select-->
 									<div >
-										<label class="col-md-3 control-label" for="type">裝置類型</label>
-										<div class="col-md-9">
+										<label class="col-md-4 control-label" for="type">裝置類型</label>
+										<div class="col-md-8">
 											<select id="type_option" name="type_option" >
 							                    <option value="d001">土壤溫濕度檢測</option>
 							                    <option value="d002">氣象檢測</option>
@@ -161,6 +161,7 @@
 	});
 	 var unitList={};
 
+
 	/*$(document).on("click","tr.rows td", function(e){
 	    alert(e.target.innerHTML);
 	});*/
@@ -226,6 +227,10 @@
 			        this.selected = true;
 	    		}
 			});
+			//alert($( "#type_option" ).val());
+			if($( "#type_option" ).val() == 'd001'){
+				socket.emit('setting_client_new',{mac:document.getElementById("mac").value});
+			}
 		}
 	});
 
@@ -252,6 +257,11 @@
 
 	function toSubmit(){
 		$('#myModal').modal('hide');
+
+		//alert($( "#type_option" ).val());
+		if($( "#type_option" ).val() == 'd001'){
+			socket.emit('setting_client_del',{mac:document.getElementById("mac").value});
+		}
 		document.getElementById("editDevice").submit();
 	}
 </script>

@@ -114,10 +114,10 @@ if(json != null){
 var sock = require('socket.io').listen(server.listen(port));
 updateAllUnitsStatus();
 
-var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
+//var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
 	// do jobs here
-	updateAllUnitsStatus();
-});
+	//updateAllUnitsStatus();
+//});
 
 
 
@@ -130,7 +130,10 @@ console.log('settings.db : '+settings.db);
 
 var isMqttConnection = false;
 var date = moment();
-var myUnits;
+
+//macList is for unit type = 'd001'
+var myUnits,macList = [],finalList = [];
+findUnitsMac();
 
 /*GIotClient.on('connect', function()  {
 	if(isMqttConnection == false){
@@ -233,7 +236,7 @@ sock.on('connection',function(client){
 	            console.log('Debug : find Device success\n:',Devices.length);
 	            if(Devices.length>0){
 					//console.log('Debug : find Device success\n:',Devices[Devices.length-1]);
-					
+
 					var device = Devices[Devices.length-1];
 					var temp = device.info.data2;
 					console.log('Debug : max = '+max,' , min = '+min+ ' , temp = '+temp);
@@ -367,7 +370,7 @@ sock.on('connection',function(client){
         //console.log('Debug giot client message -> mData : '+mData);
         //console.log('Debug giot client message -> mRecv : '+mRecv);
         var mCreate = new Date();
-		var macList = JsonFileTools.getJsonFromFile('./public/data/macList.json');
+
 		//Jason modiy on 2016.07.21
 		var index = 0;
 		for(var k = 0; k<macList.length; k++){
@@ -378,10 +381,10 @@ sock.on('connection',function(client){
 		//mData = '00fk03a900fb01d701e7';//Jason add for test
 		//Jason test
 		var flag = 0;
-		var index = mData.substring(0,4);
-		if(index == 'aa01'){
+		var device_type = mData.substring(0,4);
+		if(device_type == 'aa01'){
 			flag = 1;
-		}else if(index == 'aa02'){
+		}else if(device_type == 'aa02'){
 			flag = 2;
 		}
 
@@ -389,14 +392,12 @@ sock.on('connection',function(client){
 		if(flag == 0){
 			var mTmp1 = arrData[0];
 			var mHum1 = arrData[1];
-			var mTmp2 = arrData[2];
-			var mHum2 = arrData[3];
-			var mV = arrData[4];
+			var mV = arrData[2];
 		    var mCreate = new Date();
 			var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
-			console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" , tmp2 : "+mTmp2 +' , hum2 : '+mHum2);
+			console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" ,vol : "+mV);
 
-			client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,tmp2:mTmp2,hum2:mHum2,vol:mV});
+			client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,vol:mV});
 		}else if(flag == 1){
 			var time = Number(moment(mRecv));
 			client.broadcast.emit('index_update_weather_chart1',{time:time,array:arrData});
@@ -416,6 +417,24 @@ sock.on('connection',function(client){
 	  			client.emit('setting_client_unitlist',units);
 	  		}
   		});
+	});
+
+	client.on('setting_client_new',function(data){
+		console.log('Debug setting client------------------------------------------------------------start' );
+		console.log('Debug setting client :' + data.mac );
+		var index = macList.indexOf(data.mac);
+		if (index == -1) {
+			macList.push(data.mac);
+		}
+	});
+
+	client.on('setting_client_del',function(data){
+		console.log('Debug setting client------------------------------------------------------------start' );
+		console.log('Debug setting client :' + data.mac );
+		var index = macList.indexOf(data.mac);
+		if (index > -1) {
+			macList.splice(index, 1);
+		}
 	});
 
 	client.on('control_client',function(data){
@@ -439,7 +458,6 @@ sock.on('connection',function(client){
 		min = Number(data['min']);
 		switchBySetting(max,min);
 	});
-
 });
 
 function switchBySetting(_max,_min){
@@ -461,74 +479,7 @@ function switchBySetting(_max,_min){
 }
 
 
-/**toCheckDeviceTimeout
- * @param  {[client]}
- * @return client.emit to index page
- */
-/*unction toCheckDeviceTimeout(client){
-	var now = Number(moment().subtract(1,'days'));
-	UnitDbTools.findAllUnits(function(err,units){
-		var successMessae,errorMessae;
-		if(err){
-			console.log('Debug toCheck Device Timeout -> find All Units is fail '+err);
-			return;
-		}
 
-		var macList=[];
-		for(var i=0 ; i<units.length; i++){
-			macList.push(units[i].macAddr);
-		}
-
-		//units.forEach(function(unit) {
-		for(var i=0 ; i<units.length; i++){
-			console.log('Debug toCheckDeviceStatus -> mac :'+units[i]);
-			console.log('Debug toCheckDeviceStatus -> mac :'+units[i].macAddr);
-			DeviceDbTools.findLastDeviceByMac(units[i].macAddr,function(err,device){
-				if(err == null){
-
-					if(device == null){
-						return;
-					}
-					console.log('Debug toCheck Device  :'+device);
-					console.log('Debug toCheck Device Status ->  :'+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss"));
-
-					//Verify is timeout or not?
-					if(now>Number(moment(device.recv_at)) ){
-                        //Is timeout
-						console.log('Debug find Units And ShowList -> '+device.macAddr+' time '+ moment(device.recv_at).format("YYYY-MM-DD HH:mm:ss") +' is timeout ');
-						var mIndex = macList.indexOf(device.macAddr);
-
-						UnitDbTools.updateUnitStatus(device.macAddr,2,function(err,result){
-							if(err){
-								console.log('Debug toCheck Device Status -> '+device.macAddr+' updat unit timeout is fail :'+err);
-							}else{
-								console.log('Debug toCheck Device Status -> '+device.macAddr+' updat unit timeout success');
-								console.log('index :'+macList.indexOf(device.macAddr));
-								//console.log('mac :'+device.macAddr);
-								client.emit('index_client_timeout',{index:macList.indexOf(device.macAddr),status:2});
-							}
-						});
-					}else{
-						var mIndex = macList.indexOf(device.macAddr);
-						if(units[mIndex].status == 0){
-							return;
-						}
-						UnitDbTools.updateUnitStatus(device.macAddr,0,function(err,result){
-							if(err){
-								console.log('Debug toCheckDeviceStatus ->  '+device.macAddr+' updat unit normal is fail :'+err);
-							}else{
-								console.log('Debug toCheckDeviceStatus ->  '+device.macAddr+' updat unit normal success');
-								console.log('index :'+macList.indexOf(device.macAddr));
-								//console.log('mac :'+device.macAddr);
-								client.emit('index_client_timeout',{index:macList.indexOf(device.macAddr),status:0});
-							}
-						});
-					}
-				}
-			});
-		}
-	});
-}*/
 
 function getShortenDevices(devices){
 	var interval = Math.floor(devices.length/145)+1;
@@ -565,7 +516,7 @@ function updateAllUnitsStatus(){
 }
 
 function updateStatus(unit,callback){
-
+    //console.log('unit : '+unit);
 	var tasks = ['find_last_device','compare_status'];
 	var last_timestamp = Number(moment().subtract(2,'hours'));
 	var status = 0;
@@ -573,32 +524,53 @@ function updateStatus(unit,callback){
 		if(err){
 			return callback(unit.status);
 		}
-		var recv_timestamp = Number(moment(device.recv_at));
-		//console.log('unit : '+unit);
-		//console.log('device : '+device);
-		console.log( moment().subtract(2,'hours').format('YYYY/MM/DD , hh:mm:ss a') +' ->last 2 hours timestamp : '+last_timestamp );
-		console.log(device.recv_at+' -> recv timestamp : '+recv_timestamp);
-		console.log(' unit.status : '+unit.status);
+		if(device){
+			//console.log('device : '+device);
+			finalList[device.macAddr] = Number(moment(device.recv_at));
+			var recv_timestamp = Number(moment(device.recv_at));
+
+			console.log( moment().subtract(2,'hours').format('YYYY/MM/DD , hh:mm:ss a') +' ->last 2 hours timestamp : '+last_timestamp );
+			console.log(device.recv_at+' -> recv timestamp : '+recv_timestamp);
+			console.log(' unit.status : '+unit.status);
 
 
-		if(last_timestamp >= recv_timestamp && unit.status != 2 ){
-			console.log('name : '+unit.name + 'is overtime');
-			status = 2;
-		}else if(last_timestamp < recv_timestamp && unit.status == 2 ){
-			console.log('name : '+unit.name + 'is ok');
-			status = 0;
-		}else{
-			console.log('name : '+unit.name + ' status no change');
-			return;
-		}
-		UnitDbTools.updateUnitStatus(device.macAddr,status,function(err,result){
-			if(err){
-				console.log('update name : '+unit.name + 'err : '+err);
-				//return callback(unit.status);
+			if(last_timestamp >= recv_timestamp && unit.status != 2 ){
+				console.log('name : '+unit.name + 'is overtime');
+				status = 2;
+			}else if(last_timestamp < recv_timestamp && unit.status == 2 ){
+				console.log('name : '+unit.name + 'is ok');
+				status = 0;
 			}else{
-				console.log('update name : '+unit.name + ' status '+status+' is ok');
-				//return callback(status);
+				console.log('name : '+unit.name + ' status no change');
+				return;
 			}
-		});
+			UnitDbTools.updateUnitStatus(device.macAddr,status,function(err,result){
+				if(err){
+					console.log('update name : '+unit.name + 'err : '+err);
+					//return callback(unit.status);
+				}else{
+					console.log('update name : '+unit.name + ' status '+status+' is ok');
+					//return callback(status);
+				}
+			});
+		}
+	});
+}
+
+function findUnitsMac(){
+	UnitDbTools.findAllUnits(function(err,units){
+		if(err){
+			errorMessae = err;
+		}else{
+			if(+units.length>0){
+				for(var i=0;i<units.length;i++){
+					console.log( "unit :"+units[i] );
+					if(units[i].macAddr && units[i].type == 'd001'){
+						console.log('mac ('+i+'):'+units[i].macAddr);
+						macList.push(units[i].macAddr);
+					}
+				}
+			}
+		}
 	});
 }
