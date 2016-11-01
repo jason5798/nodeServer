@@ -342,7 +342,9 @@ sock.on('connection',function(client){
 				return;
 			}
 
-			if (devices.length>0) {
+			/*Jason modify on 2016.11.01 for chart data process from server to client
+
+			 if (devices.length>0) {
 				console.log('Debug chart -> find '+devices.length+' records');
 				var newDevices = devices;//getShortenDevices(devices);
 				var timeJsonStr =JsonFileTools.saveDataAndGetTimeeString(data.option,newDevices);
@@ -352,7 +354,8 @@ sock.on('connection',function(client){
 			}else{
 				console.log('Debug find get -> can not find');
 				client.emit('chart_client_db_result',null);
-			}
+			}*/
+			client.emit('chart_client_db_result',devices);
 		});
 
 	});

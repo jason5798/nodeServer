@@ -66,7 +66,7 @@
     <button class="button button-block button-balanced" onClick="test2()">測試2</button>-->
 
     <div class="col-md-12">
-        <div class="panel-body">
+        <div id="chartBlock" class="panel-body">
 
             <div class="panel panel-info">
 
@@ -90,31 +90,60 @@
     $('#datepicker1').datepicker({dateFormat: 'yy-mm-dd', showOn: 'both',
     buttonImageOnly: true, buttonImage: 'images/calendar.png'});
 
-
     var socket = io.connect();
     var myData;
     var plot1,plot2;
-    var options1,options2,options3,options4;
+    var tatalTime = 0,interval = 6,x_number;
+    var formatStr = '%H:%M';
+
 
     socket.on('connect',function(){
         socket.emit('chart_client','hello,chart socket cient is ready');
     });
 
-    var ajaxDataRenderer = function(url, plot, options) {
-        var ret = null;
-        //alert('ajaxDataRenderer2 url:'+url);
-        $.ajax({
-            async: false,
-            url: url,
-            dataType:"json",
-            success: function(data) {
-                ret = data;
-            }
+    $('[name=time_option]').change(function() {
+        $( "select option:selected" ).each(function() {
+          //alert( $( this ).val() );
+          if($( this ).val() == 0){
+            interval = 60;//60*5 per 300 seconds
+          }else if($( this ).val() == 1){
+            interval = 12*60;//12*5*60 per 1 hours
+          }else if($( this ).val() == 2){
+            interval = 12*60;//12*5*60 per 1 hours
+          }else{
+            interval = 12*60;//24*5*60 per 1 hours
+          }
         });
-        //alert(ret);
-        return ret;
+    });
 
-    };
+    var options1 ={
+                    title: "溫度(℃)",
+                    axes:
+                    {
+                        xaxis: {
+                            numberTicks: 24,
+                            renderer:$.jqplot.DateAxisRenderer,
+                            tickOptions:{formatString:'%H:%M'}
+                        },
+                        yaxis: {
+                            numberTicks: 10
+                        }
+                    }
+                };
+    var options2 ={
+                    title: "濕度(%)",
+                    axes:
+                    {
+                        xaxis: {
+                            numberTicks: 24,
+                            renderer:$.jqplot.DateAxisRenderer,
+                            tickOptions:{formatString:'%H:%M'}
+                        },
+                        yaxis: {
+                            numberTicks: 10
+                        }
+                    }
+                };
 
     socket.on('chart_client_db_result',function(data){
         //alert('option : '+data.option+'\ninterva : '+data.interval+'\nmin : '+data.min+'\nmax : '+data.max+'\nnumber : '+data.deviceNumber)
@@ -123,130 +152,57 @@
             $('#chartTmp').empty();
             $('#chartHum').empty();
             alert('無法找到資料!');
+            $("#chartBlock").hide();
             return;
         }
-        var jsonurl = "/data/tem1.json";
-        var jsonurl2 = "/data/hum1.json";
-        var xaxisJson = getXaxisJSON(data);//for xaxis
-        //alert('data.option :'+data.option);
-        if(data.option == 1){
-            jsonurl = "/data/tem2.json";
-            jsonurl2 = "/data/hum2.json";
-        }else if(data.option == 2){
-            jsonurl = "/data/tem3.json";
-            jsonurl2 = "/data/hum3.json";
-        }else if(data.option == 3){
-            jsonurl = "/data/tem4.json";
-            jsonurl2 = "/data/hum4.json";
+
+        //Jason add on 2016.11.01
+        $("#chartBlock").show();
+        var tempList = [],humList=[];
+        //alert('interval : '+interval);
+        for(i=0;i<data.length;i=i+interval){
+            if(i > (data.length-1) ){
+                break;
+            }else{
+                tempList.push([new Date(data[i].recv_at).getTime(),data[i].info.data0]);
+                humList.push([new Date(data[i].recv_at).getTime(),data[i].info.data1]);
+            }
         }
-
-        if(plot1 == null){
-
-            plot1 = $.jqplot('chartTmp', jsonurl,
-                {
-                    title: "溫度",
-                    dataRenderer: ajaxDataRenderer,
-                    dataRendererOptions: {
-                        unusedOptionalUrl: jsonurl
-                    },
-                    axes:
-                    {
-                        xaxis:xaxisJson,
-                        yaxis: {
-                            tickOptions: {
-                                formatString: "%'d 度"
-                            }
-                        }
-                    }
-                }
-            );
-
-            plot2 = $.jqplot('chartHum', jsonurl2,
-                {
-                    title: "濕度",
-                    dataRenderer: ajaxDataRenderer,
-                    dataRendererOptions: {
-                        unusedOptionalUrl: jsonurl2
-                    },
-                    axes:
-                    {
-                        xaxis:xaxisJson,
-                        yaxis: {
-                            tickOptions: {
-                                formatString: "%'d %"
-                            }
-                        }
-                    }
-                }
-            );
-        }else{//for replot
-
-            $('#chartTmp').empty();
-            $('#chartHum').empty();
-            toPlot('chartTmp',jsonurl,xaxisJson);
-            toPlot('chartHum',jsonurl2,xaxisJson);
+        tatalTime = Math.ceil((tempList[tempList.length-1][0]-tempList[0][0])/(1000*60*60));
+        //alert( tatalTime );
+        if(tatalTime<12){
+            x_number = tatalTime;
+            formatStr = '%H:%M';
+        }else if(tatalTime<24){
+            x_number = tatalTime/2;
+            formatStr = '%H:%M';
+        }else if(tatalTime<24*7){
+            x_number = Math.ceil(tatalTime/24);
+            formatStr = '%m/%d';
+        }else if(tatalTime<24*31){
+            x_number = Math.ceil(tatalTime/(2*24));
+            formatStr = '%m/%d';
+        }else if(tatalTime<24*31*3){
+            x_number = Math.ceil(tatalTime/(7*24));
+            formatStr = '%m/%d';
         }
 
 
+        if(plot1){
+            plot1.destroy();
+        }
+        if(plot2){
+            plot2.destroy();
+        }
 
+
+        options1.axes.xaxis.numberTicks = x_number;
+        options2.axes.xaxis.numberTicks = x_number;
+        options1.axes.xaxis.tickOptions.formatString = formatStr;
+        options2.axes.xaxis.tickOptions.formatString = formatStr;
+        plot1 = $.jqplot ('chartTmp', [tempList],options1);
+        plot2 = $.jqplot ('chartHum', [humList],options2);
     });
-
-    function toPlot(divName,url,xaxisJson){
-        var title ="溫度";
-        var formatStr ="%'d 度";
-        if(divName !='chartTmp'){
-            title ="濕度";
-            formatStr ="%'d %";
-        }
-        $.jqplot(divName, url,
-            {
-                title: title,
-                dataRenderer: ajaxDataRenderer,
-                dataRendererOptions: {
-                    unusedOptionalUrl: url
-                },
-                axes:
-                {
-                    xaxis:xaxisJson,
-                    yaxis: {
-                        tickOptions: {
-                            formatString: formatStr
-                        }
-                    }
-                }
-            }
-        );
-    }
-
-    function replot(url,xJson,plot) {
-        var ret = null;
-        $.ajax({
-            async: false,
-            url: url,
-            dataType:"json",
-            success: function(data) {
-                var dataStr = JSON.stringify(data);
-                alert('data string : \n'+dataStr);
-                var options=getOptions(data,xJson);
-                plot.replot(options);
-            }
-        });
-    };
-
-    function getOptions(dataJson,xaxisJson){
-        mOptions = {data:dataJson,
-                    axes:
-                    {
-                        xaxis:xaxisJson,
-                        yaxis: {
-                            tickOptions: {
-                                formatString: "%'d 度"
-                            }
-                        }
-                    }
-        };
-        return mOptions;
-    }
 
     function find(){
         //Get select element for mac , time
@@ -261,46 +217,13 @@
         socket.emit('chart_client_find_db',{mac:mac,option:option,date:date});
     }
 
-    function test2(){
-
-        var s3 = [[1469289952000,32.5],[1469290547000,32.5],[1469291141000,32.5],[1469291735000,32.4]];
-        var s4 = [[1469373785000,32.8],[1469374379000,32.8],[1469374974000,32.8],[1469375568000,32.8]];
-        var options = {data:[s3,s4]};
-        alert(options);
-        plot2.replot(options);
-    }
-
-    function getXaxisJSON(data){
-        //alert( typeof(data.option));
-        if(data.option == 0){
-            formatStr = '%#H:%M';
-        }else if(data.option == 1){
-            formatStr = '%#m/%#d';
-        }else if(data.option == 2){
-            formatStr = '%#m/%#d';
-        }else if(data.option == 3){
-            formatStr = '%#m/%#d';
-        }
-
-        return {renderer:$.jqplot.DateAxisRenderer,
-                tickInterval: data.interval,
-                tickOptions:{formatString:formatStr},
-                min: data.min,
-                max: data.max
-        };
-    }
-
     $(document).ready(function () {
         setTimeout(function(){
             //do what you need here
             document.getElementById('error_message').innerText = '';
         }, 3000);
-
+        $("#chartBlock").hide();
     });
 </script>
-<script src="/js/jqplot/jquery.jqplot.min.js"></script>
-<script src="/js/jqplot/plugins/jqplot.ohlcRenderer.js"></script>
-<script src="/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
-<script src="/js/jqplot/plugins/jqplot.myParser.js"></script>
 
 <%- include page/footer %>
