@@ -419,6 +419,26 @@
 		rData.push([data.time,data.array[1]]);
 	});
 
+    //Jason add of on 2016.10.31 for update unit status
+	socket.on('index_unit_time',function(data){
+		var now = (new Date()).getTime();
+		//alert('now : '+typeof(now));
+		var index = 0;
+		for(var k in data.list) {
+		  //alert(k+ ' : ' +data.list[k]);
+
+		  if(now - data.list[k] < 1000*60*60){
+		  	//alert('it is over time');
+		  	$('[name=status]').eq(index).attr("src","/images/btn_normal.png");
+		  }else{
+		  	//alert('it is not over time');
+		  	$('[name=status]').eq(index).attr("src","/images/btn_loss.png");
+		  }
+		  index ++;
+		}
+
+	});
+
 	function chartUpdate(myplot,myData,myChart) {
         	max = (new Date()).getTime();
             min =  max - (n*1000);

@@ -19,7 +19,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 			if(+units.length>0){
 				successMessae = '查詢到'+units.length+'筆資料';
 			}
-			for(var i=0;i<units.length;i++){
+			/*for(var i=0;i<units.length;i++){
 				console.log( "unit :"+units[i] );
 				if(units[i].macAddr){
 					console.log('mac ('+i+'):'+units[i].macAddr);
@@ -31,7 +31,7 @@ function findUnitsAndShowList(req,res,isUpdate){
 			//Jason add for save mac array on 2016.08.18
 			if(isUpdate){//For new and delete unit
 				JsonFileTools.saveJsonToFile('./public/data/macTypeMap.json',macTypeMap);
-			}
+			}*/
 		}
 		req.session.units = units;
 
@@ -56,7 +56,7 @@ function findUnitsAndShowSetting(req,res,isUpdate){
 			if(+units.length>0){
 				successMessae = '查詢到'+units.length+'筆資料';
 			}
-			for(var i=0;i<units.length;i++){
+			/*for(var i=0;i<units.length;i++){
 				console.log( "unit :"+units[i] );
 				if(units[i].macAddr){
 					console.log('mac ('+i+'):'+units[i].macAddr);
@@ -68,7 +68,7 @@ function findUnitsAndShowSetting(req,res,isUpdate){
 			//Jason add for save mac array on 2016.08.18
 			if(isUpdate){//For new and delete unit
 				JsonFileTools.saveJsonToFile('./public/data/macTypeMap.json',macTypeMap);
-			}
+			}*/
 		}
 		req.session.units = units;
 

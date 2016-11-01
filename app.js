@@ -114,10 +114,11 @@ if(json != null){
 var sock = require('socket.io').listen(server.listen(port));
 updateAllUnitsStatus();
 
-//var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
+//Auto update per 2 hours
+var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
 	// do jobs here
-	//updateAllUnitsStatus();
-//});
+	updateAllUnitsStatus();
+});
 
 
 
@@ -132,7 +133,7 @@ var isMqttConnection = false;
 var date = moment();
 
 //macList is for unit type = 'd001'
-var myUnits,macList = [],finalList = [];
+var myUnits,macList = [],finalTimeList = {};
 findUnitsMac();
 
 /*GIotClient.on('connect', function()  {
@@ -186,6 +187,8 @@ sock.on('connection',function(client){
 	client.on('index_client',function(data){
 		console.log('Debug index ------------------------------------------------------------start' );
 		console.log('Debug index :' + data );
+		//update unit status
+		client.emit('index_unit_time',{list:finalTimeList});
 
 		DeviceDbTools.findLastDevice({index:'aa01'},function(err,device){
 			if(err){
@@ -366,6 +369,8 @@ sock.on('connection',function(client){
 		var macAddress = data['macAddr'];
         var mData = data['data'];
         var mRecv = data['recv'];
+        //updata unit final time
+        finalTimeList[macAddress] = Number(moment(mRecv));
         //console.log('Debug giot client message -> macAddress : '+macAddress);
         //console.log('Debug giot client message -> mData : '+mData);
         //console.log('Debug giot client message -> mRecv : '+mRecv);
@@ -462,20 +467,20 @@ sock.on('connection',function(client){
 
 function switchBySetting(_max,_min){
 	DeviceDbTools.findLastDeviceByMacIndex('040004b8','aa01',function(err,device){
-			if(err){
+		if(err){
 
-			}else{
-				if(device){
-					console.log('Debug new_message_client ->device  :'+device);
-					var temp = device.info.data2;
-					if(temp>_max){
-						blink.setSwitch(true);
-					}if(temp<_min){
-						blink.setSwitch(false);
-					}
+		}else{
+			if(device){
+				console.log('Debug new_message_client ->device  :'+device);
+				var temp = device.info.data2;
+				if(temp>_max){
+					blink.setSwitch(true);
+				}if(temp<_min){
+					blink.setSwitch(false);
 				}
 			}
-		});
+		}
+	});
 }
 
 
@@ -520,13 +525,15 @@ function updateStatus(unit,callback){
 	var tasks = ['find_last_device','compare_status'];
 	var last_timestamp = Number(moment().subtract(2,'hours'));
 	var status = 0;
+	finalTimeList = {};
+
 	DeviceDbTools.findLastDeviceByMac(unit.macAddr,function(err,device){
 		if(err){
 			return callback(unit.status);
 		}
 		if(device){
 			//console.log('device : '+device);
-			finalList[device.macAddr] = Number(moment(device.recv_at));
+			finalTimeList[device.macAddr] = Number(moment(device.recv_at));
 			var recv_timestamp = Number(moment(device.recv_at));
 
 			console.log( moment().subtract(2,'hours').format('YYYY/MM/DD , hh:mm:ss a') +' ->last 2 hours timestamp : '+last_timestamp );
