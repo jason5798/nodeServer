@@ -156,13 +156,12 @@ exports.removeUnitByMac = function (mac,calllback) {
 /*Find all of unit
 */
 exports.findAllUnits = function (calllback) {
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+' Debug : findAllUnits()');
     UnitModel.find((err, units) => {
 	    if (err) {
-		    console.log('Debug : findAllUnits err:', err);
+		    console.log(moment().format('YYYY-MM-DD HH:mm:ss')+'Debug : findAllUnits err:', err);
             return calllback(err);
 	    } else {
-            console.log('Debug : findAllUnits success\n:',units.length);
+            console.log(moment().format('YYYY-MM-DD HH:mm:ss')+'Debug : findAllUnits success\n:',units.length);
 		    return calllback(err,units);
 	    }
     });

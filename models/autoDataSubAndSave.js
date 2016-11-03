@@ -7,6 +7,11 @@ var moment = require('moment');
 var date = moment();
 var mac_tag_map = {};
 
+//Combine data
+var isCombine = false;
+var firstData='',combineData='',secondInfo='';
+var target = '';
+
 var io = require('socket.io-client');
 var socket = io.connect('http://localhost:3000', {reconnect: true});
 
@@ -26,7 +31,7 @@ var messageJSON,test = false;
 
 	GIotClient.on('message', function(topic, message) {
 
-		console.log('Debug mqtt data -----------------------------------------------------start' );
+		//console.log('Debug mqtt data -----------------------------------------------------start' );
 		//console.log('topic:'+topic.toString());
 		//console.log('message:'+message.toString());
 		//console.log('message type :'+getType(message));
@@ -77,7 +82,13 @@ function saveAndSendMessage(_JSON){
 	}
 
 	//console.log('macAddr : '+ _JSON['macAddr'] + ',  recv : '+ _JSON['recv'] + ',  data : '+ _JSON['data']);
-
+	var type = _JSON['data'].substring(0,4);
+	if(type == 'aa03' || type == 'aa04' || type == 'aa05' ){
+		//Combine data
+		combinePM25(_JSON);
+		return;
+	}
+	//Update and save data
 	socket.emit('giot_client_message',_JSON);
 
 	/*if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
@@ -89,9 +100,9 @@ function saveAndSendMessage(_JSON){
 	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],time,function(err,info){
 
 		if(err){
-			console.log('Debug save Device fail : '+err);
+			//console.log('Debug save Device fail : '+err);
 		}else{
-			console.log('Debug save Device success');
+			//console.log('Debug save Device success');
 			/*UnitDbTools.findByMac(_JSON['macAddr'],function(err,unit){
 				//console.log('Debug unit : '+unit);
 				if(err == null){
@@ -117,4 +128,45 @@ function getType(p) {
     else if (typeof p == 'string') return 'string';
     else if (p != null && typeof p == 'object') return 'object';
     else return 'other';
+}
+
+function combinePM25(mJSON){
+	var type = mJSON['data'].substring(0,4);
+	var tag  = mJSON['data'].substring(4,6);
+	var info = mJSON['data'].substring(6,mJSON['data'].length);
+	if(target !=  tag){
+		target = tag;
+		if(type == 'aa03'){
+			firstData =mJSON['data'];
+			combineData = '';
+		}
+
+	}else{
+		if(type == 'aa04'){
+			secondInfo=info.substring(0,8);
+			if(firstData !=''){
+				combineData = firstData.concat(secondInfo);
+			}
+		}else if(type == 'aa05'){
+			var mInfo = info.substring(0,12);
+			if(combineData !=''){
+				combineData = combineData.concat(mInfo);
+			}else{
+				combineData = firstData.concat(secondInfo);
+				combineData = combineData.concat(mInfo);
+			}
+			//console.log('data length : '+combineData.length);
+			//Save data
+			if(combineData.length == 42){
+				DeviceDbTools.saveDevice(mJSON['macAddr'],combineData,mJSON['recv'],function(err,info){
+					if(err){
+						console.log('Debug save Device fail : '+err);
+					}
+				});
+			}
+
+			//clear combineData
+			combineData = '';
+		}
+	}
 }

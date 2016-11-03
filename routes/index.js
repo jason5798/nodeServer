@@ -351,7 +351,7 @@ module.exports = function(app){
 			});
 			DeviceDbTools.findDevicesByDate(mdate,find_mac,Number(option),'asc',function(err,devices){
 				if(err){
-					console.log('find name:'+find_mac);
+					console.log('find name:'+find_mac+" err : "+err);
 					req.flash('error', err);
 					return res.redirect('/find');
 				}
@@ -360,10 +360,38 @@ module.exports = function(app){
 					console.log('mac:'+device.macAddr + ', data :' +device.data);
 					count = count +1;
 				});*/
-				console.log('find type:'+findType);
-				console.log('Debug find get mac '+find_mac+'-> find '+devices.length+' records');
+				//console.log('find type:'+findType);
+				//console.log('Debug find get mac '+find_mac+'-> find '+devices.length+' records');
 				console.log('Debug find device '+find_mac+'-> find '+devices);
 				successMessae = '查詢到'+devices.length+'筆資料';
+				var newDevices = [];
+				if(findType == 'd001'){
+					newDevices = devices;
+				}else if(findType == 'd002'){
+					var tag = -1;
+					var arrIndex = -1;
+					for(var i=0;i<devices.length;i++){
+						if (tag != devices[i].tag){
+							tag = devices[i].tag;
+							arrIndex ++;
+						}
+						if( devices[i].index == 'aa03'){
+							newDevices[arrIndex].push([devices[i].info.data0,devices[i].info.data1,devices[i].info.data2]);
+						}else if( devices[i].index == 'aa04'){
+							if(newDevices[arrIndex].length == 0){
+								newDevices[arrIndex].push(['','','']);
+							}
+							newDevices[arrIndex].push([devices[i].info.data0,devices[i].info.data1])
+						}if( devices[i].index == 'aa05'){
+							if(newDevices[arrIndex].length == 0){//loss aa03 & aa04
+								newDevices[arrIndex].push(['','','','','','']);
+							}else if(newDevices[arrIndex].length == 3){//loss aa04
+								newDevices[arrIndex].push(['','','',]);
+							}
+							newDevices[arrIndex].push([devices[i].info.data0,devices[i].info.data1,devices[i].info.data2]);
+						}
+					}
+				}
 
 				res.render('find', { title: '資料查詢',
 					units:req.session.units,

@@ -403,7 +403,7 @@ sock.on('connection',function(client){
 			var mV = arrData[2];
 		    var mCreate = new Date();
 			var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
-			console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" ,vol : "+mV);
+			//console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" ,vol : "+mV);
 
 			client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,vol:mV});
 		}else if(flag == 1){
@@ -466,7 +466,12 @@ sock.on('connection',function(client){
 		min = Number(data['min']);
 		switchBySetting(max,min);
 	});
+
+	client.on('disconnect', function () {
+        console.log('???? socket disconnect id : ' +client.id);
+    });
 });
+
 
 function switchBySetting(_max,_min){
 	DeviceDbTools.findLastDeviceByMacIndex('040004b8','aa01',function(err,device){
@@ -567,6 +572,7 @@ function updateStatus(unit,callback){
 	});
 }
 
+//for d001 device (temprature/huminity) status
 function findUnitsMac(){
 	UnitDbTools.findAllUnits(function(err,units){
 		if(err){
@@ -574,7 +580,7 @@ function findUnitsMac(){
 		}else{
 			if(+units.length>0){
 				for(var i=0;i<units.length;i++){
-					console.log( "unit :"+units[i] );
+					//console.log( "unit :"+units[i] );
 					if(units[i].macAddr && units[i].type == 'd001'){
 						console.log('mac ('+i+'):'+units[i].macAddr);
 						macList.push(units[i].macAddr);
