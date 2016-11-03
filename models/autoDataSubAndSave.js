@@ -8,8 +8,7 @@ var date = moment();
 var mac_tag_map = {};
 
 //Combine data
-var isCombine = false;
-var firstData='',combineData='',secondInfo='';
+var firstData='',combineData='',secondInfo='',thirdIno='';
 var target = '';
 
 var io = require('socket.io-client');
@@ -137,8 +136,22 @@ function combinePM25(mJSON){
 	if(target !=  tag){
 		target = tag;
 		if(type == 'aa03'){
+			//If unable receive 'aa05'
+			if(combineData != ''){
+				//Combine 'aa05' loss data
+				combineData = combineData.concat(thirdIno);
+				//Save data
+				if(combineData.length == 42){
+					DeviceDbTools.saveDevice(mJSON['macAddr'],combineData,mJSON['recv'],function(err,info){
+						if(err){
+							console.log('Debug save Device fail : '+err);
+						}
+					});
+				}
+				//Reset to default
+				combineData = '';
+			}
 			firstData =mJSON['data'];
-			combineData = '';
 		}
 
 	}else{
@@ -148,12 +161,15 @@ function combinePM25(mJSON){
 				combineData = firstData.concat(secondInfo);
 			}
 		}else if(type == 'aa05'){
-			var mInfo = info.substring(0,12);
+			thirdIno = info.substring(0,12);
 			if(combineData !=''){
-				combineData = combineData.concat(mInfo);
+				//Combine 'aa05' data
+				combineData = combineData.concat(thirdIno);
 			}else{
+				//Combine 'aa04' loss data
 				combineData = firstData.concat(secondInfo);
-				combineData = combineData.concat(mInfo);
+				//Combine 'aa05' data
+				combineData = combineData.concat(thirdIno);
 			}
 			//console.log('data length : '+combineData.length);
 			//Save data
