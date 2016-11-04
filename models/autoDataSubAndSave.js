@@ -62,9 +62,9 @@ function isSameTagCheck(data,mac){
 	var data1 = data.substring(4,6);
 	var tag = mac_tag_map[mac];
 	console.log('mac : ' +mac + ' => tag : '+tag);
-	if(data0 !='aa00'){
+	/*if(data0 !='aa00'){
 		return false;
-	}
+	}*/
 	if (tag == data1){
 		return true;
 	}else{
@@ -87,14 +87,16 @@ function saveAndSendMessage(_JSON){
 		combinePM25(_JSON);
 		return;
 	}
+	//Filter 'aa00' same tag
+	if(type == 'aa00'  ){
+		if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
+			console.log('Debug drop same tag ');
+			return;
+		}
+	}
+
 	//Update and save data
 	socket.emit('giot_client_message',_JSON);
-
-	/*if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
-		console.log('Debug drop same tag ');
-		return;
-	}*/
-
 
 	DeviceDbTools.saveDevice(_JSON['macAddr'],_JSON['data'],time,function(err,info){
 
