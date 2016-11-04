@@ -93,7 +93,7 @@
     var socket = io.connect();
     var myData;
     var plot1,plot2;
-    var tatalTime = 0,interval = 6,x_number;
+    var tatalTime = 0,interval = 1,x_number;
     var formatStr = '%H:%M';
 
 
@@ -101,7 +101,7 @@
         socket.emit('chart_client','hello,chart socket cient is ready');
     });
 
-    $('[name=time_option]').change(function() {
+    /*$('[name=time_option]').change(function() {
         $( "select option:selected" ).each(function() {
           //alert( $( this ).val() );
           if($( this ).val() == 0){
@@ -114,7 +114,7 @@
             interval = 12*60;//24*5*60 per 1 hours
           }
         });
-    });
+    });*/
 
     var options1 ={
                     title: "溫度(℃)",
@@ -159,8 +159,9 @@
         //Jason add on 2016.11.01
         $("#chartBlock").show();
         var tempList = [],humList=[];
-        //alert('interval : '+interval);
-        for(i=0;i<data.length;i=i+interval){
+        //alert('data.length : '+data.length);
+        for(i=0;i<data.length;i++){
+            //alert('i : '+i);
             if(i > (data.length-1) ){
                 break;
             }else{
@@ -168,7 +169,7 @@
                 humList.push([new Date(data[i].recv_at).getTime(),data[i].info.data1]);
             }
         }
-        tatalTime = Math.ceil((tempList[tempList.length-1][0]-tempList[0][0])/(1000*60*60));
+        tatalTime = Math.ceil((tempList[tempList.length-1][0]-tempList[0][0])/(1000*60*60))+1;
         //alert( tatalTime );
         if(tatalTime<12){
             x_number = tatalTime;

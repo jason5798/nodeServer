@@ -144,27 +144,17 @@
 
 				<% if (devices!=null && devices.length>0){ %>
 					<tr>
-						<td >甲醛 </td>
-						<td >二氧化碳 </td>
-						<td >溫度 </td>
-						<td >濕度 </td>
-						<td >一氧化碳 </td>
-						<td >PM10 </td>
-						<td >PM2.5 </td>
-						<td >TVOC </td>
+						<td style="word-break:break-all" width="50">甲醛 ppm</td>
+						<td style="word-break:break-all" width="80">二氧化碳 ppm</td>
+						<td style="word-break:break-all" width="50">溫度 度</td>
+						<td style="word-break:break-all" width="50">濕度 %</td>
+						<td style="word-break:break-all" width="80">一氧化碳 ppm</td>
+						<td style="word-break:break-all" width="60">PM10 ug/m3</td>
+						<td style="word-break:break-all" width="60">PM2.5 ug/m3</td>
+						<td style="word-break:break-all" width="60">TVOC ppm</td>
 						<td >時間 </td>
 					</tr>
-					<tr>
-						<td >ppm</td>
-						<td >ppm</td>
-						<td >度</td>
-						<td >%</td>
-						<td >ppm</td>
-						<td >ug/m3</td>
-						<td >ug/m3</td>
-						<td >ppm</td>
-						<td ></td>
-					</tr>
+					
 					<% devices.forEach(function(device) { %>
 						<% if (device.info) { %>
 							<tr>
