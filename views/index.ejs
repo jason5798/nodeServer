@@ -452,44 +452,65 @@
 	});
 
 	function chartUpdate(myplot,myData,myChart) {
-        	max = (new Date()).getTime();
-            min =  max - (n*1000);
-            //alert('min : '+min + " myData[0][0] : "+myData[0][0]);
-            /*if(myData[0][0]<min){
-            	myData.shift();
-            }*/
+    	max = (new Date()).getTime();
+        min =  max - (n*1000);
+        //alert('min : '+min + " myData[0][0] : "+myData[0][0]);
+        /*if(myData[0][0]<min){
+        	myData.shift();
+        }*/
 
-            if (myplot) {
-                myplot.destroy();
-            }
-            //myplot.series[0].data = myData;
-            /*options.axes.xaxis.min = myData[0][0];
-            options.axes.xaxis.max = (new Date()).getTime();*/
+        /*if (myplot) {
+            myplot.destroy();
+        }*/
+        //myplot.series[0].data = myData;
+        /*options.axes.xaxis.min = myData[0][0];
+        options.axes.xaxis.max = (new Date()).getTime();*/
 
-            options.axes.xaxis.min = min;
-            options.axes.xaxis.max = max;
-            myplot = $.jqplot (myChart, [myData],options);
-        }
+        options.axes.xaxis.min = min;
+        options.axes.xaxis.max = max;
+        myplot = $.jqplot (myChart, [myData],options).replot();
+    }
 
-		function doUpdateOne() {
-            chartUpdate(plot1, pData,'pChart');
-            chartUpdate(plot2, tData,'tChart');
-            chartUpdate(plot3, hData,'hChart');
-            chartUpdate(plot4, lData,'lChart');
-            chartUpdate(plot5, uData,'uChart');
-            chartUpdate(plot6, rData,'rChart');
-        }
+    function updateSeries(myplot,myData) {	    
+    	max = (new Date()).getTime();
+        min =  max - (n*1000);
+	    myplot.series[0].data = myData;
+	    myplot.axes.xaxis.min = min;
+        myplot.axes.xaxis.max = max;
+	    myplot.replot();
+	}
 
-        function doUpdate() {
-            //alert('doUpdate() ');
-            chartUpdate(plot1, pData,'pChart');
-            chartUpdate(plot2, tData,'tChart');
-            chartUpdate(plot3, hData,'hChart');
-            chartUpdate(plot4, lData,'lChart');
-            chartUpdate(plot5, uData,'uChart');
-            chartUpdate(plot6, rData,'rChart');
-            setTimeout(doUpdate, t);
-        }
+	function doUpdateOne() {
+        /*chartUpdate(plot1, pData,'pChart');
+        chartUpdate(plot2, tData,'tChart');
+        chartUpdate(plot3, hData,'hChart');
+        chartUpdate(plot4, lData,'lChart');
+        chartUpdate(plot5, uData,'uChart');
+        chartUpdate(plot6, rData,'rChart');*/
+        updateSeries(plot1, pData);
+        updateSeries(plot2, tData);
+        updateSeries(plot3, hData);
+        updateSeries(plot4, lData);
+        updateSeries(plot5, uData);
+        updateSeries(plot6, rData);
+    }
+
+    function doUpdate() {
+        //alert('doUpdate() ');
+        /*chartUpdate(plot1, pData,'pChart');
+        chartUpdate(plot2, tData,'tChart');
+        chartUpdate(plot3, hData,'hChart');
+        chartUpdate(plot4, lData,'lChart');
+        chartUpdate(plot5, uData,'uChart');
+        chartUpdate(plot6, rData,'rChart');*/
+        updateSeries(plot1, pData);
+        updateSeries(plot2, tData);
+        updateSeries(plot3, hData);
+        updateSeries(plot4, lData);
+        updateSeries(plot5, uData);
+        updateSeries(plot6, rData);
+        setTimeout(doUpdate, t);
+    }
 </script>
 <script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>
 <script src="https://query.yahooapis.com/v1/public/yql?q= select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='Hualien, tw') and u='c'&format=json&callback=callbackFunction"></script>
