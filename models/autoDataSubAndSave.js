@@ -6,6 +6,7 @@ var JsonFileTools =  require('./jsonFileTools.js');
 var moment = require('moment');
 var date = moment();
 var mac_tag_map = {};
+var type_tag_map = {};
 
 //Combine data
 var firstData='',combineData='',secondInfo='',thirdIno='';
@@ -73,6 +74,20 @@ function isSameTagCheck(data,mac){
 	}
 }
 
+function isSameTagCheck(data){
+	var data0 = data.substring(0,4);
+	var data1 = data.substring(4,6);
+	var tag = type_tag_map[data0];
+	console.log('type : ' +data0 + ' => tag : '+tag);
+	
+	if (tag == data1){
+		return true;
+	}else{
+		type_tag_map[data0] = data1;
+		return false;
+	}
+}
+
 function saveAndSendMessage(_JSON){
 
 	var time = _JSON['recv'];
@@ -82,18 +97,26 @@ function saveAndSendMessage(_JSON){
 
 	//console.log('macAddr : '+ _JSON['macAddr'] + ',  recv : '+ _JSON['recv'] + ',  data : '+ _JSON['data']);
 	var type = _JSON['data'].substring(0,4);
+	//Filter 'aa00' same tag
+	/*if(type == 'aa00'  ){
+		if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
+			console.log('Debug drop same tag ');
+			return;
+		}
+	}*/
+
+
+	if(isSameTagCheck( _JSON['data'])){
+		console.log('Debug drop same tag ');
+		return;
+	}
+
 	if(type == 'aa03' || type == 'aa04' || type == 'aa05' ){
 		//Combine data
 		combinePM25(_JSON);
 		return;
 	}
-	//Filter 'aa00' same tag
-	if(type == 'aa00'  ){
-		if( isSameTagCheck(_JSON['data'],_JSON['macAddr']) ){
-			console.log('Debug drop same tag ');
-			return;
-		}
-	}
+	
 
 	//Update and save data
 	socket.emit('giot_client_message',_JSON);
@@ -132,6 +155,7 @@ function getType(p) {
 }
 
 function combinePM25(mJSON){
+	
 	var type = mJSON['data'].substring(0,4);
 	var tag  = mJSON['data'].substring(4,6);
 	var info = mJSON['data'].substring(6,mJSON['data'].length);
@@ -164,7 +188,8 @@ function combinePM25(mJSON){
 			}
 		}else if(type == 'aa05'){
 			thirdIno = info.substring(0,12);
-			if(combineData !=''){
+			console.log('combineData length : '+combineData.length);
+			if(combineData !='' ){
 				//Combine 'aa05' data
 				combineData = combineData.concat(thirdIno);
 			}else{
