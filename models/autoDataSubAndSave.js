@@ -7,6 +7,7 @@ var moment = require('moment');
 var date = moment();
 var mac_tag_map = {};
 var type_tag_map = {};
+var type_time_map = {};
 
 //Combine data
 var firstData='',combineData='',secondInfo='',thirdIno='';
@@ -74,16 +75,17 @@ function isSameTagCheck(data,mac){
 	}
 }
 
-function isSameTagCheck(data){
-	var data0 = data.substring(0,4);
-	var data1 = data.substring(4,6);
-	var tag = type_tag_map[data0];
-	console.log('type : ' +data0 + ' => tag : '+tag);
-	
-	if (tag == data1){
+function isSameTagCheck2(data,mac){
+	var mType = data.substring(0,4);
+	var mTag = data.substring(4,6);
+	var key = mac.concat(mType);
+	var tag = type_tag_map[key];
+	console.log('key : ' +key + ' => tag : '+tag);
+
+	if (tag == mTag){
 		return true;
 	}else{
-		type_tag_map[data0] = data1;
+		type_tag_map[key] = mTag;
 		return false;
 	}
 }
@@ -105,10 +107,15 @@ function saveAndSendMessage(_JSON){
 		}
 	}*/
 
-
-	if(isSameTagCheck( _JSON['data'])){
+	//Filter repeat data from multi gateway
+	if(isSameTagCheck2( _JSON['data'],_JSON['macAddr'])){
 		console.log('Debug drop same tag ');
 		return;
+	}
+	//Save init time for combine data
+	//'aa03' for 'aa03' & 'aa04' & 'aa05'
+	if(type == 'aa03'){
+		type_time_map[type] = time;
 	}
 
 	if(type == 'aa03' || type == 'aa04' || type == 'aa05' ){
@@ -116,7 +123,7 @@ function saveAndSendMessage(_JSON){
 		combinePM25(_JSON);
 		return;
 	}
-	
+
 
 	//Update and save data
 	socket.emit('giot_client_message',_JSON);
@@ -155,7 +162,7 @@ function getType(p) {
 }
 
 function combinePM25(mJSON){
-	
+
 	var type = mJSON['data'].substring(0,4);
 	var tag  = mJSON['data'].substring(4,6);
 	var info = mJSON['data'].substring(6,mJSON['data'].length);
@@ -166,8 +173,12 @@ function combinePM25(mJSON){
 			if(combineData != ''){
 				//Combine 'aa05' loss data
 				combineData = combineData.concat(thirdIno);
+				//Get init time for combine data
+				var time = type_time_map['aa03'];
+				console.log('Get init time : '+time);
 				//Save data
-				if(combineData.length == 42){
+				if(combineData.length == 42 && time){
+
 					DeviceDbTools.saveDevice(mJSON['macAddr'],combineData,mJSON['recv'],function(err,info){
 						if(err){
 							console.log('Debug save Device fail : '+err);
@@ -199,15 +210,17 @@ function combinePM25(mJSON){
 				combineData = combineData.concat(thirdIno);
 			}
 			//console.log('data length : '+combineData.length);
+			//Get init time for combine data
+			var time = type_time_map['aa03'];
+			console.log('Get init time : '+time);
 			//Save data
-			if(combineData.length == 42){
+			if(combineData.length == 42 && time){
 				DeviceDbTools.saveDevice(mJSON['macAddr'],combineData,mJSON['recv'],function(err,info){
 					if(err){
 						console.log('Debug save Device fail : '+err);
 					}
 				});
 			}
-
 			//clear combineData
 			combineData = '';
 		}
