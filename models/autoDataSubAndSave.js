@@ -75,14 +75,22 @@ function isSameTagCheck(data,mac){
 	}
 }
 
-function isSameTagCheck2(data,mac){
+function isSameTagCheck2(data,mac,recv){
+	var time =  moment(recv).format('mm');
 	var mType = data.substring(0,4);
-	var mTag = data.substring(4,6);
+	var tmp = data.substring(4,6);
+	tmp = tmp.concat(time);
+    var mTag = parseInt(tmp,10);
 	var key = mac.concat(mType);
 	var tag = type_tag_map[key];
+	
+	if(tag === undefined){
+		tag = 0;
+	}
+	console.log('mTag : ' +mTag);
 	console.log('key : ' +key + ' => tag : '+tag);
 
-	if (tag == mTag){
+	if (Math.abs(tag - mTag)<3){
 		return true;
 	}else{
 		type_tag_map[key] = mTag;
@@ -108,7 +116,7 @@ function saveAndSendMessage(_JSON){
 	}*/
 
 	//Filter repeat data from multi gateway
-	if(isSameTagCheck2( _JSON['data'],_JSON['macAddr'])){
+	if(isSameTagCheck2( _JSON['data'],_JSON['macAddr'],_JSON['recv'])){
 		console.log('Debug drop same tag ');
 		return;
 	}
