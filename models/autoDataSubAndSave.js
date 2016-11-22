@@ -80,10 +80,10 @@ function isSameTagCheck2(data,mac,recv){
 	var mType = data.substring(0,4);
 	var tmp = data.substring(4,6);
 	tmp = tmp.concat(time);
-    var mTag = parseInt(tmp,10);
+    var mTag = parseInt(tmp,16);
 	var key = mac.concat(mType);
 	var tag = type_tag_map[key];
-	
+
 	if(tag === undefined){
 		tag = 0;
 	}
