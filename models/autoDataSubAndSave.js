@@ -78,9 +78,17 @@ function isSameTagCheck(data,mac){
 function isSameTagCheck2(data,mac,recv){
 	var time =  moment(recv).format('mm');
 	var mType = data.substring(0,4);
+	//Get number of tag
 	var tmp = data.substring(4,6);
-	tmp = tmp.concat(time);
-    var mTag = parseInt(tmp,16);
+	/*Fix time parse to 16 issue
+	  example:
+	  19(16)->25(10)
+	  20(16)->32(10)
+	  差為7而不是1
+	  因此將流水號轉16進位*100,時間轉10進位後再相加
+	*/
+	var mTag = parseInt(tmp,16)*100;
+    mTag = mTag + parseInt(time,10);//流水號:百位+分鐘:10位及個位
 	var key = mac.concat(mType);
 	var tag = type_tag_map[key];
 
