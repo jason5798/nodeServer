@@ -25,7 +25,7 @@ var messageJSON,test = false;
 
 //if(test == false){
 	//GIotClient.on('connect', function()  {
-		GIotClient.subscribe(settings.gIoTopic);
+	GIotClient.subscribe(settings.gIoTopic);
     //});
 
 
@@ -44,7 +44,7 @@ var messageJSON,test = false;
 			//console.log('parse json error message :'+e.toString());
 			return;
 		}
-		console.log(messageJSON['recv'],', mac : '+ messageJSON['macAddr'] + ',  data : '+ messageJSON['data']);
+		console.log('recv:'+moment(messageJSON['recv']).format('YYYY-MM-DD HH:mm:ss'),',mac:'+ messageJSON['macAddr'] + ',data:'+ messageJSON['data']);
 		saveAndSendMessage(messageJSON);
 	});
 
@@ -71,6 +71,7 @@ function isSameTagCheck(data,mac){
 		return true;
 	}else{
 		mac_tag_map[mac] = data1;
+		console.log('Change tag =>  '+data1);
 		return false;
 	}
 }
@@ -80,28 +81,24 @@ function isSameTagCheck2(data,mac,recv){
 	var mType = data.substring(0,4);
 	//Get number of tag
 	var tmp = data.substring(4,6);
-	/*Fix time parse to 16 issue
-	  example:
-	  19(16)->25(10)
-	  20(16)->32(10)
-	  差為7而不是1
-	  因此將流水號轉16進位*100,時間轉10進位後再相加
-	*/
-	var mTag = parseInt(tmp,16)*100;
-    mTag = mTag + parseInt(time,10);//流水號:百位+分鐘:10位及個位
+	var mTag = parseInt(tmp,16)*100;//流水號:百位
+        mTag = mTag + parseInt(time,10);//分鐘:10位及個位
 	var key = mac.concat(mType);
 	var tag = type_tag_map[key];
 
 	if(tag === undefined){
 		tag = 0;
 	}
-	console.log('mTag : ' +mTag);
-	console.log('key : ' +key + ' => tag : '+tag);
 
-	if (Math.abs(tag - mTag)<3){
+	/* Fix 時間進位問題
+		example : time 由59分進到00分時絕對值差為59
+	*/
+	if (Math.abs(tag - mTag)<2 || Math.abs(tag - mTag)==59){
+		console.log('mTag=' +mTag+'(key:' +key + '):tag='+tag+' #### drop');
 		return true;
 	}else{
 		type_tag_map[key] = mTag;
+		console.log('**** mTag=' +mTag+'(key:' +key + '):tag='+tag +'=>'+mTag+' @@@@ save' );
 		return false;
 	}
 }
@@ -125,7 +122,7 @@ function saveAndSendMessage(_JSON){
 
 	//Filter repeat data from multi gateway
 	if(isSameTagCheck2( _JSON['data'],_JSON['macAddr'],_JSON['recv'])){
-		console.log('Debug drop same tag ');
+		//console.log('Debug drop same tag ');
 		return;
 	}
 	//Save init time for combine data
