@@ -174,7 +174,7 @@
         if(tatalTime<12){
             x_number = tatalTime;
             formatStr = '%H:%M';
-        }else if(tatalTime<26){
+        }else if(tatalTime<24){
             x_number = tatalTime/2;
             formatStr = '%H:%M';
         }else if(tatalTime<24*7){

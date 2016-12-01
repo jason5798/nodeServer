@@ -17,7 +17,7 @@ var options = {
 	reconnectPeriod: 1000,
 	protocolId: 'MQIsdp',
 	protocolVersion: 3,
-	clean: false,
+	//clean: false,
 	encoding: 'utf8'
 };
 

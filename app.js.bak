@@ -483,11 +483,11 @@ function switchBySetting(_max,_min){
 			if(device){
 				console.log('Debug new_message_client ->device  :'+device);
 				var temp = device.info.data2;
-				/*if(temp>_max){
+				if(temp>_max){
 					blink.setSwitch(true);
 				}if(temp<_min){
 					blink.setSwitch(false);
-				}*/
+				}
 			}
 		}
 	});

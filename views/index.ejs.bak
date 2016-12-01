@@ -455,20 +455,6 @@
 
 	});
 
-	socket.on('index_low_voltage',function(data){
-		//alert(data.index + data.macAddr);
-		$('[name=status]').eq(data.index).attr("src","/images/btn_alarm.png");
-		var str = "電壓過低 : ";
-		str = str.concat(data.macAddr);
-		//alert("waring message : "+str);
-		document.getElementById('warning_message').innerText = str;
-		document.getElementById('warning_message').style.color = "red";
-		/*setTimeout(function(){
-    		//do what you need here
-		    document.getElementById('warning_message').innerText = '';
-		}, 5000);*/
-	});
-
 	function chartUpdate(myplot,myData,myChart) {
     	max = (new Date()).getTime();
         min =  max - (n*1000);

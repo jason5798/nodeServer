@@ -154,7 +154,7 @@
 						<td style="word-break:break-all" width="60">TVOC ppm</td>
 						<td >時間 </td>
 					</tr>
-
+					
 					<% devices.forEach(function(device) { %>
 						<% if (device.info) { %>
 							<tr>
@@ -185,7 +185,7 @@
 		</div> <!-- panel-body -->
 
 
-<script class="code" type="text\/javascript">
+<script class="code" type="text/javascript">
 
 	 $('#datepicker1').datepicker({dateFormat: 'yy-mm-dd', showOn: 'both',
     buttonImageOnly: true, buttonImage: 'images/calendar.png'});

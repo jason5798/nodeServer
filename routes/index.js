@@ -7,6 +7,7 @@ var UserDbTools =  require('../models/userDbTools.js');
 
 var settings = require('../settings');
 var moment = require('moment');
+var noWeatherDevice = false;
 
 function findUnitsAndShowList(req,res,isUpdate){
 	UnitDbTools.findAllUnits(function(err,units){
@@ -40,7 +41,8 @@ function findUnitsAndShowList(req,res,isUpdate){
 			units:req.session.units,
 			user:req.session.user,
 			success: successMessae,
-			error: errorMessae
+			error: errorMessae,
+			noWeatherDevice : noWeatherDevice
 		});
 	});
 }

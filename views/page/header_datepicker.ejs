@@ -111,24 +111,10 @@
 			<ol class="breadcrumb">
 				<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
 				<li class="active"><%= title%></li>
-				<li class="active"><% if (success) { %>
-						<%= success %>
-					<% } %>
-					<% if (error) { %>
-						<%= error %>
-					<% } %>
+				<li class="active">
+					<label id="warning_message">
+        			</label>
 				</li>
 			</ol>
 
 			<div class="row">
-				<!--<div class="panel-heading col-lg-2">
-					<%= title %>
-				</div>  <!-- panel-heading -->
-				<!--<div id="result" class="panel-heading col-lg-10">
-					<% if (success) { %>
-						<%= success %>
-					<% } %>
-					<% if (error) { %>
-						<%= error %>
-					<% } %>
-				</div> -->  <!-- panel-heading -->

@@ -11,7 +11,7 @@ var options = {
 	reconnectPeriod: 1000,
 	protocolId: 'MQIsdp',
 	protocolVersion: 3,
-	clean: false
+	//clean: false
 };
 console.log('giotClient port:'+options.port);
 console.log('giotClient host:'+options.host);
