@@ -22,6 +22,7 @@
     "morgan": "~1.7.0",
     "mosquito": "0.0.0",
     "mqtt": "^1.11.2",
+    "node-red": "^0.15.2",
     "node-schedule": "^1.1.1",
     "serve-favicon": "~2.3.0",
     "socket.io": "*",

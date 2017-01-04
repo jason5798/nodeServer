@@ -13,7 +13,8 @@ var moment = require('moment');
 var http = require('http'),
     https = require('https');
 var ssl = require('./sslLicense');
-
+//Jason add for node-red on 2017.01.03
+var RED = require("node-red");
 var yql = require('yql-node').formatAsJSON(); //will return JSON results
 /*var query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="Hualien, tw") and u="c"';
 //returns JSON
@@ -67,6 +68,23 @@ routes(app);
 var server = http.createServer(app);
 var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
 
+//Jason add for node-red on 2017.01.03
+// Create the settings object - see default settings.js file for other options
+var settings = {
+    httpAdminRoot:"/red",
+    httpNodeRoot: "/api",
+    userDir:"./.nodered/",
+    functionGlobalContext: { }    // enables global context
+};
+
+// Initialise the runtime with a server and settings
+RED.init(server,settings);
+
+// Serve the editor UI from /red
+app.use(settings.httpAdminRoot,RED.httpAdmin);
+
+// Serve the http nodes UI from /api
+app.use(settings.httpNodeRoot,RED.httpNode);
 //Jason modify on 2016.05.23
 //app.use('/', routes);
 //app.use('/users', users);
@@ -112,6 +130,11 @@ if(json != null){
 }
 
 var sock = require('socket.io').listen(server.listen(port));
+
+//Jason add for node-red on 2017.01.03
+// Start the runtime
+RED.start();
+
 updateAllUnitsStatus();
 
 //Auto update per 2 hours
