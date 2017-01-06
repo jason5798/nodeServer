@@ -7,30 +7,44 @@ var UserDbTools =  require('../models/userDbTools.js');
 
 var settings = require('../settings');
 var moment = require('moment');
-var noWeatherDevice = false;
+var noWeatherDevice = true;
+var finalTimeList = {};
+var hour = 60*60*1000;
+
+function getNewData(obj){
+	var json = obj;
+	var now = moment();
+	/*console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+	console.log('obj.macAddr : '+obj.macAddr+' = '+finalTimeList[obj.macAddr]);
+	console.log('result = '+ (now - finalTimeList[obj.macAddr]));*/
+	if(finalTimeList[obj.macAddr] == 0){
+		obj.status = 1;
+	}else if( (now - finalTimeList[obj.macAddr])/hour > 1 ){
+		obj.status = 2;
+	}
+
+	return obj;
+}
 
 function findUnitsAndShowList(req,res,isUpdate){
 	UnitDbTools.findAllUnits(function(err,units){
 		var successMessae,errorMessae;
 		var macTypeMap = {};
-
+        finalTimeList = JsonFileTools.getJsonFromFile('./public/data/finalTimeList.json');
+		console.log( "finalTimeList :"+ JSON.stringify(finalTimeList ));
 		if(err){
 			errorMessae = err;
 		}else{
 			if(+units.length>0){
 				successMessae = '查詢到'+units.length+'筆資料';
 			}
-			/*for(var i=0;i<units.length;i++){
+
+			for(var i=0;i<units.length;i++){
 				console.log( "unit :"+units[i] );
-				if(units[i].macAddr){
-					console.log('mac ('+i+'):'+units[i].macAddr);
-					if(units[i].type){
-						macTypeMap[units[i].macAddr]=units[i].type;
-					}
-				}
+				units[i] = getNewData(units[i]);
 			}
 			//Jason add for save mac array on 2016.08.18
-			if(isUpdate){//For new and delete unit
+			/*if(isUpdate){//For new and delete unit
 				JsonFileTools.saveJsonToFile('./public/data/macTypeMap.json',macTypeMap);
 			}*/
 		}

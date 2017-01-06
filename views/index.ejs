@@ -1,5 +1,5 @@
 <%- include page/header_datepicker %>
-<meta http-equiv="refresh" content="3600">
+<!--<meta http-equiv="refresh" content="3600">-->
 	<div class="row">
 		<% if (noWeatherDevice==false) { %>
 		<div class="col-md-8">
@@ -436,7 +436,7 @@
 	});
 
     //Jason add of on 2016.10.31 for update unit status
-	socket.on('index_unit_time',function(data){
+	/*socket.on('index_unit_time',function(data){
 		var now = (new Date()).getTime();
 		//alert('now : '+typeof(now));
 		var index = 0;
@@ -463,11 +463,7 @@
 		//alert("waring message : "+str);
 		document.getElementById('warning_message').innerText = str;
 		document.getElementById('warning_message').style.color = "red";
-		/*setTimeout(function(){
-    		//do what you need here
-		    document.getElementById('warning_message').innerText = '';
-		}, 5000);*/
-	});
+	});*/
 
 	function chartUpdate(myplot,myData,myChart) {
     	max = (new Date()).getTime();
@@ -489,7 +485,7 @@
         myplot = $.jqplot (myChart, [myData],options).replot();
     }
 
-    function updateSeries(myplot,myData) {	    
+    function updateSeries(myplot,myData) {
     	max = (new Date()).getTime();
         min =  max - (n*1000);
 	    myplot.series[0].data = myData;

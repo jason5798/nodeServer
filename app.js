@@ -137,14 +137,6 @@ RED.start();
 
 updateAllUnitsStatus();
 
-//Auto update per 2 hours
-var job = new schedule.scheduleJob('120'/*{hour: 13, minute: 25}*/, function(){
-	// do jobs here
-	updateAllUnitsStatus();
-});
-
-
-
 /*app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });*/
@@ -397,6 +389,7 @@ sock.on('connection',function(client){
         var mRecv = data['recv'];
         //updata unit final time
         finalTimeList[macAddress] = Number(moment(mRecv));
+        JsonFileTools.saveJsonToFile('./public/data/finalTimeList.json',finalTimeList);
         //console.log('Debug giot client message -> macAddress : '+macAddress);
         //console.log('Debug giot client message -> mData : '+mData);
         //console.log('Debug giot client message -> mRecv : '+mRecv);
@@ -428,7 +421,9 @@ sock.on('connection',function(client){
 			var time = moment(mRecv).format("YYYY-MM-DD HH:mm:ss");
 			//console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" ,vol : "+mV);
 			if(mV<350){
-				client.broadcast.emit('index_low_voltage',{index:index,macAddr:macAddress});
+				//client.broadcast.emit('index_low_voltage',{index:index,macAddr:macAddress});
+				finalTimeList[macAddress] = 0;
+				JsonFileTools.saveJsonToFile('./public/data/finalTimeList.json',finalTimeList);
 			}
 			client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,vol:mV});
 		}else if(flag == 1){
@@ -567,32 +562,6 @@ function updateStatus(unit,callback){
 		if(device){
 			//console.log('device : '+device);
 			finalTimeList[device.macAddr] = Number(moment(device.recv_at));
-			var recv_timestamp = Number(moment(device.recv_at));
-
-			console.log( moment().subtract(2,'hours').format('YYYY/MM/DD , hh:mm:ss a') +' ->last 2 hours timestamp : '+last_timestamp );
-			console.log(device.recv_at+' -> recv timestamp : '+recv_timestamp);
-			console.log(' unit.status : '+unit.status);
-
-
-			if(last_timestamp >= recv_timestamp && unit.status != 2 ){
-				console.log('name : '+unit.name + 'is overtime');
-				status = 2;
-			}else if(last_timestamp < recv_timestamp && unit.status == 2 ){
-				console.log('name : '+unit.name + 'is ok');
-				status = 0;
-			}else{
-				console.log('name : '+unit.name + ' status no change');
-				return;
-			}
-			UnitDbTools.updateUnitStatus(device.macAddr,status,function(err,result){
-				if(err){
-					console.log('update name : '+unit.name + 'err : '+err);
-					//return callback(unit.status);
-				}else{
-					console.log('update name : '+unit.name + ' status '+status+' is ok');
-					//return callback(status);
-				}
-			});
 		}
 	});
 }
