@@ -16,7 +16,27 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>-->
 <link href="css/jquery-ui.css" rel="stylesheet">
 <script src="/js/jquery-ui.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery.validate.min.js"></script>
+<script type="text/javascript" src="additional-methods.min.js"></script>
+<script type="text/javascript" src="/localization/messages_zh_TW.js"></script>
 
+<script>
+
+	!function ($) {
+	    $(document).on("click","ul.nav li.parent > a > span.icon", function(){
+	        $(this).find('em:first').toggleClass("glyphicon-minus");
+	    });
+	    $(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+	}(window.jQuery);
+
+	$(window).on('resize', function () {
+	  if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+	})
+	$(window).on('resize', function () {
+	  if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+	})
+</script>
 
 
 </head>
