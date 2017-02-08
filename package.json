@@ -1,9 +1,9 @@
 {
   "name": "demo",
-  "version": "1.2.3",
+  "version": "1.2.31",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js"
   },
   "dependencies": {
     "MQTTClient": "0.0.1",
@@ -20,13 +20,10 @@
     "moment": "*",
     "mongoose": "~4.5.1",
     "morgan": "~1.7.0",
-    "mosquito": "0.0.0",
     "mqtt": "^1.11.2",
-    "node-red": "^0.15.2",
     "node-schedule": "^1.1.1",
     "serve-favicon": "~2.3.0",
     "socket.io": "*",
-    "socket.io-client": "^1.4.8",
-    "yql-node": "^0.2.1"
+    "socket.io-client": "^1.4.8"
   }
 }

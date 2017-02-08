@@ -14,12 +14,13 @@ var hour = 60*60*1000;
 function getNewData(obj){
 	var json = obj;
 	var now = moment();
+	var timestamp = Number(moment(finalTimeList[obj.macAddr]));
 	/*console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 	console.log('obj.macAddr : '+obj.macAddr+' = '+finalTimeList[obj.macAddr]);
 	console.log('result = '+ (now - finalTimeList[obj.macAddr]));*/
 	if(finalTimeList[obj.macAddr] == 0){
 		obj.status = 1;
-	}else if( (now - finalTimeList[obj.macAddr])/hour > 1 ){
+	}else if( (now - timestamp)/hour > 1 ){
 		obj.status = 2;
 	}
 

@@ -13,15 +13,8 @@ var moment = require('moment');
 var http = require('http'),
     https = require('https');
 var ssl = require('./sslLicense');
-//Jason add for node-red on 2017.01.03
-var RED = require("node-red");
-var yql = require('yql-node').formatAsJSON(); //will return JSON results
-/*var query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="Hualien, tw") and u="c"';
-//returns JSON
-  yql.execute(query, function(error,response){
-    console.log("yql:");
-    console.log(JSON.stringify(response));
-  });*/
+var countUnit = 0;
+var myUnits,macList = [],finalTimeList = {};
 //require private module ------------------------------------------
 var UnitDbTools = require('./models/unitDbTools.js');
 var DeviceDbTools = require('./models/deviceDbTools.js');
@@ -59,8 +52,8 @@ app.use(session({
   saveUninitialized: true
 }));
 //Jason add on 2016.09.26
-app.use(express.static(path.join(__dirname, 'bower_components/jquery-validation/dist/')));
-app.use(express.static(path.join(__dirname, 'bower_components/jquery-validation/src/')));
+//app.use(express.static(path.join(__dirname, 'bower_components/jquery-validation/dist/')));
+//app.use(express.static(path.join(__dirname, 'bower_components/jquery-validation/src/')));
 
 app.use('/todos', todos);
 //
@@ -68,23 +61,6 @@ routes(app);
 var server = http.createServer(app);
 var httpsServer = https.createServer(ssl.options, app).listen(app.get('httpsport'));
 
-//Jason add for node-red on 2017.01.03
-// Create the settings object - see default settings.js file for other options
-var settings = {
-    httpAdminRoot:"/red",
-    httpNodeRoot: "/api",
-    userDir:"./.nodered/",
-    functionGlobalContext: { }    // enables global context
-};
-
-// Initialise the runtime with a server and settings
-RED.init(server,settings);
-
-// Serve the editor UI from /red
-app.use(settings.httpAdminRoot,RED.httpAdmin);
-
-// Serve the http nodes UI from /api
-app.use(settings.httpNodeRoot,RED.httpNode);
 //Jason modify on 2016.05.23
 //app.use('/', routes);
 //app.use('/users', users);
@@ -131,10 +107,6 @@ if(json != null){
 
 var sock = require('socket.io').listen(server.listen(port));
 
-//Jason add for node-red on 2017.01.03
-// Start the runtime
-RED.start();
-
 updateAllUnitsStatus();
 
 /*app.listen(app.get('port'), function() {
@@ -148,7 +120,7 @@ var isMqttConnection = false;
 var date = moment();
 
 //macList is for unit type = 'd001'
-var myUnits,macList = [],finalTimeList = {};
+
 findUnitsMac();
 
 /*GIotClient.on('connect', function()  {
@@ -388,7 +360,9 @@ sock.on('connection',function(client){
         var mData = data['data'];
         var mRecv = data['recv'];
         //updata unit final time
-        finalTimeList[macAddress] = Number(moment(mRecv));
+		//Jason modify on 2017.02.08 for fix JSON parse issue
+        //finalTimeList[macAddress] = Number(moment(mRecv));
+		finalTimeList[macAddress] = mRecv;
         JsonFileTools.saveJsonToFile('./public/data/finalTimeList.json',finalTimeList);
         //console.log('Debug giot client message -> macAddress : '+macAddress);
         //console.log('Debug giot client message -> mData : '+mData);
@@ -422,7 +396,9 @@ sock.on('connection',function(client){
 			//console.log('tmp1:'+mTmp1 +' , hum1 : '+mHum1+" ,vol : "+mV);
 			if(mV<350){
 				//client.broadcast.emit('index_low_voltage',{index:index,macAddr:macAddress});
-				finalTimeList[macAddress] = 0;
+				//Jason modify on 2017.02.08 for fix JSON parse issue
+				//finalTimeList[macAddress] = 0;
+				finalTimeList[macAddress] = '0';
 				JsonFileTools.saveJsonToFile('./public/data/finalTimeList.json',finalTimeList);
 			}
 			client.broadcast.emit('new_message_receive_mqtt',{index:index,macAddr:macAddress,data:mData,time:time,create:mCreate,tmp1:mTmp1,hum1:mHum1,vol:mV});
@@ -535,20 +511,25 @@ function getType(p) {
     else return 'other';
 }
 
+
 function updateAllUnitsStatus(){
 	console.log('time:'+new Date());
 	UnitDbTools.findAllUnits(function(err,units){
-  		async.each(units,function(unit,callback){
+		countUnit = units.length;
+  		/*async.each(units,function(unit,callback){
 			updateStatus(unit,function(){
 				callback();
 			});
   		},function(err){
   			console.log('Debug todos -> get unit err : '+err);
-  		});
+  		});*/
+		for(var i =0;i<countUnit;i++){
+			updateStatus(units[i]);
+		}
   	});
 }
 
-function updateStatus(unit,callback){
+function updateStatus(unit){
     //console.log('unit : '+unit);
 	var tasks = ['find_last_device','compare_status'];
 	var last_timestamp = Number(moment().subtract(2,'hours'));
@@ -557,12 +538,20 @@ function updateStatus(unit,callback){
 
 	DeviceDbTools.findLastDeviceByMac(unit.macAddr,function(err,device){
 		if(err){
-			return callback(unit.status);
+			return;
 		}
 		if(device){
-			//console.log('device : '+device);
-			finalTimeList[device.macAddr] = Number(moment(device.recv_at));
+			console.log('device.macAddr : '+device.macAddr +', device.recv_at :'+device.recv_at);
+			//Jason modify on 2017.02.08 for fix JSON parse issue
+			//finalTimeList[device.macAddr] = Number(moment(device.recv_at));
+			finalTimeList[device.macAddr] = device.recv_at;
+			var count = Object.keys(finalTimeList).length;
+			console.log('finalTimeList : '+count +'\n'+finalTimeList);
+			if(count === countUnit){
+				JsonFileTools.saveJsonToFile('./public/data/finalTimeList.json',finalTimeList);
+			}
 		}
+		return;
 	});
 }
 
